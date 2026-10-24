@@ -195,8 +195,3 @@ AICTE PRAMAN aims to reduce repetitive manual scrutiny, improve the consistency 
 ## Disclaimer
 
 AICTE PRAMAN is a project prototype and is not an official AICTE service unless formally authorized. References to regulatory rules and approval processes must be verified against current official documentation. The prototype's outputs are not official approval decisions.
-
-## License
-
-Choose an appropriate license before distributing the repository publicly. If no license is provided, the default copyright restrictions apply.
-
