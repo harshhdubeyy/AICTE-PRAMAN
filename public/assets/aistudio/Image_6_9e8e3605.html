@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_dashboard" name="shell-type"/>
+<title>AICTE PRAMAN Portal — Institution Dashboard</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        overscroll-behavior: none;
+      }
+      .tabular-nums {
+        font-variant-numeric: tabular-nums;
+      }
+    }
+    ::-webkit-scrollbar {
+      display: none;
+    }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "canvas": "#D9DBFB",
+            "content-base": "#F4F5FE",
+            "primary": "#4F63E8",
+            "primary-dark": "#3348ce",
+            "primary-container": "#4F63E8",
+            "surface-pure": "#FFFFFF",
+            "on-surface-text": "#1E2238",
+            "muted-text": "#6C728E",
+            "dim-text": "#9DA2BA",
+            "success-green": "#22C55E",
+            "warning-amber": "#F59E0B",
+            "danger-red": "#EF4444",
+            "light-lavender": "#ECEEFF",
+            "border-soft": "#E4E6F6"
+          },
+          fontFamily: {
+            "headline": ["'Plus Jakarta Sans'", "sans-serif"],
+            "body": ["'Inter'", "sans-serif"]
+          },
+          boxShadow: {
+            "shell": "0 30px 60px rgba(79, 99, 232, 0.22)",
+            "card": "0 4px 20px rgba(79, 99, 232, 0.05)",
+            "active-row": "0 8px 20px rgba(79, 99, 232, 0.35)",
+            "banner": "0 12px 32px rgba(79, 99, 232, 0.25)",
+            "button-glow": "0 4px 16px rgba(79, 99, 232, 0.25)"
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-[#D9DBFB] font-body text-[#1E2238] p-4 lg:p-10 min-h-screen flex items-center justify-center antialiased selection:bg-[#4F63E8] selection:text-white">
+<!-- Floating Main Application Shell -->
+<div class="w-full max-w-[1440px] min-h-[940px] bg-white rounded-[40px] shadow-shell overflow-hidden flex flex-row relative">
+<!-- 1. LEFT NAVIGATION RAIL (~230px) -->
+<aside class="w-[230px] flex-shrink-0 bg-white border-r border-[#ECEEFF] flex flex-col justify-between py-6 px-4 select-none z-20">
+<div class="flex flex-col">
+<!-- AICTE PRAMAN Logo Lockup -->
+<div class="px-2 mb-8 flex items-center gap-3">
+<div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#4F63E8] to-[#3348ce] flex items-center justify-center text-white shadow-button-glow flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">verified</span>
+</div>
+<div class="flex flex-col leading-tight">
+<span class="font-headline font-bold text-[17px] text-[#1E2238] tracking-tight">PRAMAN</span>
+<span class="font-body text-[10px] text-[#6C728E] uppercase tracking-wider font-semibold">AICTE INSTITUTION</span>
+</div>
+</div>
+<!-- Vertical Navigation Links -->
+<nav class="flex flex-col gap-1">
+<!-- Active Dashboard Item with vertical crisp 3px indicator -->
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg bg-[rgba(79,99,232,0.08)] text-[#4F63E8] font-semibold text-[13px] relative after:content-[''] after:absolute after:right-0 after:top-1.5 after:bottom-1.5 after:w-[3.5px] after:bg-[#4F63E8] after:rounded-l-full transition-all" href="#">
+<span class="material-symbols-outlined text-[19px]">grid_view</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#6C728E] hover:text-[#1E2238] hover:bg-[#F4F5FE] font-medium text-[13px] transition-all" href="#">
+<span class="material-symbols-outlined text-[19px]">description</span>
+<span>Applications</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#6C728E] hover:text-[#1E2238] hover:bg-[#F4F5FE] font-medium text-[13px] transition-all" href="#">
+<span class="material-symbols-outlined text-[19px]">folder</span>
+<span>Documents</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#6C728E] hover:text-[#1E2238] hover:bg-[#F4F5FE] font-medium text-[13px] transition-all" href="#">
+<span class="material-symbols-outlined text-[19px]">apartment</span>
+<span>Infrastructure</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#6C728E] hover:text-[#1E2238] hover:bg-[#F4F5FE] font-medium text-[13px] transition-all" href="#">
+<span class="material-symbols-outlined text-[19px]">fact_check</span>
+<span>Validation Report</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#6C728E] hover:text-[#1E2238] hover:bg-[#F4F5FE] font-medium text-[13px] transition-all" href="#">
+<span class="material-symbols-outlined text-[19px]">forum</span>
+<div class="flex items-center justify-between flex-1">
+<span>Queries</span>
+<span class="w-2 h-2 rounded-full bg-[#EF4444]"></span>
+</div>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#6C728E] hover:text-[#1E2238] hover:bg-[#F4F5FE] font-medium text-[13px] transition-all" href="#">
+<span class="material-symbols-outlined text-[19px]">sync</span>
+<span>Resubmissions</span>
+</a>
+<a class="flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-[#6C728E] hover:text-[#1E2238] hover:bg-[#F4F5FE] font-medium text-[13px] transition-all" href="#">
+<span class="material-symbols-outlined text-[19px]">timeline</span>
+<span>Track Status</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Pinned Utilities: DigiLocker & Logout -->
+<div class="flex flex-col gap-3 px-2">
+<div class="bg-[#F4F5FE] p-2.5 rounded-xl flex items-center gap-2.5 border border-[#ECEEFF]">
+<span class="material-symbols-outlined text-[#4F63E8] text-[20px]">lock_open</span>
+<div class="flex flex-col">
+<span class="font-body text-[11px] font-bold text-[#4F63E8] leading-tight">DigiLocker</span>
+<span class="font-body text-[10px] text-[#22C55E] font-medium flex items-center gap-1 leading-tight">
+<span class="w-1.5 h-1.5 rounded-full bg-[#22C55E]"></span> Connected
+            </span>
+</div>
+</div>
+<a class="flex items-center gap-2.5 px-2 py-1.5 text-[#6C728E] hover:text-[#EF4444] text-[12px] font-semibold transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- CENTER STAGE + FOOTER WRAPPER -->
+<div class="flex-1 flex flex-col bg-[#F4F5FE] overflow-hidden">
+<!-- Top Bar Navigation Chrome -->
+<header class="h-[68px] bg-white border-b border-[#ECEEFF] px-7 flex items-center justify-between gap-6 flex-shrink-0 z-10">
+<!-- Search Input -->
+<div class="flex-1 max-w-md">
+<div class="h-10 bg-[#F4F5FE] rounded-xl px-3.5 flex items-center justify-between gap-2 border border-transparent focus-within:border-[#4F63E8] focus-within:bg-white transition-all">
+<input class="bg-transparent border-0 outline-none w-full font-body text-[13px] text-[#1E2238] placeholder:text-[#9DA2BA]" placeholder="Search documents, deficiencies, rules..." type="text"/>
+<span class="material-symbols-outlined text-[#6C728E] text-[19px]">search</span>
+</div>
+</div>
+<!-- Controls: Role Selector Pills & Action Button -->
+<div class="flex items-center gap-4">
+<!-- Role Switch Pills -->
+<div class="flex items-center bg-[#F4F5FE] p-1 rounded-full border border-[#ECEEFF]">
+<button class="px-3.5 py-1 rounded-full font-body text-[11px] text-[#6C728E] hover:text-[#1E2238] font-medium transition-colors">AICTE Officer</button>
+<button class="px-3.5 py-1 rounded-full font-body text-[11px] bg-[#4F63E8] text-white font-semibold shadow-sm">Institution</button>
+</div>
+<!-- Upload Document Primary Trigger -->
+<button class="h-9 px-4 bg-[#4F63E8] hover:bg-[#3348ce] text-white font-body text-[12px] font-semibold tracking-wide rounded-lg shadow-button-glow flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[17px]">upload_file</span>
+<span>Upload Document</span>
+<span class="material-symbols-outlined text-[16px] -mr-1">arrow_drop_down</span>
+</button>
+</div>
+</header>
+<!-- Center Scrollable Content Area -->
+<main class="flex-1 overflow-y-auto px-7 py-5">
+<div class="flex flex-col gap-5 max-w-[1040px]">
+<!-- 1. HERO BANNER WITH GRADIENT & FLAT VECTOR ILLUSTRATION -->
+<section class="relative overflow-hidden rounded-[14px] bg-gradient-to-r from-[#5B6EF0] to-[#4A5DE0] text-white shadow-banner p-6 flex items-center justify-between min-h-[148px]">
+<!-- Subtle organic ambient blobs -->
+<div class="absolute -top-12 -left-12 w-48 h-48 rounded-full bg-white/10 blur-xl pointer-events-none"></div>
+<div class="absolute -bottom-16 right-56 w-60 h-60 rounded-full bg-white/10 blur-2xl pointer-events-none"></div>
+<!-- Content Side -->
+<div class="flex flex-col z-10 max-w-lg">
+<div class="flex items-center gap-2 mb-1.5">
+<span class="font-body text-[10px] uppercase tracking-wider text-white bg-white/20 px-2.5 py-0.5 rounded-full font-semibold">AICTE Approval Cycle 2026-27</span>
+<span class="inline-flex items-center gap-1 text-white text-[10px] font-semibold bg-white/15 px-2.5 py-0.5 rounded-full">
+<span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse"></span> Scrutiny Engine Live
+                </span>
+</div>
+<h1 class="font-headline text-[22px] font-bold text-white tracking-tight leading-snug">Good Morning, Sri Venkateswara Institute</h1>
+<p class="font-body text-[12px] text-white/90 font-normal mt-1">You have 3 deficiencies to fix and 1 new query from AICTE. Let's resolve them.</p>
+<div class="flex items-center gap-3 mt-4">
+<button class="h-[34px] px-4 bg-white hover:bg-[#F4F5FE] text-[#4F63E8] font-body text-[12px] font-bold rounded-lg shadow-sm flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[17px]">assessment</span>
+<span>View Report</span>
+</button>
+<div class="h-[34px] px-3.5 bg-white/20 backdrop-blur-md rounded-lg flex items-center gap-2 text-white">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#22C55E] opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-[#22C55E]"></span>
+</span>
+<span class="font-body text-[11px] font-semibold tracking-wide tabular-nums">Application 78% Complete</span>
+</div>
+</div>
+</div>
+<!-- Vector Art / Flat Graphic Illustration with Laptop -->
+<div class="relative hidden sm:flex items-center justify-end flex-shrink-0 w-64 h-32 pr-2">
+<svg class="absolute -right-4 -bottom-3 w-44 h-36 opacity-25 pointer-events-none" fill="none" viewbox="0 0 160 140">
+<path d="M120 140C90 100 80 50 140 10C160 60 150 110 120 140Z" fill="#A5B4FC"></path>
+<path d="M70 140C50 95 30 60 90 20C105 70 95 110 70 140Z" fill="#FFFFFF"></path>
+<path d="M140 135C110 115 110 80 155 45C165 85 155 115 140 135Z" fill="#818CF8"></path>
+</svg>
+<svg class="relative z-10 w-44 h-32" fill="none" viewbox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+<!-- Desk Surface -->
+<rect fill="#E0E7FF" height="4" opacity="0.7" rx="2" width="165" x="25" y="118"></rect>
+<!-- Desk Plant -->
+<path d="M38 118 L46 118 L44 104 L40 104 Z" fill="#C7D2FE"></path>
+<circle cx="42" cy="100" fill="#22C55E" r="6"></circle>
+<circle cx="37" cy="95" fill="#22C55E" r="4"></circle>
+<circle cx="47" cy="94" fill="#34D399" r="5"></circle>
+<!-- Chair Backrest -->
+<path d="M140 70 C140 55 125 55 125 70 L125 120 L135 120 L135 90 L140 90 Z" fill="#312E81" opacity="0.3"></path>
+<!-- Person Torso & Collar -->
+<path d="M102 78 C95 78 88 84 86 92 L80 120 L122 120 L118 92 C116 84 109 78 102 78 Z" fill="#EEF2FF"></path>
+<path d="M96 78 L102 89 L108 78 Z" fill="#4F63E8"></path>
+<!-- Head & Hair -->
+<circle cx="102" cy="62" fill="#FCD34D" r="11"></circle>
+<path d="M92 60 C92 50 112 50 112 60 C112 54 106 52 98 54 Z" fill="#1F2350"></path>
+<!-- Arm & Hands -->
+<path d="M86 92 L76 104 L88 106" stroke="#EEF2FF" stroke-linecap="round" stroke-width="5"></path>
+<!-- Laptop Device -->
+<path d="M60 116 L88 116 L84 98 L64 98 Z" fill="#CBD5E1"></path>
+<rect fill="#4F63E8" height="13" rx="1" width="17" x="65" y="100"></rect>
+<polygon fill="#94A3B8" points="56,118 92,118 90,115 58,115"></polygon>
+<!-- Floating Verified Badge -->
+<g>
+<circle cx="150" cy="52" fill="#FFFFFF" filter="drop-shadow(0 4px 6px rgba(0,0,0,0.1))" r="14"></circle>
+<path d="M144 52 L148 56 L156 47" stroke="#4F63E8" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</g>
+</svg>
+</div>
+</section>
+<!-- 2. DOCUMENTS YOU NEED TO SUBMIT (5 CATEGORY CARDS) -->
+<section class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h2 class="font-headline text-[15px] font-bold text-[#1E2238]">Documents You Need to Submit</h2>
+<span class="font-body text-[11px] font-semibold bg-white text-[#6C728E] px-2 py-0.5 rounded shadow-sm">5 Categories</span>
+</div>
+<button class="h-6 px-2.5 rounded bg-white hover:bg-[#ECEEFF] text-[#4F63E8] font-body text-[11px] font-semibold transition-colors shadow-sm">View All</button>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mt-1">
+<!-- Card 1: Land & Ownership -->
+<div class="bg-white p-3.5 rounded-xl shadow-card hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer">
+<div class="flex items-start justify-between mb-3">
+<div class="w-11 h-11 rounded-[10px] bg-gradient-to-br from-[#4F63E8] to-[#3B4ED4] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">map</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#EF4444] mt-1"></span>
+</div>
+<div>
+<span class="font-headline text-[12px] leading-tight text-[#1E2238] font-bold block truncate">Land &amp; Ownership</span>
+<span class="font-body text-[11px] text-[#EF4444] font-medium mt-0.5 block tabular-nums">(2 Pending)</span>
+</div>
+</div>
+<!-- Card 2: Building & Fire Safety -->
+<div class="bg-white p-3.5 rounded-xl shadow-card hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer">
+<div class="flex items-start justify-between mb-3">
+<div class="w-11 h-11 rounded-[10px] bg-gradient-to-br from-[#FF7A59] to-[#EE5B37] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">local_fire_department</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#F59E0B] mt-1"></span>
+</div>
+<div>
+<span class="font-headline text-[12px] leading-tight text-[#1E2238] font-bold block truncate">Building &amp; Fire Safety</span>
+<span class="font-body text-[11px] text-[#F59E0B] font-medium mt-0.5 block tabular-nums">(1 Expiring)</span>
+</div>
+</div>
+<!-- Card 3: Faculty Details -->
+<div class="bg-white p-3.5 rounded-xl shadow-card hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer">
+<div class="flex items-start justify-between mb-3">
+<div class="w-11 h-11 rounded-[10px] bg-gradient-to-br from-[#8B5CF6] to-[#6D28D9] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">groups</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#4F63E8] mt-1"></span>
+</div>
+<div>
+<span class="font-headline text-[12px] leading-tight text-[#1E2238] font-bold block truncate">Faculty Details</span>
+<span class="font-body text-[11px] text-[#4F63E8] font-medium mt-0.5 block tabular-nums">(3 Pending)</span>
+</div>
+</div>
+<!-- Card 4: Financial Documents -->
+<div class="bg-white p-3.5 rounded-xl shadow-card hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer">
+<div class="flex items-start justify-between mb-3">
+<div class="w-11 h-11 rounded-[10px] bg-gradient-to-br from-[#22C55E] to-[#16A34A] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+</div>
+<span class="material-symbols-outlined text-[15px] text-[#22C55E]">check_circle</span>
+</div>
+<div>
+<span class="font-headline text-[12px] leading-tight text-[#1E2238] font-bold block truncate">Financial Documents</span>
+<span class="font-body text-[11px] text-[#16A34A] font-medium mt-0.5 block">(All Verified)</span>
+</div>
+</div>
+<!-- Card 5: Infrastructure Evidence -->
+<div class="bg-white p-3.5 rounded-xl shadow-card hover:shadow-md transition-all flex flex-col justify-between group cursor-pointer">
+<div class="flex items-start justify-between mb-3">
+<div class="w-11 h-11 rounded-[10px] bg-gradient-to-br from-[#FF5B79] to-[#E03E5D] text-white flex items-center justify-center shadow-sm group-hover:scale-105 transition-transform">
+<span class="material-symbols-outlined text-[20px]">photo_camera</span>
+</div>
+<span class="w-2 h-2 rounded-full bg-[#8B5CF6] mt-1"></span>
+</div>
+<div>
+<span class="font-headline text-[12px] leading-tight text-[#1E2238] font-bold block truncate">Infrastructure</span>
+<span class="font-body text-[11px] text-[#6C728E] font-medium mt-0.5 block tabular-nums">(4 Uploaded)</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 3. APPLICATION STATUS & STEPPER -->
+<section class="bg-white rounded-xl p-5 shadow-card flex flex-col gap-4">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[#4F63E8] text-[20px]">assignment_turned_in</span>
+<h3 class="font-headline text-[14px] font-bold text-[#1E2238]">Application Status — EoA 2026-27</h3>
+<span class="font-body text-[10px] text-[#6C728E] bg-[#F4F5FE] px-2 py-0.5 rounded font-mono tabular-nums">AICTE-2026-04821</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="flex flex-col items-end">
+<span class="font-body text-[11px] text-[#6C728E]">Overall Completeness</span>
+<span class="font-headline text-[14px] font-bold text-[#4F63E8] tabular-nums">78%</span>
+</div>
+<div class="w-28 h-2 rounded-full bg-[#ECEEFF] overflow-hidden">
+<div class="h-full bg-[#4F63E8] rounded-full transition-all duration-500" style="width: 78%;"></div>
+</div>
+</div>
+</div>
+<!-- Stepper Progress Tracker -->
+<div class="relative pt-2 pb-1">
+<div class="grid grid-cols-4 items-start relative">
+<!-- Connecting Track Behind -->
+<div class="absolute top-4 left-[12.5%] right-[12.5%] h-0.5 bg-[#ECEEFF] -z-0">
+<div class="h-full bg-[#4F63E8] w-1/3"></div>
+</div>
+<!-- Step 1: Submitted -->
+<div class="flex flex-col items-center text-center z-10 px-1">
+<div class="w-8 h-8 rounded-full bg-[#4F63E8] text-white flex items-center justify-center font-bold text-xs shadow-sm ring-4 ring-white">
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+<span class="font-body text-[12px] font-bold text-[#1E2238] mt-2">Submitted</span>
+<span class="font-body text-[10px] text-[#6C728E] tabular-nums">14 Oct 2026</span>
+</div>
+<!-- Step 2: AI Validation (ACTIVE) -->
+<div class="flex flex-col items-center text-center z-10 px-1">
+<div class="relative flex items-center justify-center">
+<span class="animate-ping absolute w-8 h-8 rounded-full bg-[#4F63E8] opacity-30"></span>
+<div class="w-8 h-8 rounded-full bg-[#4F63E8] text-white flex items-center justify-center font-bold text-xs shadow-md ring-4 ring-white">
+<span class="material-symbols-outlined text-[16px]">auto_awesome</span>
+</div>
+</div>
+<span class="font-body text-[12px] font-bold text-[#4F63E8] mt-2">AI Validation</span>
+<span class="font-body text-[10px] text-[#F59E0B] font-semibold tabular-nums">In Progress (3 Flagged)</span>
+</div>
+<!-- Step 3: Officer Review -->
+<div class="flex flex-col items-center text-center z-10 px-1">
+<div class="w-8 h-8 rounded-full bg-[#ECEEFF] text-[#6C728E] flex items-center justify-center font-bold text-xs ring-4 ring-white">
+<span class="material-symbols-outlined text-[16px]">how_to_reg</span>
+</div>
+<span class="font-body text-[12px] font-semibold text-[#6C728E] mt-2">Officer Review</span>
+<span class="font-body text-[10px] text-[#9DA2BA]">Pending AI Fixes</span>
+</div>
+<!-- Step 4: Final Decision -->
+<div class="flex flex-col items-center text-center z-10 px-1">
+<div class="w-8 h-8 rounded-full bg-[#ECEEFF] text-[#6C728E] flex items-center justify-center font-bold text-xs ring-4 ring-white">
+<span class="material-symbols-outlined text-[16px]">military_tech</span>
+</div>
+<span class="font-body text-[12px] font-semibold text-[#6C728E] mt-2">Final Decision</span>
+<span class="font-body text-[10px] text-[#9DA2BA] tabular-nums">Scheduled 15 Nov</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 4. AI REMEDIATION GUIDANCE -->
+<section class="bg-white rounded-xl p-5 shadow-card flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-md bg-[#ECEEFF] text-[#4F63E8] flex items-center justify-center">
+<span class="material-symbols-outlined text-[16px]">smart_toy</span>
+</div>
+<h3 class="font-headline text-[14px] font-bold text-[#1E2238]">AI Remediation Guidance</h3>
+<span class="font-body text-[10px] text-[#EF4444] bg-[#FEE2E2] px-2 py-0.5 rounded-full font-bold tabular-nums">3 Priority Deficiencies</span>
+</div>
+<span class="font-body text-[11px] text-[#4F63E8] font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">tune</span> Auto-Detected by OCR Model
+              </span>
+</div>
+<div class="flex flex-col gap-2 mt-1">
+<!-- Item 1: Fire NOC -->
+<div class="p-3.5 rounded-lg bg-[#F4F5FE] hover:bg-[#ECEEFF]/60 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex items-start gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#F59E0B] mt-1.5 flex-shrink-0"></span>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-body text-[12px] font-bold text-[#1E2238]">Upload a Fire NOC valid beyond 31 Dec 2026</span>
+<span class="font-body text-[10px] text-[#EF4444] bg-white px-2 py-0.5 rounded font-semibold shadow-sm">Mandatory</span>
+</div>
+<p class="font-body text-[12px] text-[#6C728E] mt-0.5">Existing NOC #MH-F-2021 expired on 12 Mar 2026. State Fire Advisory requires minimum 12 months remaining validity.</p>
+</div>
+</div>
+<button class="self-start md:self-auto h-7 px-3 bg-[#4F63E8] text-white hover:bg-[#3348ce] font-body text-[11px] font-semibold rounded-md shadow-sm transition-colors flex-shrink-0 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">upload_file</span>
+<span>Upload Renewal</span>
+</button>
+</div>
+<!-- Item 2: Affidavit Address -->
+<div class="p-3.5 rounded-lg bg-[#F4F5FE] hover:bg-[#ECEEFF]/60 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex items-start gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#EF4444] mt-1.5 flex-shrink-0"></span>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-body text-[12px] font-bold text-[#1E2238]">Correct the address in the affidavit to match the land deed</span>
+<span class="font-body text-[10px] text-[#EF4444] bg-white px-2 py-0.5 rounded font-semibold shadow-sm">Mismatch</span>
+</div>
+<p class="font-body text-[12px] text-[#6C728E] mt-0.5">Affidavit states ‘Plot 44/B, Hinjawadi Phase-1’ whereas Land Deed specifies ‘Survey 44/A’. AI spatial mismatch detected.</p>
+</div>
+</div>
+<button class="self-start md:self-auto h-7 px-3 bg-[#4F63E8] text-white hover:bg-[#3348ce] font-body text-[11px] font-semibold rounded-md shadow-sm transition-colors flex-shrink-0 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">edit_document</span>
+<span>Replace Affidavit</span>
+</button>
+</div>
+<!-- Item 3: Faculty Ratio -->
+<div class="p-3.5 rounded-lg bg-[#F4F5FE] hover:bg-[#ECEEFF]/60 transition-colors flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex items-start gap-2.5">
+<span class="w-2.5 h-2.5 rounded-full bg-[#4F63E8] mt-1.5 flex-shrink-0"></span>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="font-body text-[12px] font-bold text-[#1E2238]">Update Faculty Cadre Ratio for Computer Science Dept</span>
+<span class="font-body text-[10px] text-[#4F63E8] bg-white px-2 py-0.5 rounded font-semibold shadow-sm">Norm Violation</span>
+</div>
+<p class="font-body text-[12px] text-[#6C728E] mt-0.5">Professor to Asst Professor ratio is 1:2.8 (Norm requires 1:2:6). 2 additional assistant faculty required.</p>
+</div>
+</div>
+<button class="self-start md:self-auto h-7 px-3 bg-[#4F63E8] text-white hover:bg-[#3348ce] font-body text-[11px] font-semibold rounded-md shadow-sm transition-colors flex-shrink-0 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]">group_add</span>
+<span>Update Cadre</span>
+</button>
+</div>
+</div>
+</section>
+<!-- 5. TABLE: DOCUMENT VALIDATION STATUS (8 ROWS) -->
+<section class="bg-white rounded-xl p-5 shadow-card flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<h3 class="font-headline text-[14px] font-bold text-[#1E2238]">Document Validation Status</h3>
+<span class="font-body text-[11px] text-[#6C728E] tabular-nums">(8 Records)</span>
+</div>
+<div class="flex items-center gap-2">
+<button class="w-7 h-7 rounded-lg bg-[#F4F5FE] hover:bg-[#ECEEFF] text-[#6C728E] flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+</button>
+<button class="h-6 px-2.5 rounded bg-[#F4F5FE] hover:bg-[#ECEEFF] text-[#4F63E8] font-body text-[11px] font-semibold transition-colors">View All</button>
+</div>
+</div>
+<!-- Data Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="h-9 font-body text-[11px] font-semibold text-[#6C728E] bg-[#F4F5FE] rounded-lg">
+<th class="py-2 px-3 rounded-l-lg">Document Name</th>
+<th class="py-2 px-3">Type</th>
+<th class="py-2 px-3">Uploaded</th>
+<th class="py-2 px-3">Status</th>
+<th class="py-2 px-3 text-right rounded-r-lg">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body text-[12px]">
+<!-- Row 1: Verified -->
+<tr class="h-11 hover:bg-[#F4F5FE]/60 transition-colors border-b border-[#ECEEFF]/50">
+<td class="py-2 px-3 font-semibold text-[#1E2238] flex items-center gap-2">
+<span class="material-symbols-outlined text-[#4F63E8] text-[18px]">description</span>
+<span class="truncate">Land Deed</span>
+</td>
+<td class="py-2 px-3 text-[#6C728E]">Legal / Ownership</td>
+<td class="py-2 px-3 text-[#6C728E] tabular-nums text-[11px]">12 Oct 2026</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1.5 font-body text-[11px] font-semibold text-[#16A34A]">
+<span class="w-2 h-2 rounded-full bg-[#22C55E]"></span>
+<span>Verified</span>
+</span>
+</td>
+<td class="py-2 px-3 text-right">
+<button class="w-7 h-7 rounded hover:bg-[#ECEEFF] text-[#6C728E] inline-flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2: Expired -->
+<tr class="h-11 hover:bg-[#F4F5FE]/60 transition-colors border-b border-[#ECEEFF]/50">
+<td class="py-2 px-3 font-semibold text-[#1E2238] flex items-center gap-2">
+<span class="material-symbols-outlined text-[#FF7A59] text-[18px]">local_fire_department</span>
+<span class="truncate">Fire NOC</span>
+</td>
+<td class="py-2 px-3 text-[#6C728E]">Safety Clearance</td>
+<td class="py-2 px-3 text-[#6C728E] tabular-nums text-[11px]">14 Oct 2026</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1.5 font-body text-[11px] font-semibold text-[#EF4444]">
+<span class="w-2 h-2 rounded-full bg-[#EF4444]"></span>
+<span>Expired</span>
+</span>
+</td>
+<td class="py-2 px-3 text-right">
+<button class="w-7 h-7 rounded hover:bg-[#ECEEFF] text-[#6C728E] inline-flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3: ACTIVE / SELECTED ROW (Solid #4F63E8 with elevation) -->
+<tr class="h-12 bg-[#4F63E8] text-white rounded-xl shadow-active-row font-medium">
+<td class="py-2 px-3 rounded-l-xl font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-white text-[18px]">gavel</span>
+<span>Notarized Affidavit</span>
+<span class="bg-white/20 text-white text-[10px] px-1.5 py-0.5 rounded font-mono">Active Fix</span>
+</td>
+<td class="py-2 px-3 text-white/90">Statutory Legal</td>
+<td class="py-2 px-3 text-white/90 tabular-nums text-[11px]">14 Oct 2026</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1.5 font-body text-[11px] font-bold text-white bg-white/20 px-2.5 py-0.5 rounded-full">
+<span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+<span>Mismatch</span>
+</span>
+</td>
+<td class="py-2 px-3 text-right rounded-r-xl">
+<button class="w-7 h-7 rounded hover:bg-white/20 text-white inline-flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 4: Missing -->
+<tr class="h-11 hover:bg-[#F4F5FE]/60 transition-colors border-b border-[#ECEEFF]/50">
+<td class="py-2 px-3 font-semibold text-[#1E2238] flex items-center gap-2">
+<span class="material-symbols-outlined text-[#9DA2BA] text-[18px]">domain_disabled</span>
+<span class="truncate">Building Sanction Plan</span>
+</td>
+<td class="py-2 px-3 text-[#6C728E]">Infrastructure</td>
+<td class="py-2 px-3 text-[#6C728E] tabular-nums text-[11px]">Pending</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1.5 font-body text-[11px] font-semibold text-[#EF4444]">
+<span class="w-2 h-2 rounded-full bg-[#EF4444]"></span>
+<span>Missing</span>
+</span>
+</td>
+<td class="py-2 px-3 text-right">
+<button class="w-7 h-7 rounded hover:bg-[#ECEEFF] text-[#6C728E] inline-flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 5: Verified -->
+<tr class="h-11 hover:bg-[#F4F5FE]/60 transition-colors border-b border-[#ECEEFF]/50">
+<td class="py-2 px-3 font-semibold text-[#1E2238] flex items-center gap-2">
+<span class="material-symbols-outlined text-[#4F63E8] text-[18px]">assured_workload</span>
+<span class="truncate">Trust Registration Deed</span>
+</td>
+<td class="py-2 px-3 text-[#6C728E]">Governance</td>
+<td class="py-2 px-3 text-[#6C728E] tabular-nums text-[11px]">10 Oct 2026</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1.5 font-body text-[11px] font-semibold text-[#16A34A]">
+<span class="w-2 h-2 rounded-full bg-[#22C55E]"></span>
+<span>Verified</span>
+</span>
+</td>
+<td class="py-2 px-3 text-right">
+<button class="w-7 h-7 rounded hover:bg-[#ECEEFF] text-[#6C728E] inline-flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 6: Needs Manual Review -->
+<tr class="h-11 hover:bg-[#F4F5FE]/60 transition-colors border-b border-[#ECEEFF]/50">
+<td class="py-2 px-3 font-semibold text-[#1E2238] flex items-center gap-2">
+<span class="material-symbols-outlined text-[#8B5CF6] text-[18px]">badge</span>
+<span class="truncate">Faculty List &amp; Pay Scale</span>
+</td>
+<td class="py-2 px-3 text-[#6C728E]">Academic Staff</td>
+<td class="py-2 px-3 text-[#6C728E] tabular-nums text-[11px]">13 Oct 2026</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1.5 font-body text-[11px] font-semibold text-[#4F63E8]">
+<span class="w-2 h-2 rounded-full bg-[#4F63E8]"></span>
+<span>Needs Manual Review</span>
+</span>
+</td>
+<td class="py-2 px-3 text-right">
+<button class="w-7 h-7 rounded hover:bg-[#ECEEFF] text-[#6C728E] inline-flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 7: Suspicious -->
+<tr class="h-11 hover:bg-[#F4F5FE]/60 transition-colors border-b border-[#ECEEFF]/50">
+<td class="py-2 px-3 font-semibold text-[#1E2238] flex items-center gap-2">
+<span class="material-symbols-outlined text-[#3348ce] text-[18px]">architecture</span>
+<span class="truncate">Municipal Sanction Plan</span>
+</td>
+<td class="py-2 px-3 text-[#6C728E]">Architectural</td>
+<td class="py-2 px-3 text-[#6C728E] tabular-nums text-[11px]">14 Oct 2026</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1.5 font-body text-[11px] font-semibold text-[#3348ce]">
+<span class="w-2 h-2 rounded-full bg-[#3348ce]"></span>
+<span>Suspicious</span>
+</span>
+</td>
+<td class="py-2 px-3 text-right">
+<button class="w-7 h-7 rounded hover:bg-[#ECEEFF] text-[#6C728E] inline-flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 8: Verification Unavailable -->
+<tr class="h-11 hover:bg-[#F4F5FE]/60 transition-colors">
+<td class="py-2 px-3 font-semibold text-[#1E2238] flex items-center gap-2">
+<span class="material-symbols-outlined text-[#9DA2BA] text-[18px]">location_on</span>
+<span class="truncate">Lab Geotagged Photos</span>
+</td>
+<td class="py-2 px-3 text-[#6C728E]">Infrastructure</td>
+<td class="py-2 px-3 text-[#6C728E] tabular-nums text-[11px]">14 Oct 2026</td>
+<td class="py-2 px-3">
+<span class="inline-flex items-center gap-1.5 font-body text-[11px] font-semibold text-[#9DA2BA]">
+<span class="w-2 h-2 rounded-full bg-[#9DA2BA]"></span>
+<span>Verification Unavailable</span>
+</span>
+</td>
+<td class="py-2 px-3 text-right">
+<button class="w-7 h-7 rounded hover:bg-[#ECEEFF] text-[#6C728E] inline-flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<!-- 6. COMPLIANCE ENGINE & INTEGRITY BANNER -->
+<section class="bg-white rounded-xl p-3 shadow-card flex flex-col md:flex-row items-center justify-between gap-3 text-[#6C728E] text-[11px]">
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1.5 text-[#4F63E8] font-semibold">
+<span class="material-symbols-outlined text-[16px]">qr_code_scanner</span>
+<span>AICTE PRAMAN Compliance Engine v4.11.2 (Spatial Coordinate OCR)</span>
+</div>
+<span class="hidden sm:inline text-[#ECEEFF]">•</span>
+<span class="flex items-center gap-1 text-[#16A34A] font-semibold">
+<span class="material-symbols-outlined text-[14px]">lock_clock</span> DigiLocker PKI Verified
+              </span>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-[#F4F5FE] px-2.5 py-0.5 rounded font-mono font-medium text-[#1E2238]">Digital Signature Verified • Section 10(k)</span>
+</div>
+</section>
+</div>
+</main>
+<!-- Bottom Platform Footer Bar -->
+<footer class="h-10 bg-white border-t border-[#ECEEFF] px-7 flex items-center justify-between flex-shrink-0 text-[#6C728E] text-[11px]">
+<div class="flex items-center gap-4">
+<span class="font-semibold text-[#1E2238]">PRAMAN Compliance Engine v4.11.2</span>
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-[#4F63E8]"></span>
+<span>Server Node: Western-01</span>
+</span>
+</div>
+<span class="text-[#9DA2BA]">Digitally Signed via National Informatics Center (NIC) Root CA</span>
+</footer>
+</div>
+<!-- 3. RIGHT RAIL (~310px) -->
+<aside class="w-[310px] flex-shrink-0 bg-white border-l border-[#ECEEFF] flex flex-col justify-between overflow-y-auto p-5 select-none z-20">
+<div class="flex flex-col gap-6">
+<!-- Top Profile & Notifications Header -->
+<div class="flex items-center justify-between pb-4 border-b border-[#ECEEFF]">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-gradient-to-br from-[#4F63E8] to-[#3348ce] flex items-center justify-center text-white font-bold text-sm shadow-sm">
+<span class="material-symbols-outlined text-[20px]">person</span>
+</div>
+<div class="flex flex-col leading-tight">
+<span class="font-body text-[12px] font-bold text-[#1E2238]">SVIT Pune Admin</span>
+<span class="font-body text-[10px] text-[#6C728E] tabular-nums">Institute ID: 1-4829101</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-[#6C728E]">
+<button class="w-8 h-8 rounded-full hover:bg-[#F4F5FE] flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+</button>
+<button class="w-8 h-8 rounded-full hover:bg-[#F4F5FE] flex items-center justify-center relative transition-colors">
+<span class="material-symbols-outlined text-[18px]">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#EF4444] ring-2 ring-white"></span>
+</button>
+</div>
+</div>
+<!-- Compliance Feed Quick Status -->
+<div class="flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<span class="font-headline text-[13px] font-bold text-[#1E2238]">Compliance Feed</span>
+<span class="material-symbols-outlined text-[#4F63E8] text-[18px]">bolt</span>
+</div>
+<div class="p-3 bg-[#F4F5FE] rounded-xl flex flex-col gap-1 border border-[#ECEEFF]/60">
+<div class="flex items-center justify-between">
+<span class="font-body text-[10px] text-[#4F63E8] font-bold tracking-wider uppercase">Affiliation Status</span>
+<span class="w-2 h-2 rounded-full bg-[#4F63E8]"></span>
+</div>
+<span class="font-headline text-[13px] text-[#1E2238] font-bold">In Progress</span>
+<span class="font-body text-[11px] text-[#6C728E]">Cycle 2026-27 active scrutiny</span>
+</div>
+<div class="p-3 bg-[#F4F5FE] rounded-xl flex flex-col gap-1 border border-[#ECEEFF]/60">
+<div class="flex items-center justify-between">
+<span class="font-body text-[10px] text-[#6C728E] font-bold tracking-wider uppercase">Scrutiny Queue</span>
+<span class="material-symbols-outlined text-[14px] text-[#F59E0B]">schedule</span>
+</div>
+<span class="font-headline text-[13px] text-[#1E2238] font-bold tabular-nums">8 Verifications</span>
+<span class="font-body text-[11px] text-[#6C728E]">2 awaiting AI &amp; Officer sign-off</span>
+</div>
+</div>
+<!-- Deadlines / Schedule Calendar Strip -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<span class="font-headline text-[13px] font-bold text-[#1E2238]">Approval Schedule</span>
+<span class="font-body text-[11px] font-semibold text-[#4F63E8] cursor-pointer">October</span>
+</div>
+<div class="grid grid-cols-5 gap-1.5 text-center">
+<!-- Day 1 -->
+<div class="p-1.5 rounded-lg bg-[#F4F5FE] flex flex-col items-center">
+<span class="text-[10px] text-[#9DA2BA] font-medium">Mon</span>
+<span class="text-[12px] font-bold text-[#1E2238] tabular-nums mt-0.5">12</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#22C55E] mt-1"></span>
+</div>
+<!-- Day 2 -->
+<div class="p-1.5 rounded-lg bg-[#F4F5FE] flex flex-col items-center">
+<span class="text-[10px] text-[#9DA2BA] font-medium">Tue</span>
+<span class="text-[12px] font-bold text-[#1E2238] tabular-nums mt-0.5">13</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#4F63E8] mt-1"></span>
+</div>
+<!-- Day 3: Active Day Pill in #4F63E8 -->
+<div class="p-1.5 rounded-lg bg-[#4F63E8] text-white flex flex-col items-center shadow-button-glow">
+<span class="text-[10px] text-white/80 font-medium">Wed</span>
+<span class="text-[12px] font-bold text-white tabular-nums mt-0.5">14</span>
+<span class="w-1.5 h-1.5 rounded-full bg-white mt-1"></span>
+</div>
+<!-- Day 4 -->
+<div class="p-1.5 rounded-lg bg-[#F4F5FE] flex flex-col items-center">
+<span class="text-[10px] text-[#9DA2BA] font-medium">Thu</span>
+<span class="text-[12px] font-bold text-[#1E2238] tabular-nums mt-0.5">15</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#EF4444] mt-1"></span>
+</div>
+<!-- Day 5 -->
+<div class="p-1.5 rounded-lg bg-[#F4F5FE] flex flex-col items-center">
+<span class="text-[10px] text-[#9DA2BA] font-medium">Fri</span>
+<span class="text-[12px] font-bold text-[#1E2238] tabular-nums mt-0.5">16</span>
+<span class="w-1.5 h-1.5 rounded-full bg-[#9DA2BA] mt-1"></span>
+</div>
+</div>
+</div>
+<!-- Queries from AICTE Card -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<span class="font-headline text-[13px] font-bold text-[#1E2238]">Queries from AICTE</span>
+<span class="font-body text-[10px] font-bold text-[#EF4444] bg-[#FEE2E2] px-1.5 py-0.5 rounded tabular-nums">1 New</span>
+</div>
+<div class="p-3 bg-[#F4F5FE] rounded-xl flex flex-col gap-2.5 border border-[#ECEEFF]/60">
+<div class="flex items-start gap-2.5">
+<div class="w-7 h-7 rounded-full bg-[#4F63E8] text-white flex items-center justify-center font-bold text-[11px] flex-shrink-0">
+                RO
+              </div>
+<div class="flex flex-col leading-tight">
+<span class="font-body text-[11px] font-bold text-[#1E2238]">Regional Officer (Western)</span>
+<span class="font-body text-[10px] text-[#6C728E] tabular-nums">14 Oct • 09:30 AM</span>
+</div>
+</div>
+<p class="font-body text-[11px] text-[#1E2238] bg-white p-2 rounded-lg border border-[#ECEEFF]">
+              "Please clarify discrepancy between Land Survey 44/A and Municipal Sanction Plan 44/B before inspection."
+            </p>
+<div class="flex items-center justify-end gap-2">
+<button class="w-7 h-7 rounded-full bg-white hover:bg-[#ECEEFF] text-[#6C728E] flex items-center justify-center shadow-sm transition-colors" title="Decline / Flag">
+<span class="material-symbols-outlined text-[15px]">close</span>
+</button>
+<button class="w-7 h-7 rounded-full bg-[#4F63E8] hover:bg-[#3348ce] text-white flex items-center justify-center shadow-button-glow transition-colors" title="Reply to Officer">
+<span class="material-symbols-outlined text-[15px]">reply</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Ready to Resubmit Mini-Cards -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-headline text-[13px] font-bold text-[#1E2238]">Ready to Resubmit</span>
+<span class="font-body text-[10px] font-bold text-[#4F63E8] bg-[#ECEEFF] px-1.5 py-0.5 rounded tabular-nums">2 Fixed</span>
+</div>
+<div class="p-2.5 bg-[#F4F5FE] rounded-xl flex items-center justify-between gap-2 border border-[#ECEEFF]/60">
+<div class="flex flex-col leading-tight truncate">
+<span class="font-body text-[11px] font-bold text-[#1E2238] truncate">Affidavit Annexure-IV</span>
+<span class="font-body text-[10px] text-[#22C55E]">Signed &amp; Notarized</span>
+</div>
+<button class="h-6 px-2.5 bg-[#4F63E8] hover:bg-[#3348ce] text-white rounded font-body text-[10px] font-semibold flex-shrink-0 transition-colors">
+              Resubmit
+            </button>
+</div>
+</div>
+</div>
+<!-- Bottom AICTE Trust Network Stamp -->
+<div class="p-3 bg-[#F4F5FE] rounded-xl flex items-center gap-2.5 border border-[#ECEEFF]/80 mt-4">
+<span class="material-symbols-outlined text-[#4F63E8] text-[20px]">shield</span>
+<div class="flex flex-col">
+<span class="font-body text-[11px] font-bold text-[#1E2238] leading-tight">AICTE Trust Network</span>
+<span class="font-body text-[10px] text-[#6C728E] leading-tight">Zero tamper verified node</span>
+</div>
+</div>
+</aside>
+</div>
+</body></html>

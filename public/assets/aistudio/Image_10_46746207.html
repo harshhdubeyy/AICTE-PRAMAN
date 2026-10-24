@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="web_dashboard" name="shell-type"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=Plus+Jakarta+Sans:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#3348ce",
+            "primary-container": "#4f63e8",
+            "on-primary": "#ffffff",
+            "on-primary-container": "#f7f5ff",
+            "secondary": "#394dcf",
+            "secondary-container": "#5467e9",
+            "on-secondary": "#ffffff",
+            "tertiary": "#9f3419",
+            "tertiary-container": "#c04b2e",
+            "tertiary-fixed": "#ffdad2",
+            "on-tertiary-fixed": "#3c0700",
+            "tertiary-fixed-dim": "#ffb4a2",
+            "surface": "#faf8ff",
+            "surface-bright": "#faf8ff",
+            "surface-dim": "#d9dbfb",
+            "surface-base": "#f4f5fe",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f3f2ff",
+            "surface-container": "#ebedff",
+            "surface-container-high": "#e4e7ff",
+            "surface-container-highest": "#dce1ff",
+            "on-surface": "#141a32",
+            "on-surface-variant": "#454654",
+            "outline": "#757686",
+            "outline-variant": "#c5c5d7",
+            "inverse-surface": "#292f48",
+            "inverse-on-surface": "#eff0ff",
+            "error": "#ba1a1a",
+            "error-container": "#ffdad6"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "3xl": "1.5rem",
+            "app": "40px",
+            "full": "9999px"
+          },
+          spacing: {
+            "space-2xl": "2.5rem",
+            "space-xl": "1.75rem",
+            "space-lg": "1.25rem",
+            "space-md": "0.75rem",
+            "space-sm": "0.5rem",
+            "space-xs": "0.25rem"
+          },
+          fontFamily: {
+            "headline-xl": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-md": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "body-lg": ["Inter", "sans-serif"],
+            "body-md": ["Inter", "sans-serif"],
+            "body-sm": ["Inter", "sans-serif"],
+            "label-md": ["Inter", "sans-serif"],
+            "label-sm": ["Inter", "sans-serif"],
+            "caption": ["Inter", "sans-serif"]
+          },
+          fontSize: {
+            "headline-xl": ["26px", { lineHeight: "34px", letterSpacing: "-0.02em", fontWeight: "700" }],
+            "headline-lg": ["20px", { lineHeight: "28px", letterSpacing: "-0.015em", fontWeight: "700" }],
+            "headline-md": ["16px", { lineHeight: "24px", letterSpacing: "-0.01em", fontWeight: "600" }],
+            "headline-sm": ["14px", { lineHeight: "20px", fontWeight: "600" }],
+            "body-lg": ["14px", { lineHeight: "22px", fontWeight: "400" }],
+            "body-md": ["13px", { lineHeight: "19px", fontWeight: "400" }],
+            "body-sm": ["12px", { lineHeight: "17px", fontWeight: "400" }],
+            "label-md": ["12px", { lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "600" }],
+            "label-sm": ["11px", { lineHeight: "15px", fontWeight: "500" }],
+            "caption": ["10px", { lineHeight: "14px", fontWeight: "500" }]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-[#D9DBFB] font-body-md text-on-surface p-space-2xl min-h-screen flex items-center justify-center">
+<!-- Main Application Container -->
+<div class="w-full max-w-[1440px] min-h-[920px] bg-[#F4F5FE] rounded-[40px] shadow-[0_30px_60px_rgba(79,99,232,0.22)] overflow-hidden flex flex-row relative">
+<!-- 1. LEFT NAVIGATION RAIL (220px-240px) -->
+<aside class="w-[230px] flex-shrink-0 bg-surface-container-low flex flex-col justify-between py-space-lg select-none border-r border-surface-container-high/60">
+<div class="flex flex-col">
+<!-- AICTE PRAMAN Brand Lockup -->
+<div class="px-space-md mb-space-lg flex items-center gap-space-xs">
+<div class="w-9 h-9 rounded-xl bg-primary-container flex items-center justify-center text-on-primary shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+</div>
+<div class="flex flex-col leading-none">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold tracking-tight">PRAMAN</span>
+<span class="font-caption text-caption text-on-surface-variant uppercase tracking-wider font-semibold">AICTE INSTITUTION</span>
+</div>
+</div>
+<!-- Nav Links -->
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="dashboard" href="#">
+<span class="material-symbols-outlined text-[18px]">grid_view</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="applications" href="#">
+<span class="material-symbols-outlined text-[18px]">description</span>
+<span class="font-label-md text-label-md">Applications</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="documents" href="#">
+<span class="material-symbols-outlined text-[18px]">folder</span>
+<span class="font-label-md text-label-md">Documents</span>
+</a>
+<!-- Active State: Infrastructure with 3px primary right border & rgba(79,99,232,0.08) bg -->
+<a class="flex items-center gap-space-sm px-space-md py-2 bg-[rgba(79,99,232,0.08)] text-primary-container font-bold relative after:content-[''] after:absolute after:right-0 after:top-0 after:bottom-0 after:w-[3px] after:bg-primary-container transition-all" data-path="infrastructure" href="#">
+<span class="material-symbols-outlined text-[18px] text-primary-container" style="font-variation-settings: 'FILL' 1;">apartment</span>
+<span class="font-label-md text-label-md text-primary-container">Infrastructure</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="validation-report" href="#">
+<span class="material-symbols-outlined text-[18px]">fact_check</span>
+<span class="font-label-md text-label-md">Validation Report</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="queries" href="#">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+<span class="font-label-md text-label-md">Queries</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="resubmissions" href="#">
+<span class="material-symbols-outlined text-[18px]">sync</span>
+<span class="font-label-md text-label-md">Resubmissions</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-2 text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-all" data-path="track-status" href="#">
+<span class="material-symbols-outlined text-[18px]">timeline</span>
+<span class="font-label-md text-label-md">Track Status</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Rail Actions -->
+<div class="px-space-md flex flex-col gap-space-md">
+<div class="bg-surface-container p-2.5 rounded-xl flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[18px]">lock_open</span>
+<div class="flex flex-col">
+<span class="font-caption text-caption text-primary-container font-bold leading-tight">DigiLocker</span>
+<span class="font-caption text-caption text-on-surface-variant leading-tight">Connected</span>
+</div>
+</div>
+<a class="flex items-center gap-space-sm text-on-surface-variant hover:text-error px-1 transition-colors" data-path="logout" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="font-label-sm text-label-sm font-semibold">Logout</span>
+</a>
+</div>
+</aside>
+<!-- 2. CENTER STAGE (Main Workspace) -->
+<div class="flex-1 flex flex-col overflow-hidden bg-[#F4F5FE]">
+<!-- Top Center Header -->
+<header class="h-16 bg-[#F4F5FE]/90 backdrop-blur-md px-space-lg flex items-center justify-between gap-space-md flex-shrink-0 z-30 border-b border-surface-container-high/60">
+<!-- Search Bar with 12px border radius -->
+<div class="flex-1 max-w-md">
+<div class="h-10 bg-surface-container-lowest rounded-[12px] px-3.5 flex items-center justify-between shadow-[0_2px_8px_rgba(79,99,232,0.04)]">
+<input class="bg-transparent border-0 outline-none w-full font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant" placeholder="Search documents, deficiencies, rules..." type="text"/>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">search</span>
+</div>
+</div>
+<!-- Role Toggle & Upload CTA -->
+<div class="flex items-center gap-space-md">
+<div class="flex items-center bg-surface-container p-1 rounded-full">
+<button class="px-space-sm py-1 rounded-full font-label-sm text-label-sm text-on-surface-variant hover:text-on-surface transition-colors">AICTE Officer</button>
+<button class="px-space-sm py-1 rounded-full font-label-sm text-label-sm bg-primary-container text-on-primary font-semibold shadow-sm">Institution</button>
+</div>
+<button class="h-9 px-space-md bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold rounded-lg shadow-[0_4px_16px_rgba(79,99,232,0.25)] flex items-center gap-space-xs transition-colors">
+<span>Upload Document</span>
+<span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+</button>
+</div>
+</header>
+<!-- Center Scrollable Content Area -->
+<main class="flex-1 overflow-y-auto px-space-lg py-space-md bg-[#F4F5FE]">
+<div class="flex flex-col w-full gap-space-lg pb-space-xl">
+<!-- Sub-header / Breadcrumbs & Action Header -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-caption text-caption uppercase tracking-wider mb-1">
+<span>Statutory Compliance</span>
+<span class="material-symbols-outlined text-[12px]">chevron_right</span>
+<span class="text-primary font-bold">Physical Infrastructure &amp; Geo-Evidence</span>
+</div>
+<h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Physical Infrastructure &amp; Spatial Assets</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-0.5">Manage geotagged photos, spatial video walkthroughs, and municipal sanction floor plans for AICTE physical compliance verification.</p>
+</div>
+<!-- Quick Actions -->
+<div class="flex items-center gap-space-sm flex-shrink-0">
+<button class="h-[38px] px-space-md bg-surface-container hover:bg-surface-container-high text-primary font-label-md text-label-md rounded-[10px] flex items-center gap-space-xs transition-all shadow-sm">
+<span class="material-symbols-outlined text-[18px]">history</span>
+<span>Audit Trail</span>
+</button>
+<button class="h-[38px] px-space-md bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md rounded-[10px] flex items-center gap-space-xs shadow-[0_4px_16px_rgba(79,99,232,0.25)] transition-all">
+<span class="material-symbols-outlined text-[18px]">add_a_photo</span>
+<span>Upload Infrastructure Proof</span>
+</button>
+</div>
+</div>
+<!-- Statutory Advisory & Status Banner -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-md">
+<!-- Advisory Banner -->
+<div class="lg:col-span-8 bg-surface-container-lowest rounded-2xl p-space-md flex items-start gap-space-md shadow-[0_4px_20px_rgba(79,99,232,0.05)] relative overflow-hidden">
+<div class="w-10 h-10 rounded-xl bg-surface-container-low flex items-center justify-center text-primary-container flex-shrink-0 shadow-sm mt-0.5">
+<span class="material-symbols-outlined text-[22px]">policy</span>
+</div>
+<div class="flex flex-col flex-1">
+<div class="flex items-center gap-space-xs mb-1">
+<span class="font-label-md text-label-md text-on-surface font-bold">AICTE Statutory Clause 10(k) Mandate</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-primary font-caption text-caption font-semibold">Self-Disclosure Cycle</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+<span class="font-semibold text-on-surface">Automated spatial &amp; image analysis is advisory and does not replace statutory physical inspection.</span> All geotagged media must retain original EXIF metadata with GPS accuracy within 5 meters under National Building Code (NBC 2016) Part 3 norms.
+                </p>
+</div>
+<div class="hidden sm:flex items-center gap-1 font-caption text-caption text-primary font-semibold self-center whitespace-nowrap pl-space-sm">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<span>NIC Root CA Active</span>
+</div>
+</div>
+<!-- Completeness Meter Card -->
+<div class="lg:col-span-4 bg-surface-container-lowest rounded-2xl p-space-md flex flex-col justify-between shadow-[0_4px_20px_rgba(79,99,232,0.05)]">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-caption text-caption text-on-surface-variant uppercase tracking-wider font-semibold">Evidence Completeness</span>
+<span class="font-headline-lg text-headline-lg text-on-surface font-bold mt-0.5">84% <span class="font-body-sm text-body-sm text-on-surface-variant font-normal">Compliant</span></span>
+</div>
+<!-- Radial Progress Meter -->
+<div class="relative w-12 h-12 flex items-center justify-center">
+<svg class="w-12 h-12 transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-surface-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary-container" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="84, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="absolute font-label-sm text-label-sm font-bold text-on-surface">84%</span>
+</div>
+</div>
+<div class="mt-space-sm pt-space-xs flex items-center justify-between font-caption text-caption text-on-surface-variant border-t border-surface-container-high/40">
+<span>4/4 Spatial Categories Filed</span>
+<span class="flex items-center gap-1 font-semibold text-tertiary">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span> 2 Surveyor Signoffs Pending
+                </span>
+</div>
+</div>
+</div>
+<!-- Category Bento Cards (Pure White #FFFFFF with soft diffusion) -->
+<div class="flex flex-col gap-space-lg">
+<!-- Card 1: Advanced Computing & Engineering Labs -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-[0_4px_20px_rgba(79,99,232,0.05)] hover:shadow-[0_8px_24px_rgba(79,99,232,0.1)] transition-all flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary-container shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">science</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">Advanced Computing &amp; Engineering Labs</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-caption text-caption font-semibold text-on-surface-variant">14 Units Active</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant">Computer Science, Mechanical Workshop, IoT Systems, &amp; Nano-materials Facility</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm self-start sm:self-center">
+<span class="px-space-sm py-1 rounded-full bg-[#ecfdf5] text-[#047857] font-label-sm text-label-sm font-bold flex items-center gap-1.5 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+                    AI Compliant / Verified
+                  </span>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors" title="Spatial Options">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Completeness Progress Bar -->
+<div class="flex flex-col gap-1.5 bg-surface-container-low p-space-sm rounded-xl">
+<div class="flex items-center justify-between font-caption text-caption">
+<span class="font-semibold text-on-surface">Spatial Proof Submission Rate</span>
+<span class="font-bold text-primary-container">92% Complete • 14/14 Photo Sets • 4 Video Scans</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 92%"></div>
+</div>
+</div>
+<!-- Media Thumbnails Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Geotagged Photo Thumbnail -->
+<div class="group relative rounded-xl overflow-hidden bg-surface-container h-44 shadow-sm flex flex-col justify-between p-space-sm" data-alt="Modern academic high-performance computer lab filled with contemporary workstations, dual monitors, server racks with blue LED illumination, and polished epoxy flooring under bright neutral architectural lighting." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAxB49sgVLCpCyOS54bIoTijH5FsBsSah1xfVP9wXD8Lq6-Fm03OguRLH9Vqkm03_bPZ_FBrZRHoTI-FQMWyfxtYZ55YNtlNBbTVzP9Vm_MEZOKdrmNzajrx_V0MMlpkqSyrnsQC86gzRARIfT2h-4UDk2E-73KEom_LyEpo0uMnrxtOzSvNvGIDEeN-faYm2odf63Z63rlIGa_IQGNOR8MT1XdZHW0SgDVXd6crsXcR5ASzLkvyM3FCw')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/20 to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface font-caption text-caption font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary-fixed">pin_drop</span>
+                      18.5912° N, 73.7389° E
+                    </span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-caption text-caption font-bold text-primary">CAD Wireframe Synced</span>
+</div>
+<div class="relative z-10 flex flex-col">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Lab 402 - Cloud Compute Cell</span>
+<span class="text-inverse-on-surface/80 font-caption text-caption">Captured: 12 Mar 2025, 11:24 IST • ±1.8m accuracy</span>
+</div>
+</div>
+<!-- Video Walkthrough Thumbnail -->
+<div class="group relative rounded-xl overflow-hidden bg-surface-container h-44 shadow-sm flex flex-col justify-between p-space-sm cursor-pointer" data-alt="Mechanical engineering robotic workshop with CNC machinery, safety walkways marked in yellow, and engineering faculty demonstrating automated robotic arms." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBBi3PeKFmgsL1Je_XcgYDiV5m2khiZ_hYY_Qci9cFUrVvB5Z_n6mOZOIqY7oKEBJAPTwfCnWF8J6ZYnkcc413VZ7LrEj79ISO-5egJCAiylRVIKLd5zRtTJcx7zwPXrAAwxLTRInShBUDpaFs7RLPqwXOvSkWd-iypl1CCZQPXuGAlXaVAHv_sNXH4rbVfwOVhWy8ufUA2i-BFUs6jld8Ix9P3fg3B7RvDMlJFUXxUV3_LtMZTH9nhRA')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/30 to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface font-caption text-caption font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-tertiary-fixed">videocam</span>
+                      Walkthrough Scan
+                    </span>
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-caption text-caption font-bold">4K 60fps</span>
+</div>
+<div class="absolute inset-0 flex items-center justify-center z-10">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest/90 group-hover:scale-110 group-hover:bg-primary-container text-primary-container group-hover:text-on-primary flex items-center justify-center shadow-lg transition-all">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Heavy Machinery Lab Bay A</span>
+<span class="text-inverse-on-surface font-caption text-caption bg-inverse-surface/70 px-1.5 py-0.5 rounded">02:45 min</span>
+</div>
+</div>
+<!-- CAD Floor Plan Thumbnail -->
+<div class="relative rounded-xl overflow-hidden bg-surface-container-high h-44 shadow-sm flex flex-col justify-between p-space-sm" data-alt="Sanctioned municipal CAD floor plan for collegiate engineering laboratory wing with clear room boundaries, entrance setbacks, and emergency exit routes." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDLjFXpV6UXtnk3cYS0uexAvEUUqzcztcitkI0cCjtEdWPtKJF8YGuuoCwkdZU-__DL9VY86DIrIzF-QCltYggsPlj5WnzjXBYvKoh5seunF9Y5pbTWf4OiXxDrm21n-7IPDPxV39NL0utexwQCEpFjmgBALNqAJa5QBQrnTWGhzwcADUI0f0xMPA5fEUtQTtEDqDxNmIXgJ_EaNZRg2D2S3gXhdUEwbv_9NwUMeNltiEcZb3yp7KxjWQ')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-surface-container-lowest font-caption text-caption font-bold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">architecture</span>
+                      Sanctioned CAD v3.2
+                    </span>
+<span class="px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#047857] font-caption text-caption font-bold">Setback Verified</span>
+</div>
+<div class="relative z-10 flex flex-col">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Building Core B - Level 4 Plan</span>
+<span class="text-inverse-on-surface/80 font-caption text-caption">Pune Municipal Corp Sanction Ref: PMC/BLD/2022/981</span>
+</div>
+</div>
+</div>
+<!-- Metrics & Action Footer -->
+<div class="flex flex-col md:flex-row md:items-center justify-between pt-space-xs gap-space-sm border-t border-surface-container/60">
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary-container">straighten</span>
+<span class="font-body-sm text-body-sm text-on-surface"><strong class="font-bold text-on-surface">1,240 sq.m</strong> Carpet Area <span class="text-on-surface-variant font-caption">(AICTE Norm: ≥ 900 sq.m)</span></span>
+</div>
+<div class="h-3 w-[1px] bg-outline-variant hidden sm:block"></div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-[#10b981]">inventory_2</span>
+<span class="font-body-sm text-body-sm text-on-surface"><strong class="font-bold text-on-surface">98.4%</strong> Equipment Inventory Norm Fulfilled</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end md:self-center">
+<button class="h-8 px-space-sm rounded-lg hover:bg-surface-container text-primary font-label-sm text-label-sm font-semibold flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">document_scanner</span>
+<span>Inspect Spatial OCR</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container hover:bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold rounded-lg flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Add Media</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 2: Smart Classrooms & Lecture Theatres -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-[0_4px_20px_rgba(79,99,232,0.05)] hover:shadow-[0_8px_24px_rgba(79,99,232,0.1)] transition-all flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary-container shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">co_present</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">Smart Classrooms &amp; Lecture Theatres</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-caption text-caption font-semibold text-on-surface-variant">32 Rooms</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant">Tiered Lecture Theatres, Smart Podiums, Interactive Flat Panels &amp; Acoustic Baffles</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm self-start sm:self-center">
+<span class="px-space-sm py-1 rounded-full bg-[#ecfdf5] text-[#047857] font-label-sm text-label-sm font-bold flex items-center gap-1.5 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+                    AI Compliant / Verified
+                  </span>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors" title="Spatial Options">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Completeness Progress Bar -->
+<div class="flex flex-col gap-1.5 bg-surface-container-low p-space-sm rounded-xl">
+<div class="flex items-center justify-between font-caption text-caption">
+<span class="font-semibold text-on-surface">Spatial Proof Submission Rate</span>
+<span class="font-bold text-primary-container">88% Complete • 32/32 Photo Proofs • 2 Panoramic 360° Tours</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 88%"></div>
+</div>
+</div>
+<!-- Media Thumbnails Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Geotagged Classroom Photo -->
+<div class="group relative rounded-xl overflow-hidden bg-surface-container h-44 shadow-sm flex flex-col justify-between p-space-sm" data-alt="Modern tier-seated university lecture hall equipped with digital projection displays, ergonomic student desks, integrated microphone arrays, and timber acoustic wall panels." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCxU-eHm6CV_LcAu5wTzar-35arzdhPY5l6RyueLuJh_6hNTeGwBkOPhVmbyxq0Qjpd0ZEXxaTMsFSfoaknfyjA9n6-nFWBc2c_aYWnEEK85B1VflE1SsKzw6kqNotGZ9HOp2z8Lv2fOPmOF3UHmFCsUJ37o0uSOeCMk_cS38NxztA6v_fT6R67lNJBFWH1FPi89xkwHwohCREsgXhpYjhIWS5ySvTMw50QE9Xe5UFDhIA0lG467E2q0Q')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/20 to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface font-caption text-caption font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary-fixed">pin_drop</span>
+                      18.5915° N, 73.7392° E
+                    </span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-caption text-caption font-bold text-[#10b981]">Acoustic Baffle Pass</span>
+</div>
+<div class="relative z-10 flex flex-col">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Hall 201 - Auditorium A</span>
+<span class="text-inverse-on-surface/80 font-caption text-caption">Captured: 10 Mar 2025 • Dual IFP Display Detected</span>
+</div>
+</div>
+<!-- 360 Spatial Tour Thumbnail -->
+<div class="group relative rounded-xl overflow-hidden bg-surface-container h-44 shadow-sm flex flex-col justify-between p-space-sm cursor-pointer" data-alt="Active-learning classroom with modular trapezoidal study tables, ceiling mounted displays, and glass whiteboards." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBRg86qxmwCmMAFlJ2Yo3BoRWHWL7AJyH4EAjphleS3C7hUa5GGfw1ArBR_JED7mMMhvZKJrHIOKjmOTfDq_0YRKzqw_CrDWzt3aqegIdbX7XJxwfNj0qkATb1b4C1hYfWbT_j4WSkpS3coZfUYgkXkHDlMCJNMonwgtlp8qVg8Cw3dEYtaKASNYluA8Xv0k7wqfzn6eONFGJZpzLaXiQvXUaypL3VIbTQFNsO5geltqi1uiGXu7U02uQ')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/30 to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface font-caption text-caption font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary-fixed">view_in_ar</span>
+                      Interactive 360°
+                    </span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest font-caption text-caption font-bold text-primary">WebXR Ready</span>
+</div>
+<div class="absolute inset-0 flex items-center justify-center z-10">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest/90 group-hover:scale-110 group-hover:bg-primary-container text-primary-container group-hover:text-on-primary flex items-center justify-center shadow-lg transition-all">
+<span class="material-symbols-outlined text-[24px]">360</span>
+</div>
+</div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Smart Lecture Block C</span>
+<span class="text-inverse-on-surface font-caption text-caption bg-inverse-surface/70 px-1.5 py-0.5 rounded">6 Camera Nodes</span>
+</div>
+</div>
+<!-- Building Plan Excerpt -->
+<div class="relative rounded-xl overflow-hidden bg-surface-container-high h-44 shadow-sm flex flex-col justify-between p-space-sm" data-alt="Architectural floorplan schematic of classroom dimensions, corridor clearances of 2.5 meters, fire escape stairways, and disabled ramp access." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAEU1LP0K1717Jsu6iNkxHaXNPS-L_RNf4ZDErYQqs8yKFbuzLTFfxy8irHtWd1y7V5jBIGnYfpd11c3P6DpCy8MFsZV9SzcOlqQoiJLlnr8M5qoR0Exm9zw6iCveWKcIBn6NG4uyK4ed7jdm5p5WS722j-HN-elgu3oi2BHGw_xYq3KLF24CrmCLWv0Ww1IihiD-SWPM65FAqpcXSK_ufpNdT-Z8pFnoFfcZXDgnQRDQ3TmE6g7VFYLw')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-surface-container-lowest font-caption text-caption font-bold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">domain</span>
+                      Level 2 &amp; 3 Wing Plan
+                    </span>
+<span class="px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#047857] font-caption text-caption font-bold">ADA Compliant</span>
+</div>
+<div class="relative z-10 flex flex-col">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Academic Block East Wing</span>
+<span class="text-inverse-on-surface/80 font-caption text-caption">AICTE Norm 4.2 Stairway Width &gt; 2.0m Confirmed</span>
+</div>
+</div>
+</div>
+<!-- Metrics & Action Footer -->
+<div class="flex flex-col md:flex-row md:items-center justify-between pt-space-xs gap-space-sm border-t border-surface-container/60">
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary-container">aspect_ratio</span>
+<span class="font-body-sm text-body-sm text-on-surface"><strong class="font-bold text-on-surface">72 sq.m</strong> Avg. Room Area <span class="text-on-surface-variant font-caption">(AICTE Norm: ≥ 66 sq.m)</span></span>
+</div>
+<div class="h-3 w-[1px] bg-outline-variant hidden sm:block"></div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-[#10b981]">videocam</span>
+<span class="font-body-sm text-body-sm text-on-surface">Dual Projector &amp; CCTV Coverage <strong class="font-bold text-[#10b981]">100%</strong></span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end md:self-center">
+<button class="h-8 px-space-sm rounded-lg hover:bg-surface-container text-primary font-label-sm text-label-sm font-semibold flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">document_scanner</span>
+<span>Inspect Spatial OCR</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container hover:bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold rounded-lg flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Add Media</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 3: Central Library & Digital Knowledge Center (Needs Review) -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-[0_4px_20px_rgba(79,99,232,0.05)] hover:shadow-[0_8px_24px_rgba(79,99,232,0.1)] transition-all flex flex-col gap-space-md border-l-4 border-[#F59E0B]">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center text-[#F59E0B] shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">local_library</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">Central Library &amp; Digital Knowledge Center</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-caption text-caption font-semibold text-on-surface-variant">850 Seating</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant">Stacks, Digital Reading Carrels, Reprography Section, National Digital Library (NDL) Node</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm self-start sm:self-center">
+<span class="px-space-sm py-1 rounded-full bg-[#fef3c7] text-[#92400e] font-label-sm text-label-sm font-bold flex items-center gap-1.5 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-[#f59e0b]"></span>
+                    Needs Review (Deficiency Flagged)
+                  </span>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors" title="Spatial Options">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Completeness Progress Bar -->
+<div class="flex flex-col gap-1.5 bg-surface-container-low p-space-sm rounded-xl">
+<div class="flex items-center justify-between font-caption text-caption">
+<span class="font-semibold text-on-surface">Spatial Proof Submission Rate</span>
+<span class="font-bold text-[#b45309]">74% Complete • Low Confidence on Digital Terminals Count</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-[#F59E0B] rounded-full" style="width: 74%"></div>
+</div>
+</div>
+<!-- Media Thumbnails Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Geotagged Stacks Photo -->
+<div class="group relative rounded-xl overflow-hidden bg-surface-container h-44 shadow-sm flex flex-col justify-between p-space-sm" data-alt="Multistory collegiate academic library interior showing high wooden bookshelves filled with engineering text references, central reading tables with study lamps, and automated RFID gate kiosk." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCePdC1vfJiL9fONR7OxN3c4mBJvLJPi4XXhPN0qwNABD9mMWtJ9Kf-balUPFh7yOEoWXpLSiFvrLu7lmL3oiM5259P4dxIkMroB5c-TbOwtUZCAE3ISnWhnP0Hdx7O3z_bzJ56nn8PcnoUZS8nDEniV5P7ql67G1KBjCHZG5kK63jySlV44Zxb2VYMm98Sb9ELL9Ths8MbV28V_UWt6i-YrirFpYKGHM3I7bs52e1VjJ0n4o_P0-86Hw')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/20 to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface font-caption text-caption font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary-fixed">pin_drop</span>
+                      18.5908° N, 73.7384° E
+                    </span>
+<span class="px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#047857] font-caption text-caption font-bold">RFID Scanners OK</span>
+</div>
+<div class="relative z-10 flex flex-col">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Main Reading Hall &amp; Reference Stacks</span>
+<span class="text-inverse-on-surface/80 font-caption text-caption">Barcode OCR: 42,500 physical titles indexed</span>
+</div>
+</div>
+<!-- Digital Terminals Inspection Photo -->
+<div class="group relative rounded-xl overflow-hidden bg-surface-container h-44 shadow-sm flex flex-col justify-between p-space-sm" data-alt="University e-library room with student computer workstations in partitioned study carrels, glass door entrance, and network switches." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDMZhLkV3Xcmh72ohDSlH8GxaaC1JS3UBuAfdGGxbfAfH9hnxsjDD874MUWziEbitn7B4mGG15u8PJqnOxu4tALYeGhp_domsAiayaQ1kkCgh80RZwbLGOyNc4-3MzMLo3X62QvArAnQ_9Xes5_wQk-tqgMXBYOOKNZL8NSvhTBETNa4jBNJRLJKN7aXkqEoTlr_KVUeysvjWqUE1-_hepnP2UL1orjQyOSKmDuSguCMlvBkwUSyEznBA')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/20 to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface font-caption text-caption font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-[#F59E0B]">warning</span>
+                      18 Active Nodes Found
+                    </span>
+<span class="px-1.5 py-0.5 rounded bg-[#fef3c7] text-[#92400e] font-caption text-caption font-bold">Norm Gap: -2 Units</span>
+</div>
+<div class="relative z-10 flex flex-col">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">E-Journal Terminal Room</span>
+<span class="text-inverse-on-surface/80 font-caption text-caption text-amber-200">Detected 18/20 mandated IEEE subscription terminals</span>
+</div>
+</div>
+<!-- Fire Egress Blueprint -->
+<div class="relative rounded-xl overflow-hidden bg-surface-container-high h-44 shadow-sm flex flex-col justify-between p-space-sm" data-alt="Architectural blueprint showing building fire evacuation egress routes for central library hall with fire extinguisher locations." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCxAWQP1uSgLsiNiVV3_z-PsmRNG37t9ZNurg0wC5SCUERgnqmdOgPg9FHuCDnlvTJqKDLz8wflpkpanl0nWKxmlb12tW64SBvy-5oCqDkDqzivH7zCUsc8fXjc9gHPI81bCDumdDb9zYLWD2QmxiPijpAzVAOciD7aRAjS8j3LQZrr2giE685d_FnO6nAEysXEnP8Ti8QJZKaNlgO2cpDIxKNeoQ5TTJhAY6wPI22-WFCbjuPPjYcf5Q')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-surface-container-lowest font-caption text-caption font-bold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">emergency</span>
+                      Fire Egress Layout
+                    </span>
+<span class="px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#047857] font-caption text-caption font-bold">NOC Cleared</span>
+</div>
+<div class="relative z-10 flex flex-col">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Ground Floor East Wing</span>
+<span class="text-inverse-on-surface/80 font-caption text-caption">Dual Emergency Exit Doors width 2.4m</span>
+</div>
+</div>
+</div>
+<!-- Metrics & Action Footer with 'Upload Addendum' Button -->
+<div class="flex flex-col md:flex-row md:items-center justify-between pt-space-xs gap-space-sm border-t border-surface-container/60">
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary-container">square_foot</span>
+<span class="font-body-sm text-body-sm text-on-surface"><strong class="font-bold text-on-surface">610 sq.m</strong> Carpet Area</span>
+</div>
+<div class="h-3 w-[1px] bg-outline-variant hidden sm:block"></div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary-container">menu_book</span>
+<span class="font-body-sm text-body-sm text-on-surface"><strong class="font-bold text-on-surface">42,500</strong> Volumes Indexed</span>
+</div>
+<div class="h-3 w-[1px] bg-outline-variant hidden sm:block"></div>
+<div class="flex items-center gap-space-xs text-[#b45309]">
+<span class="material-symbols-outlined text-[18px]">terminal</span>
+<span class="font-body-sm text-body-sm font-semibold">18 Terminals <span class="font-normal text-on-surface-variant">(Norm: ≥ 20 terminals, Attention Required)</span></span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end md:self-center">
+<button class="h-8 px-space-sm bg-tertiary-container hover:bg-tertiary text-on-tertiary font-label-sm text-label-sm font-semibold rounded-lg flex items-center gap-1 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[16px]">upload_file</span>
+<span>Upload Addendum</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container hover:bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold rounded-lg flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Add Media</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Card 4: Hostels & Residential Campus Amenities -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-lg shadow-[0_4px_20px_rgba(79,99,232,0.05)] hover:shadow-[0_8px_24px_rgba(79,99,232,0.1)] transition-all flex flex-col gap-space-md">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-surface-container flex items-center justify-center text-primary-container shadow-sm flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">hotel</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-space-xs">
+<h2 class="font-headline-md text-headline-md text-on-surface font-bold">Hostels &amp; Residential Campus Amenities</h2>
+<span class="px-2 py-0.5 rounded-full bg-surface-container font-caption text-caption font-semibold text-on-surface-variant">1,200 Capacity</span>
+</div>
+<span class="font-caption text-caption text-on-surface-variant">Boys Block A, Girls Block B, Centralized Mess, RO Water Plant, Dispensary &amp; 24/7 Wardens</span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm self-start sm:self-center">
+<span class="px-space-sm py-1 rounded-full bg-[#ecfdf5] text-[#047857] font-label-sm text-label-sm font-bold flex items-center gap-1.5 shadow-sm">
+<span class="w-2 h-2 rounded-full bg-[#10b981]"></span>
+                    AI Compliant / Verified
+                  </span>
+<button class="w-8 h-8 rounded-lg hover:bg-surface-container flex items-center justify-center text-on-surface-variant transition-colors" title="Spatial Options">
+<span class="material-symbols-outlined text-[20px]">more_vert</span>
+</button>
+</div>
+</div>
+<!-- Completeness Progress Bar -->
+<div class="flex flex-col gap-1.5 bg-surface-container-low p-space-sm rounded-xl">
+<div class="flex items-center justify-between font-caption text-caption">
+<span class="font-semibold text-on-surface">Spatial Proof Submission Rate</span>
+<span class="font-bold text-primary-container">82% Complete • Drone Geotagged Polygon Submitted • Hygiene Scan Done</span>
+</div>
+<div class="w-full h-2 bg-surface-container rounded-full overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 82%"></div>
+</div>
+</div>
+<!-- Media Thumbnails Grid -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-space-md">
+<!-- Drone Aerial Photo -->
+<div class="group relative rounded-xl overflow-hidden bg-surface-container h-44 shadow-sm flex flex-col justify-between p-space-sm" data-alt="High-resolution aerial drone photograph of a modern landscaped university hostel campus with multi-story residential blocks, sports ground, solar rooftop water arrays." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAm21zqOTxbW0pvV8Sua5_NsEkfmbGAdL2qL9wr7h5lkKdEdF7bFwxp3_tqFos9wn_ltR0YumGIN-VY97Ika8-RZgQE4fvUu4JvVbnjJOt0-sPoKvacgjGgTGv5wg9fzciPcH3Uf6keWGEWBYR52HYQ4kl_WBVy-KbqhH1c7BKo2Se0RK4kCoMtRjqsruyP_16wE1DY9GVDo6WaJWv6jeDccJKNin62lC9gc84tkpZUMYx7u4MvWz201g')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/20 to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface font-caption text-caption font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary-fixed">flight</span>
+                      Drone Survey Orthomosaic
+                    </span>
+<span class="px-1.5 py-0.5 rounded bg-surface-container-lowest/90 font-caption text-caption font-bold text-primary">Boundary Locked</span>
+</div>
+<div class="relative z-10 flex flex-col">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Campus Zone IV - Hostel Boundary</span>
+<span class="text-inverse-on-surface/80 font-caption text-caption">Survey of India Datum WGS84 Validated</span>
+</div>
+</div>
+<!-- Mess Hygiene Walkthrough Video -->
+<div class="group relative rounded-xl overflow-hidden bg-surface-container h-44 shadow-sm flex flex-col justify-between p-space-sm cursor-pointer" data-alt="Industrial stainless steel institutional kitchen and collegiate dining mess hall with hygienic food preparation counters." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAXzZnfGQkyWghnXjf2swAEdf6slgNfcRdZl4wl94vVT0GWWwLKIYeNzjXcX9UrD0as0u_s3vH5sttqiGxm6KtQuirBTq-mvC4WN48cK63T-wR0iXeYDxLiXEkJgCtZmWjUFrrP4WPnR-bW44zXQa1OYUIhLfc4w1jf-i7PSGpLusH5iKuaB6hOvFWghIRfTY-uEyPOPWe7nF_MrPcaoaZWlnnLIHWTk4-hRNsTXAyaQKmyUY5vRcpRvA')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/90 via-inverse-surface/30 to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-inverse-surface/80 backdrop-blur-sm text-inverse-on-surface font-caption text-caption font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-tertiary-fixed">restaurant</span>
+                      Dining Hygiene Scan
+                    </span>
+<span class="px-2 py-0.5 rounded bg-primary-container text-on-primary font-caption text-caption font-bold">FSSAI Attached</span>
+</div>
+<div class="absolute inset-0 flex items-center justify-center z-10">
+<div class="w-12 h-12 rounded-full bg-surface-container-lowest/90 group-hover:scale-110 group-hover:bg-primary-container text-primary-container group-hover:text-on-primary flex items-center justify-center shadow-lg transition-all">
+<span class="material-symbols-outlined text-[24px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</div>
+</div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Central Dining Facility</span>
+<span class="text-inverse-on-surface font-caption text-caption bg-inverse-surface/70 px-1.5 py-0.5 rounded">01:30 min</span>
+</div>
+</div>
+<!-- Structural Stability Certificate Schematic -->
+<div class="relative rounded-xl overflow-hidden bg-surface-container-high h-44 shadow-sm flex flex-col justify-between p-space-sm" data-alt="Certified engineering schematic displaying structural stability verification, seismic parameters, and fire emergency evacuation muster points." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC5QfOYcoylTMKmN9dmU2vB2Ezo-3QJFQl3s9qTbaG4yHTIpgqIKSjq8661NqJ3ZSN07uyFauqML9EQj8b-6yV9t2pHhuyXWsSZyXauK-cMVfohdtNHeaxH_TJhJgqXxba4N4UkW3c6LY95iXQAcmKNcFKbTVSV8c7Bwr9e4k2Km-ZdiRvNa_rxANgVbhe-zQIWm8PxrdU8bbTbjV6rtnsAka-yLVeYCK768JroScj0l6xvli_0IdieSQ')">
+<div class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 via-transparent to-transparent"></div>
+<div class="relative z-10 flex items-center justify-between">
+<span class="px-2 py-0.5 rounded-md bg-surface-container-lowest font-caption text-caption font-bold text-on-surface flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px] text-primary">security</span>
+                      Structural Certificate
+                    </span>
+<span class="px-1.5 py-0.5 rounded bg-[#ecfdf5] text-[#047857] font-caption text-caption font-bold">IIT Vetted</span>
+</div>
+<div class="relative z-10 flex flex-col">
+<span class="text-inverse-on-surface font-label-md text-label-md font-bold">Seismic Zone III Proof</span>
+<span class="text-inverse-on-surface/80 font-caption text-caption">Chartered Structural Engineer Registry #SE-99120</span>
+</div>
+</div>
+</div>
+<!-- Metrics & Action Footer -->
+<div class="flex flex-col md:flex-row md:items-center justify-between pt-space-xs gap-space-sm border-t border-surface-container/60">
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary-container">groups</span>
+<span class="font-body-sm text-body-sm text-on-surface"><strong class="font-bold text-on-surface">400 Concurrent</strong> Dining Capacity</span>
+</div>
+<div class="h-3 w-[1px] bg-outline-variant hidden sm:block"></div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-[#10b981]">solar_power</span>
+<span class="font-body-sm text-body-sm text-on-surface">Solar Water Heating <strong class="font-bold text-[#10b981]">Verified</strong></span>
+</div>
+<div class="h-3 w-[1px] bg-outline-variant hidden sm:block"></div>
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-primary-container">medical_services</span>
+<span class="font-body-sm text-body-sm text-on-surface">Resident Doctor &amp; 24/7 Ambulance Confirmed</span>
+</div>
+</div>
+<div class="flex items-center gap-space-xs self-end md:self-center">
+<button class="h-8 px-space-sm rounded-lg hover:bg-surface-container text-primary font-label-sm text-label-sm font-semibold flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">document_scanner</span>
+<span>Inspect Spatial OCR</span>
+</button>
+<button class="h-8 px-space-sm bg-surface-container hover:bg-surface-container-high text-primary font-label-sm text-label-sm font-semibold rounded-lg flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-[16px]">add</span>
+<span>Add Media</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Statutory Submission Bar (Section 10(k) Batch Ready Card) -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-[0_4px_20px_rgba(79,99,232,0.05)] flex flex-col sm:flex-row sm:items-center justify-between gap-space-md">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-xl bg-[#ecfdf5] flex items-center justify-center text-[#047857] flex-shrink-0">
+<span class="material-symbols-outlined text-[20px]">task_alt</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-bold">Ready for Scrutiny Committee Dispatch</span>
+<span class="font-caption text-caption text-on-surface-variant">Batch checksum generated: <code class="bg-surface-container px-1 py-0.5 rounded text-on-surface font-mono">SHA-256: 8f2a...c04e</code></span>
+</div>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="h-[38px] px-space-md bg-surface-container hover:bg-surface-container-high text-on-surface font-label-md text-label-md rounded-[10px] transition-colors flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]">download</span>
+<span>Download Dossier PDF</span>
+</button>
+<button class="h-[38px] px-space-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md font-semibold rounded-[10px] shadow-[0_4px_16px_rgba(79,99,232,0.25)] flex items-center gap-1.5 transition-all">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Submit Batch to AICTE</span>
+</button>
+</div>
+</div>
+</div>
+</main>
+<!-- App Sub-Footer Stamp -->
+<footer class="h-10 bg-surface-container-low px-space-lg flex items-center justify-between flex-shrink-0 text-on-surface-variant font-caption text-caption border-t border-surface-container-high/60">
+<div class="flex items-center gap-space-md">
+<span class="font-semibold text-on-surface">PRAMAN Compliance Engine v4.11.2</span>
+<span class="flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-container"></span>
+            Server Node: Western-01
+          </span>
+</div>
+<span class="text-on-surface-variant">Digitally Signed via National Informatics Center (NIC) Root CA</span>
+</footer>
+</div>
+<!-- 3. RIGHT INTELLIGENCE RAIL (300px-320px) -->
+<aside class="w-[310px] flex-shrink-0 bg-surface-container-lowest p-space-md flex flex-col gap-space-md overflow-y-auto border-l border-surface-container-high/60 justify-between">
+<div class="flex flex-col gap-space-md">
+<!-- Admin Profile Badge -->
+<div class="flex items-center justify-between p-space-sm bg-surface-container-low rounded-xl">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-primary-container text-on-primary flex items-center justify-center font-bold text-sm shadow-sm">
+<span class="material-symbols-outlined text-[18px]">school</span>
+</div>
+<div class="flex flex-col leading-tight">
+<span class="font-label-md text-label-md text-on-surface font-bold">SVIT Pune Admin</span>
+<span class="font-caption text-caption text-on-surface-variant">Institute ID: 1-4829101</span>
+</div>
+</div>
+<div class="flex items-center gap-1 text-on-surface-variant">
+<button class="w-7 h-7 rounded-lg hover:bg-surface-container flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[16px]">notifications</span>
+</button>
+<button class="w-7 h-7 rounded-lg hover:bg-surface-container flex items-center justify-center transition-colors">
+<span class="material-symbols-outlined text-[16px]">settings</span>
+</button>
+</div>
+</div>
+<!-- Compliance Feed Section -->
+<div class="flex flex-col gap-2.5">
+<div class="flex items-center justify-between">
+<span class="font-headline-sm text-headline-sm text-on-surface font-bold">Compliance Feed</span>
+<span class="material-symbols-outlined text-primary-container text-[18px]">bolt</span>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-xl border border-surface-container/40">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-primary-container font-bold tracking-wider">AFFILIATION STATUS</span>
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface block font-bold">In Progress</span>
+<span class="font-caption text-caption text-on-surface-variant">Cycle 2025-26 active</span>
+</div>
+<div class="p-space-sm bg-surface-container-low rounded-xl border border-surface-container/40">
+<div class="flex items-center justify-between mb-1">
+<span class="font-label-sm text-label-sm text-on-surface-variant font-bold tracking-wider">SCRUTINY QUEUE</span>
+<span class="material-symbols-outlined text-[14px] text-tertiary">schedule</span>
+</div>
+<span class="font-headline-sm text-headline-sm text-on-surface block font-bold">8 Verifications</span>
+<span class="font-caption text-caption text-on-surface-variant">2 awaiting sign-off</span>
+</div>
+</div>
+<!-- Mini Calendar Strip with active date highlighted in solid #4F63E8 pill -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface font-bold">March 2025</span>
+<span class="font-caption text-caption text-on-surface-variant">Week 11</span>
+</div>
+<div class="grid grid-cols-7 gap-1 text-center font-caption text-caption">
+<span class="text-on-surface-variant font-medium py-1">M</span>
+<span class="text-on-surface-variant font-medium py-1">T</span>
+<span class="text-on-surface-variant font-medium py-1">W</span>
+<span class="text-on-surface-variant font-medium py-1">T</span>
+<span class="text-on-surface-variant font-medium py-1">F</span>
+<span class="text-on-surface-variant font-medium py-1">S</span>
+<span class="text-on-surface-variant font-medium py-1">S</span>
+<button class="py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container">10</button>
+<button class="py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container">11</button>
+<!-- Active date highlighted in solid #4F63E8 pill -->
+<button class="py-1.5 rounded-xl bg-primary-container text-on-primary font-bold shadow-sm">12</button>
+<button class="py-1.5 rounded-lg text-on-surface hover:bg-surface-container font-semibold">13</button>
+<button class="py-1.5 rounded-lg text-on-surface hover:bg-surface-container font-semibold">14</button>
+<button class="py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container">15</button>
+<button class="py-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container">16</button>
+</div>
+</div>
+</div>
+<!-- Trust Stamp & Cryptographic Badge at Bottom -->
+<div class="pt-space-md border-t border-surface-container-high/60 flex flex-col gap-2">
+<div class="p-2.5 bg-surface-container-low rounded-xl flex items-center gap-2">
+<span class="material-symbols-outlined text-primary-container text-[20px]">shield</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm font-bold text-on-surface leading-tight">AICTE Trust Network</span>
+<span class="font-caption text-caption text-on-surface-variant leading-tight">Zero tamper verified</span>
+</div>
+</div>
+<div class="flex items-center justify-between text-on-surface-variant font-caption text-[10px] px-1">
+<span>SHA-256 Validated</span>
+<span class="font-mono text-primary font-semibold">0x7F2A...B41E</span>
+</div>
+</div>
+</aside>
+</div>
+</body></html>

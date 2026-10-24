@@ -1,0 +1,71 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Red Hat Display', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --color-page-canvas: #D9DBFB;
+  --color-main-canvas: #F4F5FE;
+  --color-primary-blue: #4F63E8;
+  --color-primary-dark: #4458DC;
+  --color-primary-soft: #EEF0FD;
+  --color-navy-dark: #1F2350;
+  --color-text-muted: #8C91AB;
+  --color-border-light: #ECEDF7;
+  --color-status-green: #3DBE8B;
+  --color-status-orange: #F59A3C;
+  --color-status-red: #F0566A;
+  --color-status-teal: #5FD0C0;
+  --shadow-app-shell: 0 30px 60px rgba(79, 99, 232, 0.22);
+  --shadow-card-soft: 0 8px 24px rgba(140, 145, 171, 0.08);
+  --shadow-pill-active: 0 6px 16px rgba(79, 99, 232, 0.35);
+  --shadow-row-selected: 0 8px 20px rgba(79, 99, 232, 0.28);
+}
+
+body {
+  background-color: #D9DBFB;
+  font-family: 'Red Hat Display', 'Inter', sans-serif;
+  color: #1F2350;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #F4F5FE;
+}
+::-webkit-scrollbar-thumb {
+  background: #CCD1ED;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #4F63E8;
+}
+
+/* Active vertical sidebar marker indicator */
+.nav-active-indicator {
+  position: relative;
+}
+.nav-active-indicator::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 3.5px;
+  background-color: #4F63E8;
+  border-top-left-radius: 4px;
+  border-bottom-left-radius: 4px;
+}
+
+.selected-table-row {
+  background-color: #4F63E8 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 6px 18px rgba(79, 99, 232, 0.28);
+}
+.selected-table-row td, 
+.selected-table-row span,
+.selected-table-row p {
+  color: #FFFFFF !important;
+}

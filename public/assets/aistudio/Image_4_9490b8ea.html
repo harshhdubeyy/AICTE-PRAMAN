@@ -1,0 +1,1220 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AICTE PRAMAN - Portal for Regulatory Approval &amp; Monitoring</title>
+<!-- Google Fonts: Red Hat Display & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'page-canvas': '#D9DBFB',
+            'main-canvas': '#F4F5FE',
+            'primary-blue': '#4F63E8',
+            'primary-dark': '#4458DC',
+            'primary-soft': '#EEF0FD',
+            'navy-dark': '#1F2350',
+            'text-muted': '#8C91AB',
+            'border-light': '#ECEDF7',
+            'status-green': '#3DBE8B',
+            'status-orange': '#F59A3C',
+            'status-red': '#F0566A',
+            'status-teal': '#5FD0C0'
+          },
+          fontFamily: {
+            sans: ['"Red Hat Display"', 'Inter', 'sans-serif'],
+          },
+          boxShadow: {
+            'app-shell': '0 30px 60px rgba(79, 99, 232, 0.22)',
+            'card-soft': '0 8px 24px rgba(140, 145, 171, 0.08)',
+            'pill-active': '0 6px 16px rgba(79, 99, 232, 0.35)',
+            'row-selected': '0 8px 20px rgba(79, 99, 232, 0.28)'
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="base-layout">
+    body {
+      background-color: #D9DBFB;
+      font-family: 'Red Hat Display', 'Inter', sans-serif;
+      color: #1F2350;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F4F5FE;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CCD1ED;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4F63E8;
+    }
+
+    /* Active vertical sidebar marker indicator */
+    .nav-active-indicator {
+      position: relative;
+    }
+    .nav-active-indicator::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 3.5px;
+      background-color: #4F63E8;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+  </style>
+<style data-purpose="micro-interactions">
+    .transition-all-200 {
+      transition: all 0.2s ease-in-out;
+    }
+    .hover-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(79, 99, 232, 0.12);
+    }
+    .selected-table-row {
+      background-color: #4F63E8 !important;
+      color: #FFFFFF !important;
+      border-radius: 6px;
+      box-shadow: 0 6px 18px rgba(79, 99, 232, 0.28);
+    }
+    .selected-table-row td, 
+    .selected-table-row span,
+    .selected-table-row p {
+      color: #FFFFFF !important;
+    }
+  </style>
+<!-- END: Custom Styles -->
+<meta content="web_dashboard" name="shell-type"/></head>
+<body class="min-h-screen p-3 md:p-6 lg:p-8 flex items-center justify-center selection:bg-indigo-100 selection:text-primary-blue">
+<!-- BEGIN: Master Application Shell (Hireism Architecture Container) -->
+<main class="w-full max-w-[1340px] bg-white rounded-[40px] shadow-app-shell overflow-hidden flex flex-col xl:flex-row min-h-[820px] border border-white/60"><div class="flex flex-col w-full">
+<!-- Top Level Multi-Column Content Structure -->
+<div class="flex flex-col xl:flex-row w-full min-h-[760px] bg-main-canvas text-navy-dark">
+<!-- LEFT NAVIGATION RAIL -->
+<aside class="w-full xl:w-[230px] shrink-0 bg-white border-r border-[#ECEDF7] flex flex-col justify-between py-6 select-none">
+<div class="flex flex-col">
+<!-- AICTE Brand Lockup -->
+<div class="px-6 pb-6 border-b border-[#ECEDF7] flex items-center gap-3">
+<div class="w-9 h-9 rounded-xl bg-primary-blue flex items-center justify-center text-white font-extrabold shadow-sm">
+<span class="material-symbols-outlined text-xl">verified_user</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-bold text-sm tracking-tight text-navy-dark">AICTE PRAMAN</span>
+<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary-soft text-primary-blue">v2.6</span>
+</div>
+<p class="text-[10px] text-text-muted font-medium">Regulatory Scrutiny Engine</p>
+</div>
+</div>
+<!-- Role Pill Switcher (Officer / Institution) -->
+<div class="px-4 py-4">
+<div class="bg-[#F4F5FE] p-1 rounded-xl flex items-center gap-1">
+<button class="w-1/2 py-1.5 rounded-lg text-xs font-semibold bg-primary-blue text-white shadow-xs transition-all flex items-center justify-center gap-1" id="btnRoleOfficer" onclick="switchRole('officer')">
+<span class="material-symbols-outlined text-sm">shield_person</span>
+<span>Officer</span>
+</button>
+<button class="w-1/2 py-1.5 rounded-lg text-xs font-semibold text-text-muted hover:text-navy-dark transition-all flex items-center justify-center gap-1" id="btnRoleInst" onclick="switchRole('institution')">
+<span class="material-symbols-outlined text-sm">account_balance</span>
+<span>Institute</span>
+</button>
+</div>
+</div>
+<!-- Vertical Navigation Links -->
+<nav class="flex flex-col space-y-0.5 mt-1" id="sidebar-nav-container">
+<a class="group flex items-center gap-3 py-2 px-6 text-xs font-medium text-text-muted hover:text-navy-dark hover:bg-[#F8F9FE] transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-text-muted group-hover:text-navy-dark">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="group flex items-center gap-3 py-2 px-6 text-xs font-medium text-text-muted hover:text-navy-dark hover:bg-[#F8F9FE] transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-text-muted group-hover:text-navy-dark">folder_open</span>
+<span>Applications</span>
+</a>
+<!-- Active State: Validation Reports -->
+<a class="relative flex items-center gap-3 py-2 px-6 text-xs font-bold text-primary-blue bg-primary-soft transition-colors nav-active-indicator" href="#">
+<span class="material-symbols-outlined text-lg text-primary-blue" style="font-variation-settings: 'FILL' 1;">fact_check</span>
+<span>Validation Reports</span>
+</a>
+<a class="group flex items-center gap-3 py-2 px-6 text-xs font-medium text-text-muted hover:text-navy-dark hover:bg-[#F8F9FE] transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-text-muted group-hover:text-navy-dark">bolt</span>
+<span>AI Findings</span>
+</a>
+<a class="group flex items-center gap-3 py-2 px-6 text-xs font-medium text-text-muted hover:text-navy-dark hover:bg-[#F8F9FE] transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-text-muted group-hover:text-navy-dark">forum</span>
+<span>Clarifications</span>
+</a>
+<a class="group flex items-center gap-3 py-2 px-6 text-xs font-medium text-text-muted hover:text-navy-dark hover:bg-[#F8F9FE] transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-text-muted group-hover:text-navy-dark">pin_drop</span>
+<span>Inspections</span>
+</a>
+<a class="group flex items-center gap-3 py-2 px-6 text-xs font-medium text-text-muted hover:text-navy-dark hover:bg-[#F8F9FE] transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-text-muted group-hover:text-navy-dark">task_alt</span>
+<span>Decisions</span>
+</a>
+<a class="group flex items-center gap-3 py-2 px-6 text-xs font-medium text-text-muted hover:text-navy-dark hover:bg-[#F8F9FE] transition-colors" href="#">
+<span class="material-symbols-outlined text-lg text-text-muted group-hover:text-navy-dark">history_edu</span>
+<span>Audit Trail</span>
+</a>
+</nav>
+</div>
+<!-- Left Rail Bottom Status Card -->
+<div class="px-5 pt-4">
+<div class="bg-primary-soft/80 rounded-2xl p-3 flex flex-col gap-2">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-status-green/20 text-status-green flex items-center justify-center">
+<span class="material-symbols-outlined text-sm font-bold">lock</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[11px] font-bold text-navy-dark leading-tight">DigiLocker Verified</span>
+<span class="text-[9px] text-text-muted font-medium">PKI Timestamped</span>
+</div>
+</div>
+<button class="w-full mt-1 py-1.5 bg-white text-navy-dark hover:bg-white/80 rounded-lg text-[10.5px] font-bold shadow-xs flex items-center justify-center gap-1.5 transition-all" onclick="handleLogout()">
+<span class="material-symbols-outlined text-sm text-text-muted">logout</span>
+<span>End Session</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- CENTER WORKSPACE -->
+<section class="flex-1 min-w-0 p-4 md:p-6 lg:p-7 flex flex-col space-y-5 overflow-y-auto max-h-[820px]">
+<!-- Top Breadcrumb & Action Banner -->
+<div class="bg-white rounded-2xl p-4 md:p-5 shadow-card-soft flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="flex items-start sm:items-center gap-3.5">
+<button class="w-9 h-9 rounded-full bg-primary-soft text-primary-blue hover:bg-primary-blue hover:text-white flex items-center justify-center shrink-0 transition-all shadow-xs" onclick="showToast('Navigating back to full applications queue')">
+<span class="material-symbols-outlined text-lg">arrow_back</span>
+</button>
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h1 class="text-base sm:text-lg font-bold text-navy-dark tracking-tight">Sri Venkateswara Institute of Technology, Pune</h1>
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#EBF7F3] text-status-green">AI Scanned</span>
+</div>
+<div class="flex items-center gap-2 text-[11px] text-text-muted mt-1 flex-wrap">
+<span class="font-semibold text-navy-dark">AICTE-2026-04821</span>
+<span>•</span>
+<span>Extension of Approval (EoA)</span>
+<span>•</span>
+<span>AY 2026-27</span>
+<span>•</span>
+<span>Submitted: 14 Oct 2026</span>
+</div>
+</div>
+</div>
+<!-- Right Side of Header Card: Circular Progress & CTAs -->
+<div class="flex items-center gap-3 self-end sm:self-center">
+<!-- Circular AI Confidence Widget -->
+<div class="flex items-center gap-2.5 bg-[#FAF8FF] px-3 py-1.5 rounded-xl border border-indigo-50">
+<div class="relative w-9 h-9 flex items-center justify-center">
+<svg class="w-9 h-9 transform -rotate-90" viewbox="0 0 36 36">
+<circle cx="18" cy="18" fill="none" r="14" stroke="#E2E5F8" stroke-width="3"></circle>
+<circle cx="18" cy="18" fill="none" r="14" stroke="#4F63E8" stroke-dasharray="88, 100" stroke-linecap="round" stroke-width="3"></circle>
+</svg>
+<span class="absolute text-[10px] font-extrabold text-primary-blue">87%</span>
+</div>
+<div class="flex flex-col">
+<span class="text-[9px] uppercase font-bold tracking-wider text-text-muted">AI Trust Score</span>
+<span class="text-[11px] font-bold text-navy-dark">High Accuracy</span>
+</div>
+</div>
+<!-- Recommended Action Chip -->
+<div class="px-3 py-1.5 bg-[#FFF6EB] rounded-xl flex items-center gap-1.5 border border-[#FFE7BA]">
+<span class="w-2 h-2 rounded-full bg-status-orange"></span>
+<span class="text-xs font-bold text-[#873800]">Seek Clarification</span>
+</div>
+<!-- Utility Export Buttons -->
+<div class="flex items-center gap-1.5">
+<button class="h-8 px-2.5 bg-primary-soft hover:bg-primary-blue hover:text-white text-primary-blue rounded-lg text-xs font-semibold flex items-center gap-1 transition-all" onclick="showToast('Exporting Comprehensive Verification Dossier PDF...')">
+<span class="material-symbols-outlined text-sm">picture_as_pdf</span>
+<span>PDF</span>
+</button>
+<button class="h-8 px-2.5 bg-[#F4F5FE] hover:bg-gray-200 text-navy-dark rounded-lg text-xs font-semibold flex items-center gap-1 transition-all" onclick="showToast('Sharing Dossier link with Regional Approval Bureau')">
+<span class="material-symbols-outlined text-sm">share</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Stat Cards Strip (5 metrics) -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+<!-- Passed -->
+<div class="bg-white rounded-xl p-3.5 shadow-card-soft flex items-center justify-between hover-card cursor-pointer" onclick="filterByStatus('Passed')">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-text-muted">Passed</p>
+<h3 class="text-xl font-extrabold text-navy-dark mt-0.5">28</h3>
+</div>
+<div class="w-8 h-8 rounded-lg bg-[#EBF7F3] text-status-green flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-base font-bold">check_circle</span>
+</div>
+</div>
+<!-- Missing -->
+<div class="bg-white rounded-xl p-3.5 shadow-card-soft flex items-center justify-between hover-card cursor-pointer" onclick="filterByStatus('Missing')">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-text-muted">Missing</p>
+<h3 class="text-xl font-extrabold text-status-red mt-0.5">02</h3>
+</div>
+<div class="w-8 h-8 rounded-lg bg-red-50 text-status-red flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-base">file_download_off</span>
+</div>
+</div>
+<!-- Mismatch -->
+<div class="bg-white rounded-xl p-3.5 shadow-card-soft flex items-center justify-between hover-card cursor-pointer" onclick="filterByStatus('Mismatch')">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-text-muted">Mismatch</p>
+<h3 class="text-xl font-extrabold text-status-orange mt-0.5">03</h3>
+</div>
+<div class="w-8 h-8 rounded-lg bg-orange-50 text-status-orange flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-base">rule</span>
+</div>
+</div>
+<!-- Expired -->
+<div class="bg-white rounded-xl p-3.5 shadow-card-soft flex items-center justify-between hover-card cursor-pointer" onclick="filterByStatus('Expired')">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-text-muted">Expired</p>
+<h3 class="text-xl font-extrabold text-status-red mt-0.5">01</h3>
+</div>
+<div class="w-8 h-8 rounded-lg bg-rose-50 text-status-red flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-base">event_busy</span>
+</div>
+</div>
+<!-- Suspicious -->
+<div class="bg-white rounded-xl p-3.5 shadow-card-soft flex items-center justify-between hover-card cursor-pointer" onclick="filterByStatus('Suspicious')">
+<div>
+<p class="text-[10px] font-bold uppercase tracking-wider text-text-muted">Suspicious</p>
+<h3 class="text-xl font-extrabold text-primary-blue mt-0.5">01</h3>
+</div>
+<div class="w-8 h-8 rounded-lg bg-indigo-50 text-primary-blue flex items-center justify-center font-bold">
+<span class="material-symbols-outlined text-base">flag</span>
+</div>
+</div>
+</div>
+<!-- Navigation Tabs Strip -->
+<div class="border-b border-indigo-100/70 flex items-center gap-6 text-xs select-none">
+<button class="py-2 text-text-muted hover:text-navy-dark font-medium transition-colors" onclick="showToast('Navigating to Overview Tab')">Overview</button>
+<button class="py-2 font-bold text-primary-blue border-b-2 border-primary-blue flex items-center gap-1.5 -mb-[1px]">
+<span>Findings</span>
+<span class="px-1.5 py-0.2 bg-primary-soft text-primary-blue text-[10px] rounded-full font-extrabold">6</span>
+</button>
+<button class="py-2 text-text-muted hover:text-navy-dark font-medium transition-colors flex items-center gap-1.5" onclick="showToast('Navigating to 36 Uploaded Documents')">
+<span>Documents</span>
+<span class="text-[11px] text-text-muted">(36)</span>
+</button>
+<button class="py-2 text-text-muted hover:text-navy-dark font-medium transition-colors" onclick="showToast('Navigating to Built-up Space &amp; Labs Verification')">Infrastructure</button>
+<button class="py-2 text-text-muted hover:text-navy-dark font-medium transition-colors" onclick="showToast('Loading Immutable Audit Log')">History &amp; Audit</button>
+</div>
+<!-- Findings Data Table with Active Row & Expandable Discrepancy Card -->
+<div class="bg-white rounded-2xl shadow-card-soft overflow-hidden">
+<div class="p-3.5 bg-white border-b border-gray-100 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="text-xs font-bold text-navy-dark">Scrutiny Findings &amp; Rule Violations</span>
+<span class="text-[11px] text-text-muted">• AI Rule Base: Handbook AY 2026-27</span>
+</div>
+<button class="text-xs font-semibold text-primary-blue hover:underline flex items-center gap-1" onclick="toggleTableSort()">
+<span class="material-symbols-outlined text-sm">swap_vert</span>
+<span>Sort by Severity</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="text-[10px] font-bold uppercase tracking-wider text-text-muted bg-[#F8F9FE]">
+<th class="py-2.5 pl-4">Finding</th>
+<th class="py-2.5">Document / Page / Field</th>
+<th class="py-2.5">Rule Reference</th>
+<th class="py-2.5">Confidence</th>
+<th class="py-2.5">Status</th>
+<th class="py-2.5 pr-4 text-right">Action</th>
+</tr>
+</thead>
+<tbody class="text-xs divide-y divide-gray-100 font-medium">
+<!-- ROW 1 (EXPANDED & HIGHLIGHTED ACTIVE ROW) -->
+<tr class="selected-table-row bg-primary-blue text-white cursor-pointer transition-all">
+<td class="py-3 pl-4 font-bold flex items-center gap-2 text-white">
+<span class="material-symbols-outlined text-sm">warning</span>
+<span>Address mismatch</span>
+</td>
+<td class="py-3 text-white/95">Affidavit p.2 vs Land Deed p.1</td>
+<td class="py-3 text-white/90 font-mono text-[11px]">Rule APH-4.2</td>
+<td class="py-3 font-bold text-white">92%</td>
+<td class="py-3">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-white text-status-orange shadow-xs">
+<span class="w-1.5 h-1.5 rounded-full bg-status-orange"></span>
+<span>Mismatch</span>
+</span>
+</td>
+<td class="py-3 pr-4 text-right">
+<span class="material-symbols-outlined text-base inline transform rotate-180">expand_circle_up</span>
+</td>
+</tr>
+<!-- EXPANDED SUB-CARD FOR ROW 1 (Side-by-Side Detailed Difference) -->
+<tr class="bg-indigo-50/50">
+<td class="p-4" colspan="6">
+<div class="bg-white rounded-xl p-4 shadow-sm border border-indigo-100">
+<div class="flex items-center justify-between pb-3 border-b border-gray-100">
+<div class="flex items-center gap-2">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-[#AD4E00]">Spatial Coordinate Variance</span>
+<span class="text-xs font-bold text-navy-dark">Discrepancy Details &amp; Bounding Box Context</span>
+</div>
+<span class="text-[11px] text-text-muted">Rule APH-4.2 Clause 3.b: Title Deed contiguous coordinates</span>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3.5 mt-3">
+<!-- Left Box: Sworn Affidavit -->
+<div class="p-3 bg-[#F9FAFE] rounded-lg border border-indigo-50 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between text-[11px] font-bold text-navy-dark mb-1">
+<span>Value in Sworn Affidavit</span>
+<span class="text-[9px] bg-indigo-100 text-primary-blue px-1 rounded">Doc 03 • Page 2</span>
+</div>
+<p class="text-xs text-navy-dark font-semibold mt-1 p-2 bg-white rounded border border-gray-100">
+                            Plot No. 44/B, <mark class="bg-orange-100 text-orange-900 font-bold px-1 rounded">Hinjawadi Phase-1</mark>, Pune - 411057
+                          </p>
+</div>
+<span class="text-[10px] text-text-muted mt-2">OCR Confidence: 94.1% • Notarized 12 Jan 2026</span>
+</div>
+<!-- Right Box: Land Deed -->
+<div class="p-3 bg-[#F9FAFE] rounded-lg border border-indigo-50 flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between text-[11px] font-bold text-navy-dark mb-1">
+<span>Value in Land Deed</span>
+<span class="text-[9px] bg-emerald-100 text-status-green px-1 rounded">Doc 01 • Page 1</span>
+</div>
+<p class="text-xs text-navy-dark font-semibold mt-1 p-2 bg-white rounded border border-gray-100">
+                            Survey No. 44/A, <mark class="bg-orange-100 text-orange-900 font-bold px-1 rounded">Maan Village Road</mark>, Mulshi, Pune - 411057
+                          </p>
+</div>
+<span class="text-[10px] text-text-muted mt-2">OCR Confidence: 91.8% • Registered Sub-Registrar Haveli</span>
+</div>
+</div>
+<div class="mt-3 p-2.5 bg-orange-50/70 rounded-lg flex items-center justify-between text-[11px] text-orange-900">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-status-orange text-base shrink-0">info</span>
+<span><strong>Discrepancy Explanation:</strong> Spatial boundary coordinates in Affidavit do not match registered revenue survey parcel numbers in Title Deed.</span>
+</div>
+<button class="text-primary-blue hover:underline font-bold shrink-0 ml-2" onclick="applySuggestion('Seek Clarification on Land Deed')">Quick Draft Clarification</button>
+</div>
+</div>
+</td>
+</tr>
+<!-- ROW 2 -->
+<tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="showToast('Highlighting Fire Safety NOC inspection')">
+<td class="py-2.5 pl-4 font-bold text-navy-dark">Fire NOC expired</td>
+<td class="py-2.5 text-text-muted">Fire NOC p.1, Valid Till</td>
+<td class="py-2.5 font-mono text-[11px] text-text-muted">Rule APH-7.1</td>
+<td class="py-2.5 font-bold text-navy-dark">98%</td>
+<td class="py-2.5">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-status-red">
+<span class="w-1.5 h-1.5 rounded-full bg-status-red"></span>
+<span>Expired</span>
+</span>
+</td>
+<td class="py-2.5 pr-4 text-right">
+<button class="text-[11px] font-bold text-primary-blue hover:underline">View</button>
+</td>
+</tr>
+<!-- ROW 3 -->
+<tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="showToast('Highlighting Faculty Cadre &amp; Student Ratio')">
+<td class="py-2.5 pl-4 font-bold text-navy-dark">Faculty ratio below norm</td>
+<td class="py-2.5 text-text-muted">Faculty List p.4</td>
+<td class="py-2.5 font-mono text-[11px] text-text-muted">Rule APH-5.3</td>
+<td class="py-2.5 font-bold text-navy-dark">81%</td>
+<td class="py-2.5">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-status-teal">
+<span class="w-1.5 h-1.5 rounded-full bg-status-teal"></span>
+<span>Needs Review</span>
+</span>
+</td>
+<td class="py-2.5 pr-4 text-right">
+<button class="text-[11px] font-bold text-primary-blue hover:underline">View</button>
+</td>
+</tr>
+<!-- ROW 4 -->
+<tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="showToast('Near-duplicate structural overlap detected')">
+<td class="py-2.5 pl-4 font-bold text-navy-dark">Near-duplicate document</td>
+<td class="py-2.5 text-text-muted">Sanction Plan p.2</td>
+<td class="py-2.5 font-mono text-[11px] text-text-muted">Duplicate check</td>
+<td class="py-2.5 font-bold text-navy-dark">73%</td>
+<td class="py-2.5">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-primary-blue">
+<span class="w-1.5 h-1.5 rounded-full bg-primary-blue"></span>
+<span>Suspicious</span>
+</span>
+</td>
+<td class="py-2.5 pr-4 text-right">
+<button class="text-[11px] font-bold text-primary-blue hover:underline">View</button>
+</td>
+</tr>
+<!-- ROW 5 -->
+<tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="showToast('Missing mandatory structural architectural approval')">
+<td class="py-2.5 pl-4 font-bold text-navy-dark">Building plan missing</td>
+<td class="py-2.5 text-text-muted">Checklist item 9</td>
+<td class="py-2.5 font-mono text-[11px] text-text-muted">Rule APH-3.4</td>
+<td class="py-2.5 font-bold text-navy-dark">100%</td>
+<td class="py-2.5">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-status-red">
+<span class="w-1.5 h-1.5 rounded-full bg-status-red"></span>
+<span>Missing</span>
+</span>
+</td>
+<td class="py-2.5 pr-4 text-right">
+<button class="text-[11px] font-bold text-primary-blue hover:underline">View</button>
+</td>
+</tr>
+<!-- ROW 6 -->
+<tr class="hover:bg-gray-50 transition-colors cursor-pointer" onclick="showToast('Trust Registered Deed fully validated')">
+<td class="py-2.5 pl-4 font-bold text-navy-dark">Trust registration verified</td>
+<td class="py-2.5 text-text-muted">Trust Deed p.1</td>
+<td class="py-2.5 font-mono text-[11px] text-text-muted">Rule APH-2.1</td>
+<td class="py-2.5 font-bold text-navy-dark">96%</td>
+<td class="py-2.5">
+<span class="inline-flex items-center gap-1 text-[11px] font-semibold text-status-green">
+<span class="w-1.5 h-1.5 rounded-full bg-status-green"></span>
+<span>Passed</span>
+</span>
+</td>
+<td class="py-2.5 pr-4 text-right">
+<button class="text-[11px] font-bold text-primary-blue hover:underline">View</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Document Evidence Viewer Card (Split View with Spatial Coordinate OCR Bounding Boxes) -->
+<div class="bg-white rounded-2xl shadow-card-soft p-4 sm:p-5 flex flex-col space-y-3">
+<!-- Evidence Header & Controls -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-gray-100 gap-2">
+<div class="flex items-center gap-2">
+<span class="w-7 h-7 rounded-lg bg-primary-soft text-primary-blue flex items-center justify-center">
+<span class="material-symbols-outlined text-base">document_scanner</span>
+</span>
+<div>
+<h2 class="text-xs sm:text-sm font-bold text-navy-dark">Spatial Coordinate OCR Verification &amp; Bounding Box Viewer</h2>
+<p class="text-[10px] text-text-muted">Computer Vision Anchor Analysis • Neural Layer Bounding Inspection</p>
+</div>
+</div>
+<div class="flex items-center gap-2 flex-wrap">
+<select class="text-xs font-semibold bg-[#F4F5FE] text-navy-dark rounded-lg px-2.5 py-1 border-0 focus:ring-1 focus:ring-primary-blue">
+<option>Doc 03: Notarized Sworn Affidavit.pdf</option>
+<option>Doc 01: Registered Land Title Deed.pdf</option>
+<option>Doc 07: Fire Safety NOC.pdf</option>
+</select>
+<div class="flex items-center bg-[#F4F5FE] rounded-lg p-0.5 text-xs text-navy-dark font-bold">
+<button class="px-2 py-0.5 hover:bg-white rounded" onclick="showToast('Zoom In 125%')">+</button>
+<span class="px-1 text-[10px] text-text-muted">100%</span>
+<button class="px-2 py-0.5 hover:bg-white rounded" onclick="showToast('Zoom Out 75%')">-</button>
+<button class="px-1.5 py-0.5 hover:bg-white rounded text-[10px]" onclick="showToast('Auto-fit Bounding Box')">Fit</button>
+</div>
+</div>
+</div>
+<!-- Evidence Split Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+<!-- Left 60%: Simulated Scanned PDF with Bounding Boxes -->
+<div class="lg:col-span-7 bg-[#EDF0F9] p-4 rounded-xl relative overflow-hidden flex flex-col items-center">
+<div class="w-full max-w-[460px] bg-white rounded-lg shadow-md p-6 relative select-none font-serif text-[#333] text-[11px] leading-relaxed">
+<!-- PDF Watermark & Official Stamp Mockup -->
+<div class="flex items-center justify-between border-b-2 border-navy-dark/30 pb-3 mb-4">
+<div class="text-center w-full">
+<p class="text-[9px] uppercase tracking-widest font-sans font-extrabold text-navy-dark">Government of Maharashtra • Revenue Authority</p>
+<p class="text-xs font-bold font-sans text-navy-dark">FORM NO. 14 - LAND TITLE &amp; CAMPUS POSSESSION AFFIDAVIT</p>
+</div>
+</div>
+<!-- Page Body with Mockup Lines -->
+<p class="text-[10px] leading-normal text-gray-700">
+                I, Sri. Ramdas Patil, Secretary of Venkateswara Charitable Trust, solemnly affirm that the educational campus is located on contiguous land as per norm:
+              </p>
+<!-- BOUNDING BOX 1: Yellow Discrepancy Highlight -->
+<div class="relative my-3 p-2 border-2 border-dashed border-status-orange bg-orange-50/50 rounded">
+<span class="absolute -top-2.5 left-2 px-1.5 py-0.2 bg-status-orange text-white text-[9px] font-sans font-bold rounded">
+                  Spatial OCR: 92.4% (Mismatch)
+                </span>
+<p class="font-sans font-bold text-navy-dark text-xs">
+                  "Plot No. 44/B, Hinjawadi Phase-1, Taluka Mulshi, District Pune 411057, measuring 3.10 Acres"
+                </p>
+</div>
+<p class="text-[10px] text-gray-600">
+                The said property has unobstructed motorable access, free of encumbrances, and approved by the Municipal Town Planner under master plan 2024.
+              </p>
+<!-- BOUNDING BOX 2: Indigo Primary Highlight -->
+<div class="relative my-3 p-2 border border-primary-blue bg-indigo-50/40 rounded">
+<span class="absolute -top-2.5 left-2 px-1.5 py-0.2 bg-primary-blue text-white text-[9px] font-sans font-bold rounded">
+                  Target Match: 98.7%
+                </span>
+<p class="font-sans text-[10px] text-navy-dark">
+                  Built-up Academic Area: 14,200 sq. meters • Approved Floor Space Index (FSI): 1.50
+                </p>
+</div>
+<!-- Simulated Signatures & Notary Stamp -->
+<div class="mt-6 pt-3 border-t border-gray-200 flex items-center justify-between">
+<div>
+<div class="w-20 h-6 border-b border-gray-400"></div>
+<span class="text-[8px] font-sans text-gray-400">Notary Public Signature</span>
+</div>
+<div class="w-14 h-14 rounded-full border-2 border-primary-blue/30 flex items-center justify-center rotate-12">
+<span class="text-[8px] font-sans font-bold text-primary-blue text-center leading-none">PUNE SUB-REG<br/>SEAL 2026</span>
+</div>
+</div>
+</div>
+<!-- Footnote on Coordinates -->
+<div class="w-full flex items-center justify-between text-[10px] text-text-muted mt-2 px-1">
+<span>Bounding Coordinates: [X: 142px, Y: 310px, W: 260px, H: 45px]</span>
+<span class="text-primary-blue font-semibold">Tesseract-NLP v4.11</span>
+</div>
+</div>
+<!-- Right 40%: Evidence & AI Rule Explanation Panel -->
+<div class="lg:col-span-5 flex flex-col space-y-3">
+<div class="p-3.5 bg-primary-soft/60 rounded-xl flex flex-col space-y-2">
+<span class="text-[10px] uppercase font-bold text-primary-blue tracking-wider">Regulatory Reference</span>
+<h4 class="text-xs font-bold text-navy-dark">AICTE APH 2026-27 Chapter II, Cl. 4.2</h4>
+<p class="text-[11px] text-text-muted leading-relaxed">
+                "Land Title authenticity mandates that spatial boundary survey identifiers in self-attested affidavits must match the register of deed entries with exact revenue coordinates."
+              </p>
+</div>
+<div class="p-3 bg-white rounded-xl border border-gray-100 space-y-2 text-[11px]">
+<div class="flex justify-between py-1 border-b border-gray-50">
+<span class="text-text-muted">Extracted Plot ID:</span>
+<span class="font-bold text-status-orange">Plot 44/B</span>
+</div>
+<div class="flex justify-between py-1 border-b border-gray-50">
+<span class="text-text-muted">Land Deed Survey No:</span>
+<span class="font-bold text-navy-dark">Survey 44/A</span>
+</div>
+<div class="flex justify-between py-1 border-b border-gray-50">
+<span class="text-text-muted">Bounding Box Match:</span>
+<span class="font-bold text-status-green">Confidence 92.4%</span>
+</div>
+<div class="flex justify-between py-1">
+<span class="text-text-muted">Spatial Engine Model:</span>
+<span class="font-semibold text-navy-dark">VisionNLP-v4.11.2</span>
+</div>
+</div>
+<div class="p-3 bg-[#FFF8E6] rounded-xl border border-[#FFE7BA] text-[11px]">
+<span class="font-bold text-[#873800] block mb-1">Bureau Recommendation:</span>
+<p class="text-[#AD4E00] leading-snug">
+                Request registered amendment deed or sworn clarification certificate from District Sub-Registrar before proceeding to SAC approval.
+              </p>
+</div>
+<button class="w-full py-2 bg-primary-blue text-white rounded-lg text-xs font-bold hover:bg-primary-dark transition-all shadow-sm flex items-center justify-center gap-1.5" onclick="applySuggestion('Seek clarification on address mismatch')">
+<span class="material-symbols-outlined text-sm">send</span>
+<span>Insert Recommendation to Clarification Draft</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- RIGHT INTELLIGENCE & SCHEDULE RAIL -->
+<aside class="w-full xl:w-[280px] shrink-0 bg-white border-l border-[#ECEDF7] p-5 flex flex-col space-y-5 overflow-y-auto max-h-[820px]">
+<!-- User Profile Card -->
+<div class="flex items-center justify-between pb-4 border-b border-[#ECEDF7]">
+<div class="flex items-center gap-2.5">
+<img alt="Officer Avatar" class="w-10 h-10 rounded-full object-cover ring-2 ring-primary-soft" id="userAvatarImg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDaTcUO2kt91WGI2AZoF5SGvM-HagQqfbhDU-LKzw_0mI0CoBQcwzV62knoXPfgUBsOng8MSuBvSvG19T0rXd5SXMXmu_IcZ1m80ok_aUhTZDXh-trS2F0rlnkDWVvDVuqcJ01hiFvtGiQLqWhC8RcE02BU1yaNtF5zN7G2Wby9RB4QYMnXv4jNDuY_qW1VA9lnUnsbTw0BNpNn-ikl17nS5RHKT4oWahxEovsKunZnbpGC4Rq2cs5CCg"/>
+<div>
+<h4 class="text-xs font-bold text-navy-dark leading-tight" id="headerUserName">Sara Abraham</h4>
+<span class="text-[10px] text-text-muted" id="headerUserSubtitle">Senior Scrutiny Officer</span>
+</div>
+</div>
+<div class="flex items-center gap-1">
+<button class="w-7 h-7 rounded-lg hover:bg-gray-100 text-text-muted hover:text-navy-dark flex items-center justify-center relative" onclick="toggleNotificationBadge()">
+<span class="material-symbols-outlined text-base">notifications</span>
+<span class="w-1.5 h-1.5 rounded-full bg-status-red absolute top-1 right-1" id="unreadNotifDot"></span>
+</button>
+<button class="w-7 h-7 rounded-lg hover:bg-gray-100 text-text-muted hover:text-navy-dark flex items-center justify-center" onclick="toggleSettingsModal()">
+<span class="material-symbols-outlined text-base">settings</span>
+</button>
+</div>
+</div>
+<!-- AI Suggestions Card -->
+<div class="bg-[#F8F9FE] rounded-2xl p-4 flex flex-col space-y-3 border border-indigo-50">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary-blue text-base">neurology</span>
+<span class="text-xs font-bold text-navy-dark">AI Decision Assist</span>
+</div>
+<span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary-soft text-primary-blue">4 New</span>
+</div>
+<div class="space-y-2.5 text-xs">
+<!-- Suggestion 1 -->
+<div class="p-2.5 bg-white rounded-xl shadow-xs border border-gray-100 flex flex-col gap-1">
+<div class="flex items-start justify-between">
+<span class="font-bold text-navy-dark text-[11px]">Seek clarification on address mismatch</span>
+<button class="text-[10px] font-bold text-primary-blue hover:underline" onclick="applySuggestion('Clarification: Address mismatch')">Apply</button>
+</div>
+<p class="text-[10px] text-text-muted leading-tight">Why: Land deed parcel 44/A conflicts with affidavit parcel 44/B.</p>
+</div>
+<!-- Suggestion 2 -->
+<div class="p-2.5 bg-white rounded-xl shadow-xs border border-gray-100 flex flex-col gap-1">
+<div class="flex items-start justify-between">
+<span class="font-bold text-navy-dark text-[11px]">Request renewed Fire NOC</span>
+<button class="text-[10px] font-bold text-primary-blue hover:underline" onclick="applySuggestion('Request Renewed Fire NOC')">Apply</button>
+</div>
+<p class="text-[10px] text-text-muted leading-tight">Why: Existing certificate lapsed on 12 Mar 2026.</p>
+</div>
+<!-- Suggestion 3 -->
+<div class="p-2.5 bg-white rounded-xl shadow-xs border border-gray-100 flex flex-col gap-1">
+<div class="flex items-start justify-between">
+<span class="font-bold text-navy-dark text-[11px]">Recommend physical inspection</span>
+<button class="text-[10px] font-bold text-primary-blue hover:underline" onclick="applySuggestion('Schedule Expert Committee Inspection')">Apply</button>
+</div>
+<p class="text-[10px] text-text-muted leading-tight">Why: Lab equipment geo-tagged photos show low spatial confidence.</p>
+</div>
+<!-- Suggestion 4 -->
+<div class="p-2.5 bg-white rounded-xl shadow-xs border border-gray-100 flex flex-col gap-1">
+<div class="flex items-start justify-between">
+<span class="font-bold text-navy-dark text-[11px]">Needs manual review for Sanction Plan</span>
+<button class="text-[10px] font-bold text-primary-blue hover:underline" onclick="applySuggestion('Manual review for Sanction Plan')">Apply</button>
+</div>
+<p class="text-[10px] text-text-muted leading-tight">Why: 73% structural similarity with Pune Institute App #04112.</p>
+</div>
+</div>
+</div>
+<!-- Officer Actions Section -->
+<div class="flex flex-col space-y-2">
+<span class="text-[10px] font-bold uppercase tracking-wider text-text-muted">Officer Final Actions</span>
+<button class="w-full h-8 bg-primary-blue hover:bg-primary-dark text-white rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 shadow-sm transition-all" onclick="officerActionNotice('Send Formal Clarification Notice')">
+<span class="material-symbols-outlined text-sm">outgoing_mail</span>
+<span>Send Clarification</span>
+</button>
+<button class="w-full h-8 bg-white hover:bg-gray-50 border border-indigo-200 text-primary-blue rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all" onclick="officerActionNotice('Requested Physical Inspection Committee')">
+<span class="material-symbols-outlined text-sm">groups</span>
+<span>Request Physical Inspection</span>
+</button>
+<button class="w-full h-8 bg-white hover:bg-gray-50 border border-indigo-200 text-navy-dark rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all" onclick="officerActionNotice('Flagged for Bureau Committee Manual Verification')">
+<span class="material-symbols-outlined text-sm">rate_review</span>
+<span>Needs Manual Review</span>
+</button>
+<button class="w-full h-8 bg-[#EBF7F3] hover:bg-[#d6f0e7] text-status-green rounded-lg text-xs font-semibold flex items-center justify-center gap-1.5 transition-all" onclick="officerActionNotice('Approved to Next Stage (Executive Committee)')">
+<span class="material-symbols-outlined text-sm">check</span>
+<span>Approve to Next Stage</span>
+</button>
+</div>
+<!-- Observation Comment Box -->
+<div class="flex flex-col space-y-1.5">
+<label class="text-[10px] font-bold uppercase tracking-wider text-text-muted">Observation Log</label>
+<textarea class="w-full text-xs p-2.5 rounded-xl border border-gray-200 bg-[#FBFBFE] focus:ring-1 focus:ring-primary-blue text-navy-dark placeholder:text-text-muted" id="officerNoteText" placeholder="Add observation or query note for institution..." rows="3"></textarea>
+<div class="flex justify-end">
+<button class="px-3 py-1 bg-primary-soft hover:bg-primary-blue hover:text-white text-primary-blue text-[11px] font-bold rounded-lg transition-all" onclick="saveOfficerNote()">
+            Post Note
+          </button>
+</div>
+</div>
+<!-- Regulatory Disclaimer Badge -->
+<div class="pt-2 border-t border-[#ECEDF7]">
+<p class="text-[9.5px] text-text-muted leading-relaxed italic bg-[#F8F9FE] p-2.5 rounded-xl border border-indigo-50">
+          "AI results are decision support. Final regulatory decision rests exclusively with the authorized officer. Digital Signature Verified • Section 10(k)."
+        </p>
+</div>
+</aside>
+</div>
+</div>
+<script>
+  function saveOfficerNote() {
+    const el = document.getElementById('officerNoteText');
+    if (!el || !el.value.trim()) {
+      showToast('Please enter an observation note before posting');
+      return;
+    }
+    showToast('Observation recorded in immutable scrutiny trail');
+    el.value = '';
+  }
+</script></main>
+<!-- END: Master Application Shell -->
+<!-- BEGIN: Interactive AI Report & Officer Evaluation Modal -->
+<div class="fixed inset-0 bg-navy-dark/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden" data-purpose="officer-detail-modal" id="reportDetailModal">
+<div class="bg-white rounded-3xl w-full max-w-4xl max-h-[921px] overflow-y-auto shadow-2xl border border-indigo-100 flex flex-col">
+<!-- Modal Header -->
+<div class="p-5 sm:p-6 border-b border-[#F0F1FA] flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur z-20">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-primary-blue">AICTE-2026-04821</span>
+<h3 class="text-base font-bold text-navy-dark">Automated Verification Dossier: Sri Venkateswara Institute of Technology</h3>
+</div>
+<p class="text-[11px] text-text-muted mt-0.5">Scanned on May 24, 2025 • Spatial Coordinate NLP Engine • Overall Confidence: 87%</p>
+</div>
+<button class="w-8 h-8 rounded-full bg-[#F4F5FE] hover:bg-gray-200 text-navy-dark flex items-center justify-center font-bold text-sm" onclick="closeReportModal()">
+      ✕
+    </button>
+</div>
+<!-- Modal Body -->
+<div class="p-6 space-y-5">
+<!-- Summary Alert Box -->
+<div class="bg-[#FFF8E6] border border-[#FFE7BA] rounded-xl p-4 flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-status-orange text-white flex items-center justify-center shrink-0 text-xs font-bold">!</div>
+<div>
+<h4 class="text-xs font-bold text-[#873800]">Needs Manual Review: Address &amp; Fire Safety Certificate</h4>
+<p class="text-[11px] text-[#AD4E00] leading-relaxed mt-0.5">
+          Spatial coordinate extraction identified an address discrepancy between Land Title Deed (Survey No. 42/8B, Wagholi, Pune) and Municipal Affidavit (Survey No. 42/8A). Additionally, the Fire Safety NOC expired on 12 Mar 2026.
+        </p>
+</div>
+</div>
+<!-- Side-by-Side OCR Coordinate Inspection -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Column 1: Extracted OCR Coordinates -->
+<div class="bg-[#F8F9FE] p-4 rounded-xl border border-indigo-50">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[11px] font-bold text-primary-blue uppercase tracking-wider">Spatial Coordinate Extracted Data</span>
+<span class="text-[9px] bg-status-green/10 text-status-green font-bold px-1.5 py-0.5 rounded">QR Tamper-Proof</span>
+</div>
+<ul class="text-[11.5px] space-y-2 text-navy-dark">
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">Land Survey No:</span>
+<span class="font-semibold text-status-orange font-bold">Survey 42/8B, Wagholi</span>
+</li>
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">FAR Floor Space:</span>
+<span class="font-semibold">14,200 sq.m</span>
+</li>
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">Fire Safety NOC:</span>
+<span class="font-semibold text-status-red font-bold">Expired: 12 Mar 2026</span>
+</li>
+<li class="flex justify-between py-1">
+<span class="text-text-muted">Faculty Count:</span>
+<span class="font-semibold text-status-teal font-bold">1:18 Ratio (Norm 1:15)</span>
+</li>
+</ul>
+</div>
+<!-- Column 2: Institutional Claim & Self-Declaration -->
+<div class="bg-[#F8F9FE] p-4 rounded-xl border border-indigo-50">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[11px] font-bold text-navy-dark uppercase tracking-wider">Institutional Sworn Declaration</span>
+<span class="text-[9px] bg-indigo-50 text-primary-blue font-bold px-1.5 py-0.5 rounded">Stamped &amp; Notarized</span>
+</div>
+<ul class="text-[11.5px] space-y-2 text-navy-dark">
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">Land Survey No:</span>
+<span class="font-semibold text-navy-dark font-bold">Survey 42/8A (Mismatch)</span>
+</li>
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">FAR Floor Space:</span>
+<span class="font-semibold text-navy-dark">14,200 sq.m</span>
+</li>
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">Fire Safety NOC:</span>
+<span class="font-semibold text-navy-dark">Claimed Active in Annexure</span>
+</li>
+<li class="flex justify-between py-1">
+<span class="text-text-muted">Faculty Count:</span>
+<span class="font-semibold text-navy-dark">Claimed 1:15 Ratio</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Regulatory Rule Compliance Checks -->
+<div>
+<h4 class="text-xs font-bold text-navy-dark mb-2.5">Rule Compliance Engine Checks</h4>
+<div class="space-y-2 text-[11px]">
+<div class="flex items-center justify-between p-2.5 bg-green-50/70 rounded-lg border border-green-100">
+<div class="flex items-center gap-2">
+<span class="w-4 h-4 rounded-full bg-status-green text-white flex items-center justify-center text-[10px]">✓</span>
+<span class="font-medium text-navy-dark">Contiguous Land Requirement (Min 2.5 Acres for Pune Urban)</span>
+</div>
+<span class="font-bold text-status-green">Satisfied (3.1 Acres)</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-amber-50/70 rounded-lg border border-amber-100">
+<div class="flex items-center gap-2">
+<span class="w-4 h-4 rounded-full bg-status-orange text-white flex items-center justify-center text-[10px]">!</span>
+<span class="font-medium text-navy-dark">Barrier-Free Infrastructure (Ramps, Lifts &amp; Braille Indicators)</span>
+</div>
+<span class="font-bold text-status-orange">Needs Manual Review</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-red-50/70 rounded-lg border border-red-100">
+<div class="flex items-center gap-2">
+<span class="w-4 h-4 rounded-full bg-status-red text-white flex items-center justify-center text-[10px]">✕</span>
+<span class="font-medium text-navy-dark">Current Valid Fire Safety NOC</span>
+</div>
+<span class="font-bold text-status-red">Certificate Expired</span>
+</div>
+</div>
+</div>
+<p class="text-[10px] text-text-muted italic bg-gray-50 p-3 rounded-lg border border-gray-100">
+        "AI results are decision support. Final regulatory decision rests exclusively with the authorized AICTE approval bureau officer."
+      </p>
+</div>
+<!-- Modal Footer Officer Actions -->
+<div class="p-4 bg-[#F8F9FE] border-t border-[#F0F1FA] flex items-center justify-between gap-3 sticky bottom-0">
+<button class="px-3.5 py-2 text-status-orange hover:bg-orange-50 border border-orange-200 rounded-lg text-xs font-bold transition-all" onclick="officerActionNotice('Send Clarification')">
+      Send Clarification
+    </button>
+<div class="flex items-center gap-2">
+<button class="px-3.5 py-2 bg-white hover:bg-gray-100 border border-border-light text-navy-dark rounded-lg text-xs font-bold transition-all" onclick="officerActionNotice('Request Inspection')">
+        Request Inspection
+      </button>
+<button class="px-4 py-2 bg-primary-blue hover:bg-primary-dark text-white rounded-lg text-xs font-bold transition-all shadow-sm" onclick="officerActionNotice('Approve to Next Stage')">
+        Approve to Next Stage
+      </button>
+</div>
+</div>
+</div>
+</div>
+<!-- END: Modal -->
+<!-- BEGIN: Toast Notification Element -->
+<div class="fixed bottom-6 right-6 bg-navy-dark text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 z-50 transform translate-y-24 opacity-0 transition-all duration-300" id="toastMessage">
+<span class="w-2 h-2 rounded-full bg-status-green"></span>
+<span id="toastText">Action completed successfully</span>
+</div>
+<!-- END: Toast Notification Element -->
+<!-- BEGIN: Application Scripts -->
+<script data-purpose="app-logic">
+    // Mock Data Store updated strictly for AICTE Validation Domain
+    const dataStore = {
+      currentRole: 'officer', // 'officer' or 'institution'
+      selectedRowId: 'row-1', // Sri Venkateswara selected by default
+      
+      // Sidebar Navigation Items
+      navOfficer: [
+        { id: 'dashboard', label: 'Dashboard', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z', active: true },
+        { id: 'applications', label: 'Applications', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', active: false },
+        { id: 'validation-reports', label: 'Validation Reports', icon: 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', active: false },
+        { id: 'ai-findings', label: 'AI Findings', icon: 'M13 10V3L4 14h7v7l9-11h-7z', active: false },
+        { id: 'clarifications', label: 'Clarifications', icon: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z', active: false },
+        { id: 'inspections', label: 'Inspections', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', active: false },
+        { id: 'decisions', label: 'Decisions', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', active: false },
+        { id: 'audit-trail', label: 'Audit Trail', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', active: false }
+      ],
+
+      navInstitution: [
+        { id: 'dashboard', label: 'Dashboard', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z', active: true },
+        { id: 'applications', label: 'My Applications', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', active: false },
+        { id: 'documents', label: 'Uploaded Documents', icon: 'M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2', active: false },
+        { id: 'clarifications', label: 'AICTE Queries', icon: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z', active: false },
+        { id: 'decisions', label: 'Approval Status', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', active: false }
+      ],
+
+      // Strict AICTE Institutions Data Table
+      rows: [
+        {
+          id: 'row-1',
+          institution: 'Sri Venkateswara Institute of Technology, Pune',
+          appType: 'Extension of Approval',
+          documents: '32/36',
+          confidence: '87%',
+          status: 'Needs Review',
+          statusColor: '#5FD0C0' // teal dot
+        },
+        {
+          id: 'row-2',
+          institution: 'Sahyadri College of Engineering, Mangalore',
+          appType: 'New Institution',
+          documents: '28/34',
+          confidence: '64%',
+          status: 'Mismatch',
+          statusColor: '#F59A3C' // orange dot
+        },
+        {
+          id: 'row-3',
+          institution: 'Narmada Institute of Management, Bhopal',
+          appType: 'Change in Program',
+          documents: '18/18',
+          confidence: '94%',
+          status: 'Passed',
+          statusColor: '#3DBE8B' // green dot
+        },
+        {
+          id: 'row-4',
+          institution: 'Kaveri Polytechnic, Madurai',
+          appType: 'Extension of Approval',
+          documents: '21/30',
+          confidence: '58%',
+          status: 'Missing Documents',
+          statusColor: '#F0566A' // red dot
+        },
+        {
+          id: 'row-5',
+          institution: 'Gomti Institute of Pharmacy, Lucknow',
+          appType: 'New Institution',
+          documents: '30/33',
+          confidence: '71%',
+          status: 'Suspicious',
+          statusColor: '#4F63E8' // blue dot
+        },
+        {
+          id: 'row-6',
+          institution: 'Aravali Technical Campus, Jaipur',
+          appType: 'Extension of Approval',
+          documents: '33/33',
+          confidence: '91%',
+          status: 'Ready for Decision',
+          statusColor: '#3DBE8B' // green dot
+        }
+      ]
+    };
+
+    // Render Sidebar Navigation
+    function renderSidebar() {
+      const container = document.getElementById('sidebar-nav-container');
+      const navItems = dataStore.currentRole === 'officer' ? dataStore.navOfficer : dataStore.navInstitution;
+      
+      container.innerHTML = navItems.map(item => {
+        const isActive = item.active;
+        return `
+          <div 
+            onclick="switchNav('${item.id}')"
+            class="group cursor-pointer flex items-center justify-between py-2 px-6 text-[11.5px] font-semibold transition-all duration-150 ${
+              isActive 
+                ? 'bg-primary-soft text-primary-blue nav-active-indicator' 
+                : 'text-text-muted hover:text-navy-dark hover:bg-gray-50'
+            }"
+          >
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 ${isActive ? 'text-primary-blue' : 'text-[#8C91AB] group-hover:text-navy-dark'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"/>
+              </svg>
+              <span>${item.label}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render Table Rows
+    function renderTable(filterQuery = '') {
+      const tbody = document.getElementById('tableRowsBody');
+      const filtered = dataStore.rows.filter(r => {
+        if (!filterQuery) return true;
+        const q = filterQuery.toLowerCase();
+        return r.institution.toLowerCase().includes(q) || 
+               r.appType.toLowerCase().includes(q) || 
+               r.status.toLowerCase().includes(q);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-text-muted text-xs">No matching applications found</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(row => {
+        const isSelected = row.id === dataStore.selectedRowId;
+        const selectedClass = isSelected ? 'selected-table-row' : 'hover:bg-indigo-50/40';
+
+        return `
+          <tr 
+            onclick="selectRow('${row.id}')"
+            class="transition-colors duration-150 cursor-pointer ${selectedClass}"
+          >
+            <!-- Institution -->
+            <td class="py-2.5 pl-3">
+              <span class="font-bold text-[11.5px]">${row.institution}</span>
+            </td>
+
+            <!-- Application Type -->
+            <td class="py-2.5 ${isSelected ? 'text-white/90' : 'text-text-muted'} font-medium text-[11px]">
+              ${row.appType}
+            </td>
+
+            <!-- Documents Fraction -->
+            <td class="py-2.5 ${isSelected ? 'text-white' : 'text-navy-dark'} font-semibold text-[11px]">
+              ${row.documents}
+            </td>
+
+            <!-- AI Confidence -->
+            <td class="py-2.5">
+              <span class="font-bold text-[11px] ${isSelected ? 'text-white' : 'text-primary-blue'}">${row.confidence}</span>
+            </td>
+
+            <!-- Status with Colored Dot -->
+            <td class="py-2.5">
+              <span class="inline-flex items-center gap-1.5 font-medium text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: ${isSelected ? '#FFFFFF' : row.statusColor};"></span>
+                <span class="${isSelected ? 'text-white' : ''}">${row.status}</span>
+              </span>
+            </td>
+
+            <!-- Three-dots action icon -->
+            <td class="py-2.5 pr-3 text-right">
+              <button onclick="event.stopPropagation(); openReportModal()" class="p-1 hover:opacity-80">
+                <svg class="w-3.5 h-3.5 inline ${isSelected ? 'text-white' : 'text-text-muted'}" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Select row
+    function selectRow(id) {
+      dataStore.selectedRowId = id;
+      renderTable();
+      openReportModal();
+    }
+
+    // Switch Role
+    function switchRole(role) {
+      dataStore.currentRole = role;
+      const btnOfficer = document.getElementById('btnRoleOfficer');
+      const btnInst = document.getElementById('btnRoleInst');
+      const heroGreeting = document.getElementById('hero-greeting');
+      const heroSubtext = document.getElementById('hero-subtext');
+      const userName = document.getElementById('headerUserName');
+      const userSub = document.getElementById('headerUserSubtitle');
+      const avatarImg = document.getElementById('userAvatarImg');
+      const catSectionTitle = document.getElementById('category-section-title');
+      const btnActionLabel = document.getElementById('btnActionLabel');
+
+      if (role === 'officer') {
+        btnOfficer.className = 'px-2.5 py-1 rounded bg-primary-blue text-white shadow-xs transition-all';
+        btnInst.className = 'px-2.5 py-1 rounded text-text-muted hover:text-navy-dark transition-all';
+        heroGreeting.innerText = 'Good Morning, Sara';
+        heroSubtext.innerText = '75 new applications are in your queue. 12 need attention today, 5 have AI-flagged discrepancies.';
+        userName.innerText = 'Sara Abraham';
+        userSub.innerText = 'View profile';
+        avatarImg.src = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80';
+        catSectionTitle.innerText = 'You Need to Validate';
+        btnActionLabel.innerText = 'Add New ▾';
+      } else {
+        btnInst.className = 'px-2.5 py-1 rounded bg-primary-blue text-white shadow-xs transition-all';
+        btnOfficer.className = 'px-2.5 py-1 rounded text-text-muted hover:text-navy-dark transition-all';
+        heroGreeting.innerText = 'Sri Venkateswara IT, Pune';
+        heroSubtext.innerText = 'Your Extension of Approval application for AY 2026-27 is under scrutiny. 2 discrepancies require responses.';
+        userName.innerText = 'Dr. V. Kulkarni';
+        userSub.innerText = 'Principal / Registrar';
+        avatarImg.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80';
+        catSectionTitle.innerText = 'Deficiencies to Rectify';
+        btnActionLabel.innerText = 'Upload Doc ▾';
+      }
+
+      renderSidebar();
+      renderTable();
+      showToast(`Switched view to ${role === 'officer' ? 'AICTE Officer' : 'Institution Portal'}`);
+    }
+
+    // Switch Navigation
+    function switchNav(navId) {
+      const navList = dataStore.currentRole === 'officer' ? dataStore.navOfficer : dataStore.navInstitution;
+      navList.forEach(item => item.active = (item.id === navId));
+      renderSidebar();
+      showToast(`Navigated to ${navId.replace('-', ' ').toUpperCase()}`);
+    }
+
+    // Filter table by text search
+    function handleSearch(val) {
+      renderTable(val);
+    }
+
+    // Filter by category status
+    function filterByStatus(statusTerm) {
+      renderTable(statusTerm);
+      showToast(`Filtered queue: ${statusTerm}`);
+    }
+
+    // Filter by doc type / category
+    function filterByDocType(term) {
+      renderTable(term);
+      showToast(`Filtering for: ${term}`);
+    }
+
+    // Reset all filters
+    function resetFilters() {
+      document.getElementById('globalSearchInput').value = '';
+      dataStore.selectedRowId = 'row-1';
+      renderTable();
+      showToast('Showing all applications');
+    }
+
+    // Open/Close Dossier Modal
+    function openReportModal() {
+      const modal = document.getElementById('reportDetailModal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeReportModal() {
+      const modal = document.getElementById('reportDetailModal');
+      modal.classList.add('hidden');
+    }
+
+    function toggleActionMenu() {
+      const menu = document.getElementById('quickActionMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function toggleTableSort() {
+      dataStore.rows.reverse();
+      renderTable();
+      showToast('Inverted table sorting order');
+    }
+
+    function applySuggestion(actionDesc) {
+      showToast(`AI Suggestion applied: ${actionDesc}`);
+    }
+
+    function executeApprove(instName) {
+      showToast(`Official Approval granted for: ${instName}`);
+    }
+
+    function officerActionNotice(action) {
+      closeReportModal();
+      showToast(`Action dispatched: ${action}`);
+    }
+
+    function quickMessage(name) {
+      showToast(`Opened clarification channel for ${name}`);
+    }
+
+    function handleLogout() {
+      showToast('Logging out of AICTE PRAMAN Portal...');
+    }
+
+    function toggleNotificationBadge() {
+      const dot = document.getElementById('unreadNotifDot');
+      if (dot) dot.classList.toggle('hidden');
+      showToast('Regulatory notifications marked as read');
+    }
+
+    function toggleSettingsModal() {
+      showToast('Opening AICTE System Preferences');
+    }
+
+    function toggleUserDropdown() {
+      showToast(`Active User Profile: ${dataStore.currentRole === 'officer' ? 'Sara Abraham (Senior Scrutiny Officer)' : 'Dr. V. Kulkarni (Principal SVIT)'}`);
+    }
+
+    // Toast notification handler
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('toastMessage');
+      const text = document.getElementById('toastText');
+      text.innerText = msg;
+      
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 2600);
+    }
+
+    // Close menus on outside click
+    window.addEventListener('click', function(e) {
+      const menu = document.getElementById('quickActionMenu');
+      if (menu && !menu.contains(e.target) && !e.target.closest('#btnActionLabel')) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    // Initialize layout
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSidebar();
+      renderTable();
+    });
+  </script>
+<!-- END: Application Scripts -->
+</body></html>

@@ -1,0 +1,6 @@
+{
+  "name": "AICTE PRAMAN",
+  "description": "AICTE VerifyAI - AI-powered regulatory application validation, document OCR cross-verification, and decision support platform.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

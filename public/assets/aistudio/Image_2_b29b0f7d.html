@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AICTE PRAMAN - Portal for Regulatory Approval &amp; Monitoring</title>
+<!-- Google Fonts: Red Hat Display & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Red+Hat+Display:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'page-canvas': '#D9DBFB',
+            'main-canvas': '#F4F5FE',
+            'primary-blue': '#4F63E8',
+            'primary-dark': '#4458DC',
+            'primary-soft': '#EEF0FD',
+            'navy-dark': '#1F2350',
+            'text-muted': '#8C91AB',
+            'border-light': '#ECEDF7',
+            'status-green': '#3DBE8B',
+            'status-orange': '#F59A3C',
+            'status-red': '#F0566A',
+            'status-teal': '#5FD0C0'
+          },
+          fontFamily: {
+            sans: ['"Red Hat Display"', 'Inter', 'sans-serif'],
+          },
+          boxShadow: {
+            'app-shell': '0 30px 60px rgba(79, 99, 232, 0.22)',
+            'card-soft': '0 8px 24px rgba(140, 145, 171, 0.08)',
+            'pill-active': '0 6px 16px rgba(79, 99, 232, 0.35)',
+            'row-selected': '0 8px 20px rgba(79, 99, 232, 0.28)'
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom Styles -->
+<style data-purpose="base-layout">
+    body {
+      background-color: #D9DBFB;
+      font-family: 'Red Hat Display', 'Inter', sans-serif;
+      color: #1F2350;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* Custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #F4F5FE;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #CCD1ED;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #4F63E8;
+    }
+
+    /* Active vertical sidebar marker indicator */
+    .nav-active-indicator {
+      position: relative;
+    }
+    .nav-active-indicator::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      width: 3.5px;
+      background-color: #4F63E8;
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+  </style>
+<style data-purpose="micro-interactions">
+    .transition-all-200 {
+      transition: all 0.2s ease-in-out;
+    }
+    .hover-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(79, 99, 232, 0.12);
+    }
+    .selected-table-row {
+      background-color: #4F63E8 !important;
+      color: #FFFFFF !important;
+      border-radius: 6px;
+      box-shadow: 0 6px 18px rgba(79, 99, 232, 0.28);
+    }
+    .selected-table-row td, 
+    .selected-table-row span,
+    .selected-table-row p {
+      color: #FFFFFF !important;
+    }
+  </style>
+<!-- END: Custom Styles -->
+</head>
+<body class="min-h-screen p-3 md:p-6 lg:p-8 flex items-center justify-center selection:bg-indigo-100 selection:text-primary-blue">
+<!-- BEGIN: Master Application Shell (Hireism Architecture Container) -->
+<main class="w-full max-w-[1340px] bg-white rounded-[40px] shadow-app-shell overflow-hidden flex flex-col xl:flex-row min-h-[820px] border border-white/60">
+<!-- BEGIN: Left Sidebar Navigation (~205px) -->
+<aside class="w-full xl:w-[210px] bg-white flex flex-col justify-between py-6 shrink-0 border-r border-[#F0F1FA]" data-purpose="sidebar-nav">
+<div>
+<!-- Brand Logo -->
+<div class="px-6 flex items-center gap-2.5 mb-7 cursor-pointer" onclick="switchNav('dashboard')">
+<div class="w-8 h-8 rounded-full bg-[#4F63E8] flex items-center justify-center text-white shadow-md shadow-indigo-300">
+<!-- Emblem Logo Icon -->
+<svg class="w-4 h-4 fill-current" viewbox="0 0 24 24">
+<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+</svg>
+</div>
+<div>
+<div class="flex items-center gap-1">
+<span class="font-extrabold text-[15px] text-navy-dark tracking-tight leading-none">PRAMAN</span>
+</div>
+<span class="text-[8.5px] font-semibold text-text-muted uppercase tracking-wider block mt-0.5">AICTE Verification</span>
+</div>
+</div>
+<!-- Dynamic Navigation Links -->
+<nav class="space-y-0.5" id="sidebar-nav-container">
+<!-- Rendered via JS -->
+</nav>
+</div>
+<!-- Pinned Footer at Bottom -->
+<div class="px-6 pt-4 border-t border-[#F4F5FE]">
+<button class="flex items-center gap-3 text-text-muted hover:text-navy-dark text-[11.5px] font-semibold transition-colors duration-150 w-full py-1.5 group" onclick="handleLogout()">
+<svg class="w-4 h-4 text-text-muted group-hover:text-primary-blue transition-colors" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>Logout</span>
+</button>
+<div class="mt-3 bg-primary-soft rounded-lg p-2.5 text-[9.5px] text-[#4F63E8] font-medium leading-tight">
+<span class="font-bold">v3.4 Production</span><br/>
+<span class="text-text-muted">Connected to AICTE Digilocker</span>
+</div>
+</div>
+</aside>
+<!-- END: Left Sidebar Navigation -->
+<!-- BEGIN: Center Workspace (~820px) -->
+<section class="flex-1 bg-[#F4F5FE] p-5 sm:p-6 lg:p-7 flex flex-col justify-between overflow-x-hidden" data-purpose="center-main-workspace">
+<div>
+<!-- Top Workspace Bar: Search + Quick Add & Interactive Role Toggle -->
+<header class="flex flex-wrap items-center justify-between gap-3 mb-5" data-purpose="workspace-header">
+<!-- Search Bar -->
+<div class="relative flex-1 min-w-[240px] max-w-[380px]">
+<input class="w-full h-9 pl-3.5 pr-8 bg-white text-[11.5px] font-medium text-navy-dark placeholder:text-[#9EA3BE] rounded-lg border-0 shadow-sm focus:ring-2 focus:ring-primary-blue focus:outline-none transition-all" id="globalSearchInput" oninput="handleSearch(this.value)" placeholder="Search application ID, college code, tag..." type="text"/>
+<svg class="w-3.5 h-3.5 text-[#9EA3BE] absolute right-3 top-2.5 pointer-events-none" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+</svg>
+</div>
+<!-- Controls: Role Selector Pills & Primary Action Button -->
+<div class="flex items-center gap-2.5">
+<!-- Perspective Toggle Pill -->
+<div class="bg-white p-1 rounded-lg shadow-sm flex items-center text-[10.5px] font-bold border border-border-light">
+<button class="px-2.5 py-1 rounded bg-primary-blue text-white shadow-xs transition-all" id="btnRoleOfficer" onclick="switchRole('officer')">AICTE Officer</button>
+<button class="px-2.5 py-1 rounded text-text-muted hover:text-navy-dark transition-all" id="btnRoleInst" onclick="switchRole('institution')">Institution</button>
+</div>
+<!-- "Add New" Dropdown Button -->
+<div class="relative">
+<button class="h-9 px-3.5 bg-primary-blue hover:bg-primary-dark text-white rounded-lg text-[11px] font-bold flex items-center gap-1.5 shadow-sm transition-all" onclick="toggleActionMenu()">
+<span id="btnActionLabel">Add New ▾</span>
+</button>
+<!-- Dropdown popup -->
+<div class="hidden absolute right-0 mt-1 w-48 bg-white rounded-xl shadow-lg border border-border-light py-1 z-30 text-[11px] font-medium text-navy-dark" id="quickActionMenu">
+<a class="block px-3 py-1.5 hover:bg-primary-soft hover:text-primary-blue" href="javascript:void(0)" onclick="openReportModal()">Open Full AI Report</a>
+<a class="block px-3 py-1.5 hover:bg-primary-soft hover:text-primary-blue" href="javascript:void(0)" onclick="filterByDocType('Mismatch')">Filter Discrepancies</a>
+<a class="block px-3 py-1.5 hover:bg-primary-soft hover:text-primary-blue" href="javascript:void(0)" onclick="openReportModal()">Initiate New Scrutiny</a>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Workspace Content Area -->
+<div id="main-content-area">
+<!-- BEGIN: Hero Banner with Stylized Vector Backdrop -->
+<div class="relative w-full rounded-2xl bg-gradient-to-r from-[#5B6EF0] to-[#4557DC] p-5 sm:p-6 text-white overflow-hidden mb-5 shadow-card-soft" data-purpose="hero-banner">
+<!-- Left Text Content -->
+<div class="relative z-10 max-w-[64%]">
+<h1 class="text-[20px] sm:text-[22px] font-bold tracking-tight text-white mb-1" id="hero-greeting">
+      Good Morning, Sara
+    </h1>
+<p class="text-[11px] text-indigo-100 font-normal leading-relaxed mb-4 max-w-md" id="hero-subtext">
+      75 new applications are in your queue. 12 need attention today, 5 have AI-flagged discrepancies.
+    </p>
+<div class="flex items-center gap-2">
+<button class="px-4 py-1.5 bg-white text-[#4F63E8] hover:bg-indigo-50 rounded-md text-[11px] font-bold shadow-sm transition-all hover:shadow-md" onclick="openReportModal()">
+        Review Queue
+      </button>
+<span class="text-[9.5px] text-white/90 bg-white/15 px-2.5 py-1 rounded-md backdrop-blur-xs flex items-center gap-1.5 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-status-green"></span> OCR Engine Active
+      </span>
+</div>
+</div>
+<!-- Right Vector Graphic mimicking Hireism illustration -->
+<div class="absolute right-0 bottom-0 top-0 w-[38%] flex items-end justify-center pointer-events-none select-none overflow-hidden">
+<div class="absolute -right-4 top-1 w-36 h-36 bg-white/10 rounded-full blur-xl"></div>
+<div class="absolute right-12 bottom-0 w-28 h-28 bg-indigo-300/20 rounded-full blur-md"></div>
+<svg class="relative z-10 w-44 h-40 max-w-full drop-shadow-md" fill="none" viewbox="0 0 200 180" xmlns="http://www.w3.org/2000/svg">
+<path d="M120 180C120 130 160 100 180 80C160 110 165 150 160 180H120Z" fill="#7588FA" fill-opacity="0.45"></path>
+<path d="M90 180C95 125 130 90 150 70C130 105 130 145 125 180H90Z" fill="#8DA0FE" fill-opacity="0.35"></path>
+<path d="M60 180C70 135 100 105 120 90C100 115 95 150 90 180H60Z" fill="#A5B5FE" fill-opacity="0.3"></path>
+<ellipse cx="110" cy="175" fill="#3647BA" fill-opacity="0.4" rx="50" ry="6"></ellipse>
+<rect fill="#FFFFFF" height="65" rx="10" width="34" x="95" y="105"></rect>
+<circle cx="112" cy="78" fill="#F8C19D" r="14"></circle>
+<path d="M98 75C98 65 110 63 118 64C126 65 128 72 128 78C128 82 124 85 122 86C122 80 120 74 112 73C104 72 100 78 98 75Z" fill="#1F2350"></path>
+<circle cx="123" cy="67" fill="#1F2350" r="7"></circle>
+<path d="M96 112L87 95C85 91 88 88 91 90L99 104" stroke="#F8C19D" stroke-linecap="round" stroke-width="4"></path>
+<path d="M94 135L128 135L133 148L90 148L94 135Z" fill="#DDE2FB"></path>
+<path d="M94 135L98 116L126 116L128 135Z" fill="#EEF2FF" stroke="#C5CEF8" stroke-width="1"></path>
+<circle cx="112" cy="125" fill="#4F63E8" r="2.5"></circle>
+</svg>
+</div>
+</div>
+<!-- END: Hero Banner -->
+<!-- BEGIN: Category Cards Row (5 Cards) -->
+<div class="mb-5">
+<div class="flex items-center justify-between mb-2.5">
+<h2 class="text-[13px] font-bold text-navy-dark tracking-tight" id="category-section-title">You Need to Validate</h2>
+<button class="text-[10px] font-bold text-primary-blue hover:text-primary-dark transition-colors bg-white px-2 py-0.5 rounded shadow-xs" onclick="resetFilters()">
+      View All
+    </button>
+</div>
+<!-- 5 Cards Container -->
+<div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5" id="categoryCardsGrid">
+<!-- Card 1: Document Mismatches -->
+<div class="hover-card bg-white rounded-xl p-3 flex flex-col items-center text-center cursor-pointer border border-transparent hover:border-indigo-100 transition-all-200 shadow-card-soft" onclick="filterByStatus('Mismatch')">
+<div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#3D52E6] to-[#5A6DF0] flex items-center justify-center text-white mb-2 shadow-sm">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<span class="text-[11px] font-bold text-navy-dark leading-tight block">Document Mismatches</span>
+<span class="text-[9.5px] font-medium text-text-muted mt-0.5">(14 Open)</span>
+</div>
+<!-- Card 2: Missing Documents -->
+<div class="hover-card bg-white rounded-xl p-3 flex flex-col items-center text-center cursor-pointer border border-transparent hover:border-indigo-100 transition-all-200 shadow-card-soft" onclick="filterByStatus('Missing')">
+<div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#FF7A45] to-[#FFA940] flex items-center justify-center text-white mb-2 shadow-sm">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M12 9v2m0 4h.01" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<span class="text-[11px] font-bold text-navy-dark leading-tight block">Missing Documents</span>
+<span class="text-[9.5px] font-medium text-text-muted mt-0.5">(9 Pending)</span>
+</div>
+<!-- Card 3: Expiring Certificates -->
+<div class="hover-card bg-white rounded-xl p-3 flex flex-col items-center text-center cursor-pointer border border-transparent hover:border-indigo-100 transition-all-200 shadow-card-soft" onclick="filterByStatus('Expiring')">
+<div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#FF4D4F] to-[#FF7875] flex items-center justify-center text-white mb-2 shadow-sm">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<span class="text-[11px] font-bold text-navy-dark leading-tight block">Expiring Certificates</span>
+<span class="text-[9.5px] font-medium text-text-muted mt-0.5">(6 Expiring)</span>
+</div>
+<!-- Card 4: Suspicious Flags -->
+<div class="hover-card bg-white rounded-xl p-3 flex flex-col items-center text-center cursor-pointer border border-transparent hover:border-indigo-100 transition-all-200 shadow-card-soft" onclick="filterByStatus('Suspicious')">
+<div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#722ED1] to-[#9254DE] flex items-center justify-center text-white mb-2 shadow-sm">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<span class="text-[11px] font-bold text-navy-dark leading-tight block">Suspicious Flags</span>
+<span class="text-[9.5px] font-medium text-text-muted mt-0.5">(4 To Review)</span>
+</div>
+<!-- Card 5: Ready for Decision -->
+<div class="hover-card bg-white rounded-xl p-3 flex flex-col items-center text-center cursor-pointer border border-transparent hover:border-indigo-100 transition-all-200 shadow-card-soft" onclick="filterByStatus('Ready for Decision')">
+<div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#36CFC9] to-[#5CDBD3] flex items-center justify-center text-white mb-2 shadow-sm">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<span class="text-[11px] font-bold text-navy-dark leading-tight block">Ready for Decision</span>
+<span class="text-[9.5px] font-medium text-text-muted mt-0.5">(11 Cases)</span>
+</div>
+</div>
+</div>
+<!-- END: Category Cards Row -->
+<!-- BEGIN: Two-Column Section (Generated Validation Report + AI Suggestions) -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5" data-purpose="validation-preview-and-ai">
+<!-- LEFT CARD: Generated Validation Report -->
+<div class="bg-white rounded-xl p-4 shadow-card-soft border border-border-light flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between gap-2 mb-3">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<h3 class="text-[12.5px] font-bold text-navy-dark leading-snug">Sri Venkateswara Institute of Technology, Pune</h3>
+<span class="text-[9px] bg-indigo-50 text-primary-blue font-bold px-1.5 py-0.5 rounded">Extension of Approval</span>
+</div>
+<p class="text-[10px] text-text-muted mt-0.5">Application ID: <span class="font-semibold text-navy-dark">AICTE-2026-04821</span></p>
+</div>
+<!-- Radial Gauge / Circular Progress Ring -->
+<div class="flex items-center gap-2 shrink-0 bg-[#F8F9FE] px-2.5 py-1.5 rounded-lg border border-indigo-50">
+<div class="relative w-8 h-8 flex items-center justify-center">
+<svg class="w-8 h-8 transform -rotate-90" viewbox="0 0 36 36">
+<path class="text-[#E8EAF5]" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-width="3.5"></path>
+<path class="text-primary-blue" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke="currentColor" stroke-dasharray="87, 100" stroke-linecap="round" stroke-width="3.5"></path>
+</svg>
+<span class="absolute text-[8.5px] font-extrabold text-primary-blue">87%</span>
+</div>
+<div class="leading-none text-left">
+<span class="text-[10px] font-bold text-navy-dark block">87%</span>
+<span class="text-[8px] text-text-muted">AI Confidence</span>
+</div>
+</div>
+</div>
+<!-- 5 Stat Chips Strip -->
+<div class="flex items-center gap-1.5 flex-wrap mb-3">
+<span class="px-2 py-0.5 rounded text-[9.5px] font-bold bg-[#EAFBF3] text-status-green">Passed 28</span>
+<span class="px-2 py-0.5 rounded text-[9.5px] font-bold bg-[#FEEBED] text-status-red">Missing 2</span>
+<span class="px-2 py-0.5 rounded text-[9.5px] font-bold bg-[#FFF5EB] text-status-orange">Mismatch 3</span>
+<span class="px-2 py-0.5 rounded text-[9.5px] font-bold bg-[#FFF1F0] text-[#CF1322]">Expired 1</span>
+<span class="px-2 py-0.5 rounded text-[9.5px] font-bold bg-[#F3F0FF] text-[#722ED1]">Suspicious 1</span>
+</div>
+<!-- Top 3 Findings list with colored status dots -->
+<div class="space-y-1.5 mb-3 bg-[#FAF8FF] p-2.5 rounded-lg border border-[#EEF0FD]">
+<div class="flex items-center gap-2 text-[10.5px]">
+<span class="w-2 h-2 rounded-full bg-status-orange shrink-0"></span>
+<span class="text-navy-dark font-medium">Address mismatch: Affidavit vs Land Document (Page 3)</span>
+</div>
+<div class="flex items-center gap-2 text-[10.5px]">
+<span class="w-2 h-2 rounded-full bg-status-red shrink-0"></span>
+<span class="text-navy-dark font-medium">Fire NOC expired on 12 Mar 2026</span>
+</div>
+<div class="flex items-center gap-2 text-[10.5px]">
+<span class="w-2 h-2 rounded-full bg-status-teal shrink-0"></span>
+<span class="text-navy-dark font-medium">Faculty ratio below norm for 2 programs</span>
+</div>
+</div>
+</div>
+<!-- Bottom Action Buttons -->
+<div class="flex items-center gap-2 pt-2 border-t border-border-light">
+<button class="px-3.5 py-1.5 bg-primary-blue hover:bg-primary-dark text-white rounded-md text-[10.5px] font-bold shadow-xs transition-colors" onclick="openReportModal()">
+        View Full Report
+      </button>
+<button class="px-3 py-1.5 bg-white hover:bg-gray-50 border border-border-light text-navy-dark rounded-md text-[10.5px] font-bold transition-colors" onclick="showToast('Exporting Dossier PDF for SVIT Pune...')">
+        Export PDF
+      </button>
+</div>
+</div>
+<!-- RIGHT CARD: AI Suggestions -->
+<div class="bg-white rounded-xl p-4 shadow-card-soft border border-border-light flex flex-col justify-between">
+<div>
+<!-- Header with sparkler/robot icon -->
+<div class="flex items-center justify-between mb-2.5">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 rounded-md bg-indigo-50 flex items-center justify-center text-primary-blue">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</div>
+<h3 class="text-[12.5px] font-bold text-navy-dark">AI Suggestions</h3>
+</div>
+<span class="text-[9.5px] font-semibold text-primary-blue bg-primary-soft px-2 py-0.5 rounded">4 Recommendations</span>
+</div>
+<!-- 4 suggestion items with icon, clear description, and Apply button -->
+<div class="space-y-2">
+<div class="p-2 rounded-lg bg-[#FAF8FF] border border-[#EEF0FD] flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 overflow-hidden">
+<svg class="w-3.5 h-3.5 text-primary-blue shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<p class="text-[10px] text-navy-dark font-medium truncate">Seek clarification on address mismatch before approval</p>
+</div>
+<button class="px-2 py-0.5 rounded bg-white hover:bg-primary-soft text-primary-blue border border-indigo-100 text-[9.5px] font-bold shrink-0 transition-colors" onclick="applySuggestion('Address Clarification Notice Generated')">Apply</button>
+</div>
+<div class="p-2 rounded-lg bg-[#FAF8FF] border border-[#EEF0FD] flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 overflow-hidden">
+<svg class="w-3.5 h-3.5 text-status-orange shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<p class="text-[10px] text-navy-dark font-medium truncate">Request updated Fire NOC from the institution</p>
+</div>
+<button class="px-2 py-0.5 rounded bg-white hover:bg-primary-soft text-primary-blue border border-indigo-100 text-[9.5px] font-bold shrink-0 transition-colors" onclick="applySuggestion('Fire Safety Re-upload Triggered')">Apply</button>
+</div>
+<div class="p-2 rounded-lg bg-[#FAF8FF] border border-[#EEF0FD] flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 overflow-hidden">
+<svg class="w-3.5 h-3.5 text-[#722ED1] shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<p class="text-[10px] text-navy-dark font-medium truncate">Recommend physical inspection for lab facilities (evidence insufficient)</p>
+</div>
+<button class="px-2 py-0.5 rounded bg-white hover:bg-primary-soft text-primary-blue border border-indigo-100 text-[9.5px] font-bold shrink-0 transition-colors" onclick="applySuggestion('Inspection Scheduled in Docket')">Apply</button>
+</div>
+<div class="p-2 rounded-lg bg-[#FAF8FF] border border-[#EEF0FD] flex items-center justify-between gap-2">
+<div class="flex items-center gap-2 overflow-hidden">
+<svg class="w-3.5 h-3.5 text-status-red shrink-0" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<p class="text-[10px] text-navy-dark font-medium truncate">Document 7 is a near-duplicate of a file in another application: manual review</p>
+</div>
+<button class="px-2 py-0.5 rounded bg-white hover:bg-primary-soft text-primary-blue border border-indigo-100 text-[9.5px] font-bold shrink-0 transition-colors" onclick="applySuggestion('Marked for Duplicate Audit')">Apply</button>
+</div>
+</div>
+</div>
+<div class="pt-2 border-t border-border-light">
+<p class="text-[9px] text-text-muted italic leading-tight">
+        * AI results are decision support. Final decision rests with the authorized officer.
+      </p>
+</div>
+</div>
+</div>
+<!-- END: Two-Column Section -->
+<!-- BEGIN: Data Table ("AICTE Validation Progress") -->
+<div class="bg-white rounded-2xl p-4 shadow-card-soft" data-purpose="validation-table-card">
+<div class="flex items-center justify-between mb-3 px-1">
+<h2 class="text-[13px] font-bold text-navy-dark tracking-tight" id="table-card-title">AICTE Validation Progress</h2>
+<div class="flex items-center gap-2">
+<button class="w-6 h-6 flex items-center justify-center rounded text-text-muted hover:text-navy-dark hover:bg-gray-100 transition-colors" onclick="toggleTableSort()" title="Filter &amp; Sort">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M3 4h18M6 10h12M9 16h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<button class="text-[10px] font-bold text-primary-blue hover:text-primary-dark transition-colors px-1" onclick="resetFilters()">
+        View All
+      </button>
+</div>
+</div>
+<!-- Table responsive wrapper -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="mainValidationTable">
+<thead>
+<tr class="text-[10.5px] font-bold text-text-muted border-b border-[#F4F5FE]">
+<th class="pb-2.5 pl-3 font-semibold">Institution</th>
+<th class="pb-2.5 font-semibold">Application Type</th>
+<th class="pb-2.5 font-semibold">Documents</th>
+<th class="pb-2.5 font-semibold">AI Confidence</th>
+<th class="pb-2.5 font-semibold">Status</th>
+<th class="pb-2.5 pr-3 text-right font-semibold">
+<span class="sr-only">Actions</span>
+<svg class="w-3.5 h-3.5 inline text-text-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</th>
+</tr>
+</thead>
+<tbody class="text-[11.5px] font-medium text-navy-dark divide-y divide-[#F7F8FE]" id="tableRowsBody">
+<!-- Populated via Javascript -->
+</tbody>
+</table>
+</div>
+<!-- Table Footer -->
+<div class="mt-3.5 pt-2 border-t border-[#F4F5FE] flex items-center justify-between text-[9.5px] text-text-muted">
+<span>* AI recommendations are automated decision support. Final authority rests with AICTE Committee.</span>
+<span class="text-primary-blue font-semibold cursor-pointer hover:underline" onclick="openReportModal()">View Detailed Evaluation →</span>
+</div>
+</div>
+<!-- END: Data Table -->
+</div>
+</div>
+<!-- Footer bar of center workspace -->
+<footer class="mt-4 pt-2.5 text-[10px] text-text-muted flex items-center justify-between border-t border-[#E8EAF5]">
+<span>PRAMAN Engine: NLP Model v4.11.2 (Spatial Coordinate OCR)</span>
+<div class="flex items-center gap-3">
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-status-green"></span> 98.4% Match rate</span>
+<span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-status-orange"></span> 3 Pending inspections</span>
+</div>
+</footer>
+</section>
+<!-- END: Center Workspace -->
+<!-- BEGIN: Right Information Panel (~265px) -->
+<aside class="w-full xl:w-[270px] bg-white p-5 flex flex-col justify-between shrink-0 border-l border-[#F0F1FA]" data-purpose="right-sidebar">
+<div>
+<!-- Top Profile & Notifications Bar -->
+<div class="flex items-center justify-between mb-5 pb-1" data-purpose="user-header">
+<div class="flex items-center gap-3 text-text-muted">
+<button class="hover:text-primary-blue transition-colors" onclick="toggleSettingsModal()" title="Settings">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+<path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+</button>
+<button class="hover:text-primary-blue transition-colors relative" onclick="toggleNotificationBadge()" title="Notifications">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span class="absolute -top-1 -right-0.5 w-2 h-2 rounded-full bg-status-red ring-2 ring-white" id="unreadNotifDot"></span>
+</button>
+</div>
+<div class="flex items-center gap-2 text-right cursor-pointer" onclick="toggleUserDropdown()">
+<div>
+<span class="text-[12px] font-bold text-navy-dark leading-tight block" id="headerUserName">Sara Abraham</span>
+<span class="text-[9.5px] text-text-muted hover:text-primary-blue transition-colors block" id="headerUserSubtitle">View profile</span>
+</div>
+<div class="w-8 h-8 rounded-full overflow-hidden border-2 border-indigo-100 shrink-0">
+<img alt="Sara Abraham" class="w-full h-full object-cover" id="userAvatarImg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDLAtlEjxcEq0SClXdIeZMYBBkkWeS0R3JJqbUVvc7hR0D7BjNFjqDb5gP7Esd60YTlrtYTHnpx51EpfLoHxcKyXvBHstx8_jPtNkHJ-QhghPCHQKVXwOWk_3XmzCXOnxTQoubfKVZROud6mXeWg8BkstaL6hPaIE5OTAYfZT3MC4PsHtKh5a9N_T-dvBn62bovANjOU5A-Nue_Fn9dySeAxuotlprWPQNpP88I3a8akdAUBi2_aOWgdQ"/>
+</div>
+</div>
+</div>
+<!-- Schedule / Review Schedule Calendar Section -->
+<div class="mb-5" data-purpose="calendar-widget">
+<div class="flex items-center justify-between mb-2.5">
+<div class="flex items-center gap-1.5">
+<span class="text-[12px] font-bold text-navy-dark">Review Schedule</span>
+<div class="flex items-center text-text-muted text-[10px] space-x-0.5 ml-0.5">
+<button class="hover:text-primary-blue">&lt;</button>
+<button class="hover:text-primary-blue">&gt;</button>
+</div>
+</div>
+<!-- Month Pill -->
+<button class="text-[10px] font-bold text-navy-dark bg-[#F4F5FE] hover:bg-indigo-50 px-2 py-0.5 rounded flex items-center gap-1 transition-colors">
+<svg class="w-3 h-3 text-text-muted" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<span>May</span>
+</button>
+</div>
+<!-- Calendar Days Row (Mon 22 to Fri 26) -->
+<div class="grid grid-cols-5 gap-1.5 text-center">
+<!-- Mon 22 -->
+<div class="py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all">
+<span class="text-[9px] font-semibold text-text-muted block">Mon</span>
+<span class="text-[12px] font-bold text-navy-dark">22</span>
+<div class="w-1 h-1 rounded-full bg-status-green mx-auto mt-1" title="Scheduled Inspection"></div>
+</div>
+<!-- Tue 23 -->
+<div class="py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all">
+<span class="text-[9px] font-semibold text-text-muted block">Tue</span>
+<span class="text-[12px] font-bold text-navy-dark">23</span>
+<div class="w-1 h-1 rounded-full bg-status-orange mx-auto mt-1" title="Discrepancy Review"></div>
+</div>
+<!-- Wed 24 (ACTIVE SOLID INDIGO PILL) -->
+<div class="py-2 rounded-xl bg-primary-blue text-white shadow-pill-active cursor-pointer">
+<span class="text-[9px] font-semibold text-white/80 block">Wed</span>
+<span class="text-[12px] font-bold text-white">24</span>
+<div class="w-1 h-1 rounded-full bg-white mx-auto mt-1"></div>
+</div>
+<!-- Thu 25 -->
+<div class="py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all">
+<span class="text-[9px] font-semibold text-text-muted block">Thu</span>
+<span class="text-[12px] font-bold text-navy-dark">25</span>
+<div class="w-1 h-1 rounded-full bg-transparent mx-auto mt-1"></div>
+</div>
+<!-- Fri 26 -->
+<div class="py-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-all">
+<span class="text-[9px] font-semibold text-text-muted block">Fri</span>
+<span class="text-[12px] font-bold text-navy-dark">26</span>
+<div class="w-1 h-1 rounded-full bg-status-red mx-auto mt-1" title="Decision Deadline"></div>
+</div>
+</div>
+</div>
+<!-- Institution Queries Section -->
+<div class="mb-5" data-purpose="institution-queries-list">
+<div class="flex items-center justify-between mb-2.5">
+<h3 class="text-[12px] font-bold text-navy-dark tracking-tight">Institution Queries</h3>
+<button class="text-[9.5px] font-bold text-primary-blue hover:underline" onclick="showToast('Displaying full query tickets register')">View All</button>
+</div>
+<!-- 5 Query items with colored initials avatars and 2 indigo circular action buttons -->
+<div class="space-y-2.5">
+<!-- 1. SVIT Pune -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-2 overflow-hidden">
+<div class="w-7 h-7 rounded-full bg-indigo-100 text-primary-blue font-bold text-[10px] flex items-center justify-center shrink-0">
+              SV
+            </div>
+<div class="leading-tight truncate">
+<h4 class="text-[11px] font-bold text-navy-dark truncate">SVIT Pune</h4>
+<p class="text-[9px] text-text-muted truncate">Replied: Fire NOC attached</p>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="quickMessage('SVIT Pune')" title="Message Institution">
+<svg class="w-2.5 h-2.5" fill="currentColor" viewbox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+</button>
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="openReportModal()" title="View Submission">
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</div>
+<!-- 2. Sahyadri Engg -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-2 overflow-hidden">
+<div class="w-7 h-7 rounded-full bg-[#FFE7BA] text-[#D46B08] font-bold text-[10px] flex items-center justify-center shrink-0">
+              SE
+            </div>
+<div class="leading-tight truncate">
+<h4 class="text-[11px] font-bold text-navy-dark truncate">Sahyadri Engg</h4>
+<p class="text-[9px] text-text-muted truncate">Query on faculty cadre ratio</p>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="quickMessage('Sahyadri Engg')" title="Message Institution">
+<svg class="w-2.5 h-2.5" fill="currentColor" viewbox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+</button>
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="openReportModal()" title="View Submission">
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</div>
+<!-- 3. Narmada Inst -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-2 overflow-hidden">
+<div class="w-7 h-7 rounded-full bg-[#D9F7BE] text-[#389E0D] font-bold text-[10px] flex items-center justify-center shrink-0">
+              NI
+            </div>
+<div class="leading-tight truncate">
+<h4 class="text-[11px] font-bold text-navy-dark truncate">Narmada Inst</h4>
+<p class="text-[9px] text-text-muted truncate">Clarification submitted: Land deed</p>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="quickMessage('Narmada Inst')" title="Message Institution">
+<svg class="w-2.5 h-2.5" fill="currentColor" viewbox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+</button>
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="openReportModal()" title="View Submission">
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</div>
+<!-- 4. Kaveri Poly -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-2 overflow-hidden">
+<div class="w-7 h-7 rounded-full bg-[#FFD6E7] text-[#C41D7F] font-bold text-[10px] flex items-center justify-center shrink-0">
+              KP
+            </div>
+<div class="leading-tight truncate">
+<h4 class="text-[11px] font-bold text-navy-dark truncate">Kaveri Poly</h4>
+<p class="text-[9px] text-text-muted truncate">Awaiting trust deed amendment</p>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="quickMessage('Kaveri Poly')" title="Message Institution">
+<svg class="w-2.5 h-2.5" fill="currentColor" viewbox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+</button>
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="openReportModal()" title="View Submission">
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</div>
+<!-- 5. Gomti Pharmacy -->
+<div class="flex items-center justify-between group">
+<div class="flex items-center gap-2 overflow-hidden">
+<div class="w-7 h-7 rounded-full bg-[#EFDBFF] text-[#531DAB] font-bold text-[10px] flex items-center justify-center shrink-0">
+              GP
+            </div>
+<div class="leading-tight truncate">
+<h4 class="text-[11px] font-bold text-navy-dark truncate">Gomti Pharmacy</h4>
+<p class="text-[9px] text-text-muted truncate">Floor plan coordinates uploaded</p>
+</div>
+</div>
+<div class="flex items-center gap-1 shrink-0">
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="quickMessage('Gomti Pharmacy')" title="Message Institution">
+<svg class="w-2.5 h-2.5" fill="currentColor" viewbox="0 0 20 20"><path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"></path><path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"></path></svg>
+</button>
+<button class="w-5 h-5 rounded-full bg-primary-blue text-white flex items-center justify-center hover:bg-primary-dark transition-colors" onclick="openReportModal()" title="View Submission">
+<svg class="w-2.5 h-2.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path></svg>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom Section: Ready For Decision (3 Cards) -->
+<div data-purpose="decision-cards-section">
+<div class="flex items-center justify-between mb-2">
+<h3 class="text-[12px] font-bold text-navy-dark tracking-tight">Ready For Decision</h3>
+<button class="text-[9.5px] font-bold text-primary-blue hover:underline" onclick="showToast('Loading Committee Approvals docket')">View All</button>
+</div>
+<div class="grid grid-cols-3 gap-1.5">
+<!-- Card 1: IIT Delhi Extension -->
+<div class="bg-[#F8F9FE] hover:bg-[#EEF1FD] transition-colors rounded-xl p-2 flex flex-col items-center text-center">
+<div class="w-6 h-6 rounded-full bg-indigo-200 text-primary-blue font-extrabold text-[9px] flex items-center justify-center mb-1 border border-white">
+          IIT
+        </div>
+<h5 class="text-[9px] font-bold text-navy-dark truncate w-full leading-tight">IIT Delhi Ext.</h5>
+<span class="text-[7.5px] text-text-muted truncate w-full block mb-1.5">New Delhi</span>
+<button class="w-full py-0.5 bg-primary-blue hover:bg-primary-dark text-white text-[8px] font-bold rounded transition-colors shadow-xs" onclick="executeApprove('IIT Delhi Extension')">
+          Approve
+        </button>
+</div>
+<!-- Card 2: BITS Pilani Off-Campus -->
+<div class="bg-[#F8F9FE] hover:bg-[#EEF1FD] transition-colors rounded-xl p-2 flex flex-col items-center text-center">
+<div class="w-6 h-6 rounded-full bg-emerald-100 text-status-green font-extrabold text-[9px] flex items-center justify-center mb-1 border border-white">
+          BITS
+        </div>
+<h5 class="text-[9px] font-bold text-navy-dark truncate w-full leading-tight">BITS Pilani</h5>
+<span class="text-[7.5px] text-text-muted truncate w-full block mb-1.5">Goa</span>
+<button class="w-full py-0.5 bg-primary-blue hover:bg-primary-dark text-white text-[8px] font-bold rounded transition-colors shadow-xs" onclick="executeApprove('BITS Pilani Off-Campus')">
+          Approve
+        </button>
+</div>
+<!-- Card 3: NIT Trichy PG Center -->
+<div class="bg-[#F8F9FE] hover:bg-[#EEF1FD] transition-colors rounded-xl p-2 flex flex-col items-center text-center">
+<div class="w-6 h-6 rounded-full bg-amber-100 text-[#D46B08] font-extrabold text-[9px] flex items-center justify-center mb-1 border border-white">
+          NIT
+        </div>
+<h5 class="text-[9px] font-bold text-navy-dark truncate w-full leading-tight">NIT Trichy</h5>
+<span class="text-[7.5px] text-text-muted truncate w-full block mb-1.5">Tiruchirappalli</span>
+<button class="w-full py-0.5 bg-primary-blue hover:bg-primary-dark text-white text-[8px] font-bold rounded transition-colors shadow-xs" onclick="executeApprove('NIT Trichy PG Center')">
+          Approve
+        </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Small legal stamp badge in right sidebar -->
+<div class="pt-3 text-center">
+<span class="text-[8.5px] text-text-muted font-medium">Digital Signature Verified • Section 10(k)</span>
+</div>
+</aside>
+<!-- END: Right Information Panel -->
+</main>
+<!-- END: Master Application Shell -->
+<!-- BEGIN: Interactive AI Report & Officer Evaluation Modal -->
+<div class="fixed inset-0 bg-navy-dark/60 backdrop-blur-xs flex items-center justify-center p-4 z-50 hidden" data-purpose="officer-detail-modal" id="reportDetailModal">
+<div class="bg-white rounded-3xl w-full max-w-4xl max-h-[90vh] overflow-y-auto shadow-2xl border border-indigo-100 flex flex-col">
+<!-- Modal Header -->
+<div class="p-5 sm:p-6 border-b border-[#F0F1FA] flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur z-20">
+<div>
+<div class="flex items-center gap-2 flex-wrap">
+<span class="px-2 py-0.5 rounded text-[10px] font-bold bg-indigo-100 text-primary-blue">AICTE-2026-04821</span>
+<h3 class="text-base font-bold text-navy-dark">Automated Verification Dossier: Sri Venkateswara Institute of Technology</h3>
+</div>
+<p class="text-[11px] text-text-muted mt-0.5">Scanned on May 24, 2025 • Spatial Coordinate NLP Engine • Overall Confidence: 87%</p>
+</div>
+<button class="w-8 h-8 rounded-full bg-[#F4F5FE] hover:bg-gray-200 text-navy-dark flex items-center justify-center font-bold text-sm" onclick="closeReportModal()">
+      ✕
+    </button>
+</div>
+<!-- Modal Body -->
+<div class="p-6 space-y-5">
+<!-- Summary Alert Box -->
+<div class="bg-[#FFF8E6] border border-[#FFE7BA] rounded-xl p-4 flex items-start gap-3">
+<div class="w-6 h-6 rounded-full bg-status-orange text-white flex items-center justify-center shrink-0 text-xs font-bold">!</div>
+<div>
+<h4 class="text-xs font-bold text-[#873800]">Needs Manual Review: Address &amp; Fire Safety Certificate</h4>
+<p class="text-[11px] text-[#AD4E00] leading-relaxed mt-0.5">
+          Spatial coordinate extraction identified an address discrepancy between Land Title Deed (Survey No. 42/8B, Wagholi, Pune) and Municipal Affidavit (Survey No. 42/8A). Additionally, the Fire Safety NOC expired on 12 Mar 2026.
+        </p>
+</div>
+</div>
+<!-- Side-by-Side OCR Coordinate Inspection -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Column 1: Extracted OCR Coordinates -->
+<div class="bg-[#F8F9FE] p-4 rounded-xl border border-indigo-50">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[11px] font-bold text-primary-blue uppercase tracking-wider">Spatial Coordinate Extracted Data</span>
+<span class="text-[9px] bg-status-green/10 text-status-green font-bold px-1.5 py-0.5 rounded">QR Tamper-Proof</span>
+</div>
+<ul class="text-[11.5px] space-y-2 text-navy-dark">
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">Land Survey No:</span>
+<span class="font-semibold text-status-orange font-bold">Survey 42/8B, Wagholi</span>
+</li>
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">FAR Floor Space:</span>
+<span class="font-semibold">14,200 sq.m</span>
+</li>
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">Fire Safety NOC:</span>
+<span class="font-semibold text-status-red font-bold">Expired: 12 Mar 2026</span>
+</li>
+<li class="flex justify-between py-1">
+<span class="text-text-muted">Faculty Count:</span>
+<span class="font-semibold text-status-teal font-bold">1:18 Ratio (Norm 1:15)</span>
+</li>
+</ul>
+</div>
+<!-- Column 2: Institutional Claim & Self-Declaration -->
+<div class="bg-[#F8F9FE] p-4 rounded-xl border border-indigo-50">
+<div class="flex items-center justify-between mb-2">
+<span class="text-[11px] font-bold text-navy-dark uppercase tracking-wider">Institutional Sworn Declaration</span>
+<span class="text-[9px] bg-indigo-50 text-primary-blue font-bold px-1.5 py-0.5 rounded">Stamped &amp; Notarized</span>
+</div>
+<ul class="text-[11.5px] space-y-2 text-navy-dark">
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">Land Survey No:</span>
+<span class="font-semibold text-navy-dark font-bold">Survey 42/8A (Mismatch)</span>
+</li>
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">FAR Floor Space:</span>
+<span class="font-semibold text-navy-dark">14,200 sq.m</span>
+</li>
+<li class="flex justify-between py-1 border-b border-gray-100">
+<span class="text-text-muted">Fire Safety NOC:</span>
+<span class="font-semibold text-navy-dark">Claimed Active in Annexure</span>
+</li>
+<li class="flex justify-between py-1">
+<span class="text-text-muted">Faculty Count:</span>
+<span class="font-semibold text-navy-dark">Claimed 1:15 Ratio</span>
+</li>
+</ul>
+</div>
+</div>
+<!-- Regulatory Rule Compliance Checks -->
+<div>
+<h4 class="text-xs font-bold text-navy-dark mb-2.5">Rule Compliance Engine Checks</h4>
+<div class="space-y-2 text-[11px]">
+<div class="flex items-center justify-between p-2.5 bg-green-50/70 rounded-lg border border-green-100">
+<div class="flex items-center gap-2">
+<span class="w-4 h-4 rounded-full bg-status-green text-white flex items-center justify-center text-[10px]">✓</span>
+<span class="font-medium text-navy-dark">Contiguous Land Requirement (Min 2.5 Acres for Pune Urban)</span>
+</div>
+<span class="font-bold text-status-green">Satisfied (3.1 Acres)</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-amber-50/70 rounded-lg border border-amber-100">
+<div class="flex items-center gap-2">
+<span class="w-4 h-4 rounded-full bg-status-orange text-white flex items-center justify-center text-[10px]">!</span>
+<span class="font-medium text-navy-dark">Barrier-Free Infrastructure (Ramps, Lifts &amp; Braille Indicators)</span>
+</div>
+<span class="font-bold text-status-orange">Needs Manual Review</span>
+</div>
+<div class="flex items-center justify-between p-2.5 bg-red-50/70 rounded-lg border border-red-100">
+<div class="flex items-center gap-2">
+<span class="w-4 h-4 rounded-full bg-status-red text-white flex items-center justify-center text-[10px]">✕</span>
+<span class="font-medium text-navy-dark">Current Valid Fire Safety NOC</span>
+</div>
+<span class="font-bold text-status-red">Certificate Expired</span>
+</div>
+</div>
+</div>
+<p class="text-[10px] text-text-muted italic bg-gray-50 p-3 rounded-lg border border-gray-100">
+        "AI results are decision support. Final regulatory decision rests exclusively with the authorized AICTE approval bureau officer."
+      </p>
+</div>
+<!-- Modal Footer Officer Actions -->
+<div class="p-4 bg-[#F8F9FE] border-t border-[#F0F1FA] flex items-center justify-between gap-3 sticky bottom-0">
+<button class="px-3.5 py-2 text-status-orange hover:bg-orange-50 border border-orange-200 rounded-lg text-xs font-bold transition-all" onclick="officerActionNotice('Send Clarification')">
+      Send Clarification
+    </button>
+<div class="flex items-center gap-2">
+<button class="px-3.5 py-2 bg-white hover:bg-gray-100 border border-border-light text-navy-dark rounded-lg text-xs font-bold transition-all" onclick="officerActionNotice('Request Inspection')">
+        Request Inspection
+      </button>
+<button class="px-4 py-2 bg-primary-blue hover:bg-primary-dark text-white rounded-lg text-xs font-bold transition-all shadow-sm" onclick="officerActionNotice('Approve to Next Stage')">
+        Approve to Next Stage
+      </button>
+</div>
+</div>
+</div>
+</div>
+<!-- END: Modal -->
+<!-- BEGIN: Toast Notification Element -->
+<div class="fixed bottom-6 right-6 bg-navy-dark text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2 z-50 transform translate-y-24 opacity-0 transition-all duration-300" id="toastMessage">
+<span class="w-2 h-2 rounded-full bg-status-green"></span>
+<span id="toastText">Action completed successfully</span>
+</div>
+<!-- END: Toast Notification Element -->
+<!-- BEGIN: Application Scripts -->
+<script data-purpose="app-logic">
+    // Mock Data Store updated strictly for AICTE Validation Domain
+    const dataStore = {
+      currentRole: 'officer', // 'officer' or 'institution'
+      selectedRowId: 'row-1', // Sri Venkateswara selected by default
+      
+      // Sidebar Navigation Items
+      navOfficer: [
+        { id: 'dashboard', label: 'Dashboard', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z', active: true },
+        { id: 'applications', label: 'Applications', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', active: false },
+        { id: 'validation-reports', label: 'Validation Reports', icon: 'M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', active: false },
+        { id: 'ai-findings', label: 'AI Findings', icon: 'M13 10V3L4 14h7v7l9-11h-7z', active: false },
+        { id: 'clarifications', label: 'Clarifications', icon: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z', active: false },
+        { id: 'inspections', label: 'Inspections', icon: 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z', active: false },
+        { id: 'decisions', label: 'Decisions', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', active: false },
+        { id: 'audit-trail', label: 'Audit Trail', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z', active: false }
+      ],
+
+      navInstitution: [
+        { id: 'dashboard', label: 'Dashboard', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z', active: true },
+        { id: 'applications', label: 'My Applications', icon: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z', active: false },
+        { id: 'documents', label: 'Uploaded Documents', icon: 'M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2', active: false },
+        { id: 'clarifications', label: 'AICTE Queries', icon: 'M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z', active: false },
+        { id: 'decisions', label: 'Approval Status', icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', active: false }
+      ],
+
+      // Strict AICTE Institutions Data Table
+      rows: [
+        {
+          id: 'row-1',
+          institution: 'Sri Venkateswara Institute of Technology, Pune',
+          appType: 'Extension of Approval',
+          documents: '32/36',
+          confidence: '87%',
+          status: 'Needs Review',
+          statusColor: '#5FD0C0' // teal dot
+        },
+        {
+          id: 'row-2',
+          institution: 'Sahyadri College of Engineering, Mangalore',
+          appType: 'New Institution',
+          documents: '28/34',
+          confidence: '64%',
+          status: 'Mismatch',
+          statusColor: '#F59A3C' // orange dot
+        },
+        {
+          id: 'row-3',
+          institution: 'Narmada Institute of Management, Bhopal',
+          appType: 'Change in Program',
+          documents: '18/18',
+          confidence: '94%',
+          status: 'Passed',
+          statusColor: '#3DBE8B' // green dot
+        },
+        {
+          id: 'row-4',
+          institution: 'Kaveri Polytechnic, Madurai',
+          appType: 'Extension of Approval',
+          documents: '21/30',
+          confidence: '58%',
+          status: 'Missing Documents',
+          statusColor: '#F0566A' // red dot
+        },
+        {
+          id: 'row-5',
+          institution: 'Gomti Institute of Pharmacy, Lucknow',
+          appType: 'New Institution',
+          documents: '30/33',
+          confidence: '71%',
+          status: 'Suspicious',
+          statusColor: '#4F63E8' // blue dot
+        },
+        {
+          id: 'row-6',
+          institution: 'Aravali Technical Campus, Jaipur',
+          appType: 'Extension of Approval',
+          documents: '33/33',
+          confidence: '91%',
+          status: 'Ready for Decision',
+          statusColor: '#3DBE8B' // green dot
+        }
+      ]
+    };
+
+    // Render Sidebar Navigation
+    function renderSidebar() {
+      const container = document.getElementById('sidebar-nav-container');
+      const navItems = dataStore.currentRole === 'officer' ? dataStore.navOfficer : dataStore.navInstitution;
+      
+      container.innerHTML = navItems.map(item => {
+        const isActive = item.active;
+        return `
+          <div 
+            onclick="switchNav('${item.id}')"
+            class="group cursor-pointer flex items-center justify-between py-2 px-6 text-[11.5px] font-semibold transition-all duration-150 ${
+              isActive 
+                ? 'bg-primary-soft text-primary-blue nav-active-indicator' 
+                : 'text-text-muted hover:text-navy-dark hover:bg-gray-50'
+            }"
+          >
+            <div class="flex items-center gap-3">
+              <svg class="w-4 h-4 ${isActive ? 'text-primary-blue' : 'text-[#8C91AB] group-hover:text-navy-dark'}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${item.icon}"/>
+              </svg>
+              <span>${item.label}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Render Table Rows
+    function renderTable(filterQuery = '') {
+      const tbody = document.getElementById('tableRowsBody');
+      const filtered = dataStore.rows.filter(r => {
+        if (!filterQuery) return true;
+        const q = filterQuery.toLowerCase();
+        return r.institution.toLowerCase().includes(q) || 
+               r.appType.toLowerCase().includes(q) || 
+               r.status.toLowerCase().includes(q);
+      });
+
+      if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-text-muted text-xs">No matching applications found</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(row => {
+        const isSelected = row.id === dataStore.selectedRowId;
+        const selectedClass = isSelected ? 'selected-table-row' : 'hover:bg-indigo-50/40';
+
+        return `
+          <tr 
+            onclick="selectRow('${row.id}')"
+            class="transition-colors duration-150 cursor-pointer ${selectedClass}"
+          >
+            <!-- Institution -->
+            <td class="py-2.5 pl-3">
+              <span class="font-bold text-[11.5px]">${row.institution}</span>
+            </td>
+
+            <!-- Application Type -->
+            <td class="py-2.5 ${isSelected ? 'text-white/90' : 'text-text-muted'} font-medium text-[11px]">
+              ${row.appType}
+            </td>
+
+            <!-- Documents Fraction -->
+            <td class="py-2.5 ${isSelected ? 'text-white' : 'text-navy-dark'} font-semibold text-[11px]">
+              ${row.documents}
+            </td>
+
+            <!-- AI Confidence -->
+            <td class="py-2.5">
+              <span class="font-bold text-[11px] ${isSelected ? 'text-white' : 'text-primary-blue'}">${row.confidence}</span>
+            </td>
+
+            <!-- Status with Colored Dot -->
+            <td class="py-2.5">
+              <span class="inline-flex items-center gap-1.5 font-medium text-[11px]">
+                <span class="w-1.5 h-1.5 rounded-full shrink-0" style="background-color: ${isSelected ? '#FFFFFF' : row.statusColor};"></span>
+                <span class="${isSelected ? 'text-white' : ''}">${row.status}</span>
+              </span>
+            </td>
+
+            <!-- Three-dots action icon -->
+            <td class="py-2.5 pr-3 text-right">
+              <button onclick="event.stopPropagation(); openReportModal()" class="p-1 hover:opacity-80">
+                <svg class="w-3.5 h-3.5 inline ${isSelected ? 'text-white' : 'text-text-muted'}" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z"/>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // Select row
+    function selectRow(id) {
+      dataStore.selectedRowId = id;
+      renderTable();
+      openReportModal();
+    }
+
+    // Switch Role
+    function switchRole(role) {
+      dataStore.currentRole = role;
+      const btnOfficer = document.getElementById('btnRoleOfficer');
+      const btnInst = document.getElementById('btnRoleInst');
+      const heroGreeting = document.getElementById('hero-greeting');
+      const heroSubtext = document.getElementById('hero-subtext');
+      const userName = document.getElementById('headerUserName');
+      const userSub = document.getElementById('headerUserSubtitle');
+      const avatarImg = document.getElementById('userAvatarImg');
+      const catSectionTitle = document.getElementById('category-section-title');
+      const btnActionLabel = document.getElementById('btnActionLabel');
+
+      if (role === 'officer') {
+        btnOfficer.className = 'px-2.5 py-1 rounded bg-primary-blue text-white shadow-xs transition-all';
+        btnInst.className = 'px-2.5 py-1 rounded text-text-muted hover:text-navy-dark transition-all';
+        heroGreeting.innerText = 'Good Morning, Sara';
+        heroSubtext.innerText = '75 new applications are in your queue. 12 need attention today, 5 have AI-flagged discrepancies.';
+        userName.innerText = 'Sara Abraham';
+        userSub.innerText = 'View profile';
+        avatarImg.src = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80';
+        catSectionTitle.innerText = 'You Need to Validate';
+        btnActionLabel.innerText = 'Add New ▾';
+      } else {
+        btnInst.className = 'px-2.5 py-1 rounded bg-primary-blue text-white shadow-xs transition-all';
+        btnOfficer.className = 'px-2.5 py-1 rounded text-text-muted hover:text-navy-dark transition-all';
+        heroGreeting.innerText = 'Sri Venkateswara IT, Pune';
+        heroSubtext.innerText = 'Your Extension of Approval application for AY 2026-27 is under scrutiny. 2 discrepancies require responses.';
+        userName.innerText = 'Dr. V. Kulkarni';
+        userSub.innerText = 'Principal / Registrar';
+        avatarImg.src = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80';
+        catSectionTitle.innerText = 'Deficiencies to Rectify';
+        btnActionLabel.innerText = 'Upload Doc ▾';
+      }
+
+      renderSidebar();
+      renderTable();
+      showToast(`Switched view to ${role === 'officer' ? 'AICTE Officer' : 'Institution Portal'}`);
+    }
+
+    // Switch Navigation
+    function switchNav(navId) {
+      const navList = dataStore.currentRole === 'officer' ? dataStore.navOfficer : dataStore.navInstitution;
+      navList.forEach(item => item.active = (item.id === navId));
+      renderSidebar();
+      showToast(`Navigated to ${navId.replace('-', ' ').toUpperCase()}`);
+    }
+
+    // Filter table by text search
+    function handleSearch(val) {
+      renderTable(val);
+    }
+
+    // Filter by category status
+    function filterByStatus(statusTerm) {
+      renderTable(statusTerm);
+      showToast(`Filtered queue: ${statusTerm}`);
+    }
+
+    // Filter by doc type / category
+    function filterByDocType(term) {
+      renderTable(term);
+      showToast(`Filtering for: ${term}`);
+    }
+
+    // Reset all filters
+    function resetFilters() {
+      document.getElementById('globalSearchInput').value = '';
+      dataStore.selectedRowId = 'row-1';
+      renderTable();
+      showToast('Showing all applications');
+    }
+
+    // Open/Close Dossier Modal
+    function openReportModal() {
+      const modal = document.getElementById('reportDetailModal');
+      modal.classList.remove('hidden');
+    }
+
+    function closeReportModal() {
+      const modal = document.getElementById('reportDetailModal');
+      modal.classList.add('hidden');
+    }
+
+    function toggleActionMenu() {
+      const menu = document.getElementById('quickActionMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    function toggleTableSort() {
+      dataStore.rows.reverse();
+      renderTable();
+      showToast('Inverted table sorting order');
+    }
+
+    function applySuggestion(actionDesc) {
+      showToast(`AI Suggestion applied: ${actionDesc}`);
+    }
+
+    function executeApprove(instName) {
+      showToast(`Official Approval granted for: ${instName}`);
+    }
+
+    function officerActionNotice(action) {
+      closeReportModal();
+      showToast(`Action dispatched: ${action}`);
+    }
+
+    function quickMessage(name) {
+      showToast(`Opened clarification channel for ${name}`);
+    }
+
+    function handleLogout() {
+      showToast('Logging out of AICTE PRAMAN Portal...');
+    }
+
+    function toggleNotificationBadge() {
+      const dot = document.getElementById('unreadNotifDot');
+      if (dot) dot.classList.toggle('hidden');
+      showToast('Regulatory notifications marked as read');
+    }
+
+    function toggleSettingsModal() {
+      showToast('Opening AICTE System Preferences');
+    }
+
+    function toggleUserDropdown() {
+      showToast(`Active User Profile: ${dataStore.currentRole === 'officer' ? 'Sara Abraham (Senior Scrutiny Officer)' : 'Dr. V. Kulkarni (Principal SVIT)'}`);
+    }
+
+    // Toast notification handler
+    let toastTimer;
+    function showToast(msg) {
+      const toast = document.getElementById('toastMessage');
+      const text = document.getElementById('toastText');
+      text.innerText = msg;
+      
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 2600);
+    }
+
+    // Close menus on outside click
+    window.addEventListener('click', function(e) {
+      const menu = document.getElementById('quickActionMenu');
+      if (menu && !menu.contains(e.target) && !e.target.closest('#btnActionLabel')) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    // Initialize layout
+    document.addEventListener('DOMContentLoaded', () => {
+      renderSidebar();
+      renderTable();
+    });
+  </script>
+<!-- END: Application Scripts -->
+</body></html>
