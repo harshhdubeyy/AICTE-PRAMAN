@@ -110,8 +110,8 @@ aicte-praman/
 ### 1. Clone the repository
 
 ```bash
-git clone <YOUR_GITHUB_REPOSITORY_URL>
-cd aicte-praman
+git clone https://github.com/harshhdubeyy/AICTE-PRAMAN.git
+cd AICTE-PRAMAN
 ```
 
 ### 2. Install dependencies

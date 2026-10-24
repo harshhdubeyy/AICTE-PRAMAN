@@ -8,7 +8,8 @@ import {
   InspectionSchedule,
   AuditEvent,
   InfrastructureFacility,
-  ApplicationType
+  ApplicationType,
+  UserProfile
 } from '../types';
 import {
   SEED_INSTITUTIONS,
@@ -21,8 +22,90 @@ import {
 } from '../data/seedData';
 import { AICTE_RULES, CURRENT_RULESET_VERSION, evaluateApplication } from '../rules/rules';
 
+export const DEFAULT_OFFICER_PROFILES: UserProfile[] = [
+  {
+    name: 'Sara Abraham',
+    email: 'sara.abraham@aicte-india.org',
+    role: 'officer',
+    title: 'Senior Scrutiny Officer (Western Regional Office)',
+    avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80'
+  },
+  {
+    name: 'Dr. Anil Sahasrabudhe',
+    email: 'anil.sahasrabudhe@aicte-india.org',
+    role: 'officer',
+    title: 'Executive Scrutiny Bureau Director (National HQ)',
+    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80'
+  },
+  {
+    name: 'Prof. R. K. Singhal',
+    email: 'rk.singhal@iitb.ac.in',
+    role: 'officer',
+    title: 'Expert Visiting Committee Lead (IIT Bombay)',
+    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&h=120&q=80'
+  }
+];
+
+export const DEFAULT_INSTITUTION_PROFILES: UserProfile[] = [
+  {
+    name: 'Dr. V. Kulkarni',
+    email: 'registrar@svit.ac.in',
+    role: 'institution',
+    title: 'Principal / Registrar',
+    institutionId: 'inst-1',
+    institutionName: 'Sri Venkateswara Institute of Technology, Pune',
+    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80'
+  },
+  {
+    name: 'Dr. Manjunath Bhandary',
+    email: 'principal@sahyadri.edu.in',
+    role: 'institution',
+    title: 'Chairman / Principal',
+    institutionId: 'inst-2',
+    institutionName: 'Sahyadri College of Engineering, Mangalore',
+    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=120&h=120&q=80'
+  },
+  {
+    name: 'Dr. Alok Verma',
+    email: 'director@narmada.ac.in',
+    role: 'institution',
+    title: 'Director / Head of Institute',
+    institutionId: 'inst-3',
+    institutionName: 'Narmada Institute of Management, Bhopal',
+    avatar: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=120&h=120&q=80'
+  },
+  {
+    name: 'Prof. S. Meenakshi',
+    email: 'admin@kaveri.ac.in',
+    role: 'institution',
+    title: 'Principal / Admin In-charge',
+    institutionId: 'inst-4',
+    institutionName: 'Kaveri Polytechnic, Madurai',
+    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=120&h=120&q=80'
+  },
+  {
+    name: 'Dr. R. P. Tiwari',
+    email: 'dean@gomtipharmacy.edu.in',
+    role: 'institution',
+    title: 'Dean of Pharmacy Studies',
+    institutionId: 'inst-5',
+    institutionName: 'Gomti Institute of Pharmacy, Lucknow',
+    avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?auto=format&fit=crop&w=120&h=120&q=80'
+  },
+  {
+    name: 'Dr. K. L. Sharma',
+    email: 'director@aravali.edu.in',
+    role: 'institution',
+    title: 'Campus Director',
+    institutionId: 'inst-6',
+    institutionName: 'Aravali Technical Campus, Jaipur',
+    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=120&h=120&q=80'
+  }
+];
+
 interface AppContextType {
   role: UserRole;
+  currentUser: UserProfile;
   isLoggedIn: boolean;
   activeNav: string;
   currentInstitutionId: string;
@@ -36,6 +119,8 @@ interface AppContextType {
   auditTrail: AuditEvent[];
   facilities: InfrastructureFacility[];
   toast: { text: string; id: number } | null;
+  availableOfficerProfiles: UserProfile[];
+  availableInstitutionProfiles: UserProfile[];
   // UI states
   isReportModalOpen: boolean;
   isLoginModalOpen: boolean;
@@ -62,18 +147,22 @@ interface AppContextType {
   postOfficerNote: (appId: string, note: string) => void;
   applyAiSuggestion: (desc: string) => void;
   showToast: (msg: string) => void;
-  login: (role: UserRole, email: string) => void;
+  login: (profileOrRole: UserProfile | UserRole, email?: string, institutionId?: string, name?: string) => void;
   logout: () => void;
   toggleLoginModal: () => void;
+  registerNewProfile: (profile: UserProfile) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [role, setRole] = useState<UserRole>('officer');
+  const [availableOfficerProfiles, setAvailableOfficerProfiles] = useState<UserProfile[]>(DEFAULT_OFFICER_PROFILES);
+  const [availableInstitutionProfiles, setAvailableInstitutionProfiles] = useState<UserProfile[]>(DEFAULT_INSTITUTION_PROFILES);
+  const [currentUser, setCurrentUser] = useState<UserProfile>(DEFAULT_OFFICER_PROFILES[0]);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(true);
   const [activeNav, setActiveNav] = useState<string>('dashboard');
-  const [currentInstitutionId] = useState<string>('inst-1');
+  const [currentInstitutionId, setCurrentInstitutionId] = useState<string>('inst-1');
   const [selectedAppId, setSelectedAppId] = useState<string>('app-1');
   const [institutions] = useState(SEED_INSTITUTIONS);
   const [applications, setApplications] = useState<Application[]>(SEED_APPLICATIONS);
@@ -545,27 +634,70 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const login = (newRole: UserRole, email: string) => {
-    setRole(newRole);
+  const login = (
+    profileOrRole: UserProfile | UserRole,
+    email?: string,
+    institutionId?: string,
+    name?: string
+  ) => {
+    let resolvedProfile: UserProfile;
+
+    if (typeof profileOrRole === 'object') {
+      resolvedProfile = profileOrRole;
+    } else {
+      const isOfficer = profileOrRole === 'officer';
+      const foundInst = institutions.find(i => i.id === institutionId);
+      resolvedProfile = {
+        name: name || (isOfficer ? 'AICTE Officer' : foundInst?.name || 'Institutional Representative'),
+        email: email || (isOfficer ? 'officer@aicte-india.org' : 'admin@institution.edu.in'),
+        role: profileOrRole,
+        title: isOfficer ? 'Scrutiny Officer' : 'Registrar / Principal',
+        avatar: isOfficer
+          ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80'
+          : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80',
+        institutionId: institutionId || (profileOrRole === 'institution' ? 'inst-1' : undefined),
+        institutionName: foundInst?.name
+      };
+    }
+
+    setRole(resolvedProfile.role);
+    setCurrentUser(resolvedProfile);
+    if (resolvedProfile.institutionId) {
+      setCurrentInstitutionId(resolvedProfile.institutionId);
+      const matchingApp = applications.find(a => a.institutionId === resolvedProfile.institutionId);
+      if (matchingApp) setSelectedAppId(matchingApp.id);
+    }
+
     setIsLoggedIn(true);
     setIsLoginModalOpen(false);
-    showToast(`Logged in as ${email} (${newRole === 'officer' ? 'AICTE Officer' : 'Institution Portal'})`);
+    setActiveNav('dashboard');
+    showToast(`Welcome ${resolvedProfile.name}! Logged in as ${resolvedProfile.role === 'officer' ? 'AICTE Officer' : 'Institution Portal'}.`);
   };
 
   const logout = () => {
     setIsLoggedIn(false);
-    setIsLoginModalOpen(true);
-    showToast('Session ended. Please login to continue.');
+    setIsLoginModalOpen(false);
+    showToast('Logged out of AICTE PRAMAN. Please choose a role to sign in.');
   };
 
   const toggleLoginModal = () => {
     setIsLoginModalOpen(prev => !prev);
   };
 
+  const registerNewProfile = (newProfile: UserProfile) => {
+    if (newProfile.role === 'officer') {
+      setAvailableOfficerProfiles(prev => [newProfile, ...prev]);
+    } else {
+      setAvailableInstitutionProfiles(prev => [newProfile, ...prev]);
+    }
+    showToast(`Registered new role profile: ${newProfile.name} (${newProfile.role})`);
+  };
+
   return (
     <AppContext.Provider
       value={{
         role,
+        currentUser,
         isLoggedIn,
         activeNav,
         currentInstitutionId,
@@ -579,6 +711,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         auditTrail,
         facilities,
         toast,
+        availableOfficerProfiles,
+        availableInstitutionProfiles,
         isReportModalOpen,
         isLoginModalOpen,
         selectedFindingId,
@@ -601,7 +735,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         showToast,
         login,
         logout,
-        toggleLoginModal
+        toggleLoginModal,
+        registerNewProfile
       }}
     >
       {children}

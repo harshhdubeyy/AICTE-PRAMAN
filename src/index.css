@@ -20,6 +20,16 @@
   --shadow-row-selected: 0 8px 20px rgba(79, 99, 232, 0.28);
 }
 
+html,
+body,
+#root {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
 body {
   background-color: #D9DBFB;
   font-family: 'Red Hat Display', 'Inter', sans-serif;

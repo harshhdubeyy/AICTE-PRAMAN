@@ -20,8 +20,8 @@ export const CalendarStrip: React.FC = () => {
   ];
 
   return (
-    <div className="mb-5" data-purpose="calendar-widget">
-      <div className="flex items-center justify-between mb-2.5">
+    <div className="mb-3.5" data-purpose="calendar-widget">
+      <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-1.5">
           <span className="text-[12px] font-bold text-[#1F2350]">Review Schedule</span>
           <div className="flex items-center text-[#8C91AB] text-[10px] space-x-0.5 ml-0.5">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, ChevronDown, Menu, X, FileUp, PlusCircle, Filter } from 'lucide-react';
+import { Search, ChevronDown, Menu, X, FileUp, PlusCircle, Filter, UserCheck } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 
 interface TopBarProps {
@@ -13,7 +13,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   onMobileMenuToggle,
   isMobileMenuOpen = false
 }) => {
-  const { role, switchRole, openReportModal, setActiveNav, showToast } = useApp();
+  const { role, openReportModal, setActiveNav, showToast, toggleLoginModal } = useApp();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
@@ -32,7 +32,7 @@ export const TopBar: React.FC<TopBarProps> = ({
       <div className="flex items-center gap-2 xl:hidden">
         <button
           onClick={onMobileMenuToggle}
-          className="p-2 rounded-lg bg-white border border-[#ECEDF7] text-[#1F2350] hover:bg-gray-50"
+          className="p-2 rounded-lg bg-white border border-[#ECEDF7] text-[#1F2350] hover:bg-gray-50 cursor-pointer"
         >
           {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -50,31 +50,26 @@ export const TopBar: React.FC<TopBarProps> = ({
         <Search className="w-3.5 h-3.5 text-[#9EA3BE] absolute right-3 top-2.5 pointer-events-none" />
       </div>
 
-      {/* Controls: Role Selector Pills & Primary Action Button */}
-      <div className="flex items-center gap-2.5">
-        {/* Perspective Toggle Pill */}
-        <div className="bg-white p-1 rounded-lg shadow-sm flex items-center text-[10.5px] font-bold border border-[#ECEDF7]">
-          <button
-            onClick={() => switchRole('officer')}
-            className={`px-2.5 py-1 rounded transition-all cursor-pointer ${
-              role === 'officer'
-                ? 'bg-[#4F63E8] text-white shadow-xs'
-                : 'text-[#8C91AB] hover:text-[#1F2350]'
-            }`}
-          >
-            AICTE Officer
-          </button>
-          <button
-            onClick={() => switchRole('institution')}
-            className={`px-2.5 py-1 rounded transition-all cursor-pointer ${
-              role === 'institution'
-                ? 'bg-[#4F63E8] text-white shadow-xs'
-                : 'text-[#8C91AB] hover:text-[#1F2350]'
-            }`}
-          >
-            Institution
-          </button>
+      {/* Controls: Active Role Indicator, Switch/Add Role Button & Primary Action Button */}
+      <div className="flex items-center gap-2">
+        {/* Active Role Indicator Badge */}
+        <div className="hidden sm:flex items-center gap-1.5 px-3 h-9 bg-white border border-[#ECEDF7] rounded-lg text-[11px] shadow-xs select-none">
+          <span className="w-2 h-2 rounded-full bg-[#4F63E8]" />
+          <span className="text-[#8C91AB] font-medium">Portal:</span>
+          <span className="text-[#1F2350] font-bold">
+            {role === 'officer' ? 'AICTE Officer' : 'Accredited Institution'}
+          </span>
         </div>
+
+        {/* Switch / Add Role Quick Trigger */}
+        <button
+          onClick={toggleLoginModal}
+          className="h-9 px-3 bg-white hover:bg-gray-50 border border-[#ECEDF7] text-[#4F63E8] rounded-lg text-[11px] font-bold flex items-center gap-1.5 shadow-sm transition-all cursor-pointer"
+          title="Switch Account or Add New Role Profile"
+        >
+          <UserCheck className="w-3.5 h-3.5" />
+          <span>Switch / Add Role</span>
+        </button>
 
         {/* Action Button Dropdown */}
         <div className="relative">
@@ -98,7 +93,18 @@ export const TopBar: React.FC<TopBarProps> = ({
 
           {/* Dropdown popup */}
           {isDropdownOpen && (
-            <div className="absolute right-0 mt-1 w-52 bg-white rounded-xl shadow-lg border border-[#ECEDF7] py-1.5 z-40 text-[11px] font-medium text-[#1F2350]">
+            <div className="absolute right-0 mt-1 w-56 bg-white rounded-xl shadow-lg border border-[#ECEDF7] py-1.5 z-40 text-[11px] font-medium text-[#1F2350]">
+              <button
+                onClick={() => {
+                  setIsDropdownOpen(false);
+                  toggleLoginModal();
+                }}
+                className="w-full text-left px-3 py-1.5 hover:bg-[#EEF0FD] text-[#4F63E8] font-semibold flex items-center gap-2 cursor-pointer border-b border-[#F0F1FA]"
+              >
+                <UserCheck className="w-3.5 h-3.5 text-[#4F63E8]" />
+                <span>Switch or Add Role Account</span>
+              </button>
+
               {role === 'officer' ? (
                 <>
                   <button

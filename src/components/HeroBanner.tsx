@@ -25,7 +25,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 }) => {
   return (
     <div
-      className="relative w-full rounded-2xl bg-gradient-to-r from-[#5B6EF0] to-[#4557DC] p-5 sm:p-6 text-white overflow-hidden mb-5 shadow-card-soft"
+      className="relative w-full rounded-2xl bg-gradient-to-r from-[#5B6EF0] to-[#4557DC] p-4 sm:p-5 text-white overflow-hidden mb-3.5 shadow-card-soft"
       data-purpose="hero-banner"
     >
       {/* Background ambient lighting */}
@@ -35,7 +35,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
       {/* Left Text Content */}
       <div className="relative z-10 max-w-[68%]">
         {cycleBadge && (
-          <div className="flex items-center gap-2 mb-2">
+          <div className="flex items-center gap-2 mb-1.5">
             <span className="text-[10px] uppercase tracking-wider text-white bg-white/20 px-2.5 py-0.5 rounded-full font-semibold">
               {cycleBadge}
             </span>
@@ -46,11 +46,11 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           </div>
         )}
 
-        <h1 className="text-[20px] sm:text-[22px] font-bold tracking-tight text-white mb-1">
+        <h1 className="text-[19px] sm:text-[21px] font-bold tracking-tight text-white mb-1">
           {greeting}
         </h1>
 
-        <p className="text-[11.5px] text-indigo-100 font-normal leading-relaxed mb-4 max-w-lg">
+        <p className="text-[11.5px] text-indigo-100 font-normal leading-relaxed mb-3 max-w-lg">
           {subtext}
         </p>
 

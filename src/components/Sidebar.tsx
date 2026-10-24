@@ -14,7 +14,8 @@ import {
   GitBranch,
   Lock,
   LogOut,
-  ShieldCheck
+  ShieldCheck,
+  UserCheck
 } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 
@@ -26,7 +27,7 @@ interface NavItem {
 }
 
 export const Sidebar: React.FC = () => {
-  const { role, activeNav, setActiveNav, logout } = useApp();
+  const { role, activeNav, setActiveNav, logout, toggleLoginModal } = useApp();
 
   const officerNav: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
@@ -54,14 +55,14 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside
-      className="w-full xl:w-[215px] bg-white flex flex-col justify-between py-6 shrink-0 border-r border-[#F0F1FA] select-none"
+      className="w-full xl:w-[215px] h-full bg-white flex flex-col justify-between py-4 shrink-0 border-r border-[#F0F1FA] select-none overflow-y-auto custom-scrollbar"
       data-purpose="sidebar-nav"
     >
       <div>
         {/* Brand Logo & Lockup */}
         <div
           onClick={() => setActiveNav('dashboard')}
-          className="px-6 flex items-center gap-2.5 mb-7 cursor-pointer"
+          className="px-5 flex items-center gap-2 mb-4 cursor-pointer"
         >
           <div className="w-8 h-8 rounded-full bg-[#4F63E8] flex items-center justify-center text-white shadow-md shadow-indigo-200">
             <ShieldCheck className="w-4 h-4 stroke-[2.2]" />
@@ -112,10 +113,18 @@ export const Sidebar: React.FC = () => {
       </div>
 
       {/* Pinned Footer at Bottom */}
-      <div className="px-6 pt-4 border-t border-[#F4F5FE]">
+      <div className="px-6 pt-3 border-t border-[#F4F5FE] space-y-1">
+        <button
+          onClick={toggleLoginModal}
+          className="flex items-center gap-3 text-[#4F63E8] hover:text-[#384cc2] text-[11.5px] font-bold transition-colors duration-150 w-full py-1.5 group cursor-pointer"
+        >
+          <UserCheck className="w-4 h-4 text-[#4F63E8]" />
+          <span>Switch / Add Role</span>
+        </button>
+
         <button
           onClick={logout}
-          className="flex items-center gap-3 text-[#8C91AB] hover:text-[#1F2350] text-[11.5px] font-semibold transition-colors duration-150 w-full py-1.5 group cursor-pointer"
+          className="flex items-center gap-3 text-[#8C91AB] hover:text-[#1F2350] text-[11.5px] font-semibold transition-colors duration-150 w-full py-1 group cursor-pointer"
         >
           <LogOut className="w-4 h-4 text-[#8C91AB] group-hover:text-[#4F63E8] transition-colors" />
           <span>Logout</span>

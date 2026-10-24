@@ -54,7 +54,7 @@ export const OfficerDashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3.5">
       {/* Hero Banner */}
       <HeroBanner
         greeting="Good Morning, Sara"

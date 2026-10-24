@@ -32,11 +32,29 @@ export default function App() {
     isReportModalOpen,
     closeReportModal,
     toast,
-    showToast
+    showToast,
+    isLoggedIn,
+    isLoginModalOpen,
+    toggleLoginModal
   } = useApp();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchFilter, setSearchFilter] = useState('');
+
+  // If user is not logged in, show full-page Login Screen
+  if (!isLoggedIn) {
+    return (
+      <div className="h-screen w-screen overflow-y-auto p-2 sm:p-4 flex items-center justify-center selection:bg-indigo-100 selection:text-[#4F63E8]">
+        <LoginScreen isModal={false} />
+        {toast && (
+          <div className="fixed bottom-6 right-6 bg-[#1F2350] text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold flex items-center gap-2.5 z-50 animate-bounce">
+            <span className="w-2 h-2 rounded-full bg-[#3DBE8B]" />
+            <span>{toast.text}</span>
+          </div>
+        )}
+      </div>
+    );
+  }
 
   // Screen routing for Officer
   const renderOfficerScreen = () => {
@@ -107,9 +125,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen p-3 md:p-6 lg:p-8 flex items-center justify-center selection:bg-indigo-100 selection:text-[#4F63E8]">
-      {/* Master Application Shell */}
-      <main className="w-full max-w-[1360px] bg-white rounded-[40px] shadow-app-shell overflow-hidden flex flex-col xl:flex-row min-h-[840px] border border-white/60 relative">
+    <div className="h-screen w-screen overflow-hidden flex selection:bg-indigo-100 selection:text-[#4F63E8]">
+      {/* Master Application Shell - Edge-to-Edge */}
+      <main className="w-full h-full bg-white overflow-hidden flex flex-col xl:flex-row relative">
         {/* Mobile Sidebar Drawer Overlay */}
         {isMobileMenuOpen && (
           <div
@@ -124,31 +142,35 @@ export default function App() {
             isMobileMenuOpen
               ? 'fixed inset-y-0 left-0 z-50 w-[240px] bg-white shadow-2xl flex'
               : 'hidden xl:flex'
-          }`}
+          } h-full shrink-0`}
         >
           <Sidebar />
         </div>
 
         {/* Center Main Workspace */}
         <section
-          className="flex-1 bg-[#F4F5FE] p-4 sm:p-6 lg:p-7 flex flex-col justify-between overflow-x-hidden"
+          className="flex-1 h-full bg-[#F4F5FE] p-3 sm:p-4 lg:p-5 flex flex-col overflow-hidden min-w-0"
           data-purpose="center-main-workspace"
         >
-          <div>
+          {/* Header */}
+          <div className="shrink-0 mb-3">
             <TopBar
               onSearch={val => setSearchFilter(val)}
               onMobileMenuToggle={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               isMobileMenuOpen={isMobileMenuOpen}
             />
+          </div>
 
-            {/* Active Screen Render */}
-            <div id="main-content-area">
-              {role === 'officer' ? renderOfficerScreen() : renderInstitutionScreen()}
-            </div>
+          {/* Active Screen Render with smooth internal scroll */}
+          <div
+            id="main-content-area"
+            className="flex-1 overflow-y-auto pr-1 min-h-0 custom-scrollbar"
+          >
+            {role === 'officer' ? renderOfficerScreen() : renderInstitutionScreen()}
           </div>
 
           {/* Footer Bar of Center Workspace */}
-          <footer className="mt-5 pt-3 text-[10px] text-[#8C91AB] flex flex-col sm:flex-row items-center justify-between gap-2 border-t border-[#E8EAF5]">
+          <footer className="mt-2.5 pt-2 text-[10px] text-[#8C91AB] flex flex-col sm:flex-row items-center justify-between gap-1.5 border-t border-[#E8EAF5] shrink-0">
             <span>PRAMAN Engine: NLP Model v4.11.2 (Spatial Coordinate OCR)</span>
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1.5">
@@ -162,7 +184,7 @@ export default function App() {
         </section>
 
         {/* Right Information Panel (Collapses on screens below 1280px or when drawer active) */}
-        <div className="hidden xl:flex">
+        <div className="hidden xl:flex h-full shrink-0">
           <RightPanel />
         </div>
       </main>
@@ -187,8 +209,8 @@ export default function App() {
         </div>
       )}
 
-      {/* Login Screen / Modal */}
-      <LoginScreen />
+      {/* Login / Role Switching Modal */}
+      <LoginScreen isModal={true} />
 
       {/* Toast Notification Element */}
       {toast && (

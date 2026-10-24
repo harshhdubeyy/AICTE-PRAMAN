@@ -1,5 +1,15 @@
 export type UserRole = 'officer' | 'institution';
 
+export interface UserProfile {
+  name: string;
+  email: string;
+  role: UserRole;
+  title: string;
+  avatar: string;
+  institutionId?: string;
+  institutionName?: string;
+}
+
 export type ValidationStatus =
   | 'Passed'
   | 'Missing'

@@ -6,6 +6,8 @@ import { CalendarStrip } from './CalendarStrip';
 export const RightPanel: React.FC = () => {
   const {
     role,
+    currentUser,
+    toggleLoginModal,
     queries,
     showToast,
     openReportModal,
@@ -19,23 +21,23 @@ export const RightPanel: React.FC = () => {
 
   return (
     <aside
-      className="w-full xl:w-[270px] bg-white p-5 flex flex-col justify-between shrink-0 border-l border-[#F0F1FA] select-none"
+      className="w-full xl:w-[260px] h-full bg-white p-3.5 sm:p-4 flex flex-col justify-between shrink-0 border-l border-[#F0F1FA] select-none overflow-y-auto custom-scrollbar"
       data-purpose="right-sidebar"
     >
       <div>
         {/* Top Profile & Notifications Bar */}
-        <div className="flex items-center justify-between mb-5 pb-1 border-b border-[#F0F1FA]" data-purpose="user-header">
+        <div className="flex items-center justify-between mb-3.5 pb-1 border-b border-[#F0F1FA]" data-purpose="user-header">
           <div className="flex items-center gap-2.5 text-[#8C91AB]">
             <button
               onClick={() => showToast('Opening AICTE Scrutiny System Preferences')}
-              className="hover:text-[#4F63E8] p-1 transition-colors"
+              className="hover:text-[#4F63E8] p-1 transition-colors cursor-pointer"
               title="Settings"
             >
               <Settings className="w-4 h-4" />
             </button>
             <button
               onClick={() => showToast('Regulatory notifications marked as read')}
-              className="hover:text-[#4F63E8] p-1 transition-colors relative"
+              className="hover:text-[#4F63E8] p-1 transition-colors relative cursor-pointer"
               title="Notifications"
             >
               <Bell className="w-4 h-4" />
@@ -44,32 +46,25 @@ export const RightPanel: React.FC = () => {
           </div>
 
           <div
-            onClick={() =>
-              showToast(
-                `Active Profile: ${
-                  role === 'officer'
-                    ? 'Sara Abraham (Senior Scrutiny Officer, AICTE Western Bureau)'
-                    : 'Dr. V. Kulkarni (Principal / Registrar, SVIT Pune)'
-                }`
-              )
-            }
+            onClick={toggleLoginModal}
             className="flex items-center gap-2 text-right cursor-pointer group"
+            title="Click to Switch Profile or Add Role"
           >
             <div>
-              <span className="text-[12px] font-bold text-[#1F2350] leading-tight block group-hover:text-[#4F63E8] transition-colors">
-                {role === 'officer' ? 'Sara Abraham' : 'SVIT Pune Admin'}
+              <span className="text-[12px] font-bold text-[#1F2350] leading-tight block group-hover:text-[#4F63E8] transition-colors truncate max-w-[120px]">
+                {currentUser?.name || (role === 'officer' ? 'Sara Abraham' : 'SVIT Pune Admin')}
               </span>
-              <span className="text-[9.5px] text-[#8C91AB] group-hover:text-[#4F63E8] transition-colors block">
-                {role === 'officer' ? 'View profile' : 'Institute ID: 1-4829101'}
+              <span className="text-[9.5px] text-[#8C91AB] group-hover:text-[#4F63E8] transition-colors block truncate max-w-[120px]">
+                {role === 'officer' ? (currentUser?.title || 'Scrutiny Officer') : (currentUser?.institutionName || 'Institute Portal')}
               </span>
             </div>
-            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-indigo-100 shrink-0">
+            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-indigo-100 shrink-0 ring-2 ring-indigo-50">
               <img
-                src={
+                src={currentUser?.avatar || (
                   role === 'officer'
                     ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80'
                     : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80'
-                }
+                )}
                 alt="User Avatar"
                 className="w-full h-full object-cover"
               />
@@ -111,8 +106,8 @@ export const RightPanel: React.FC = () => {
         <CalendarStrip />
 
         {/* Institution Queries / Clarification list */}
-        <div className="mb-5" data-purpose="institution-queries-list">
-          <div className="flex items-center justify-between mb-2.5">
+        <div className="mb-3.5" data-purpose="institution-queries-list">
+          <div className="flex items-center justify-between mb-2">
             <h3 className="text-[12px] font-bold text-[#1F2350] tracking-tight">
               {role === 'officer' ? 'Institution Queries' : 'Queries from AICTE'}
             </h3>
@@ -124,7 +119,7 @@ export const RightPanel: React.FC = () => {
             </button>
           </div>
 
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             {/* Query 1: SVIT Pune */}
             <div className="flex items-center justify-between group">
               <div className="flex items-center gap-2 overflow-hidden">

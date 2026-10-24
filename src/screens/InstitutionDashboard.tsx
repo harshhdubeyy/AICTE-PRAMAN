@@ -48,7 +48,7 @@ export const InstitutionDashboard: React.FC = () => {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-3.5">
       {/* 1. Hero Banner */}
       <HeroBanner
         cycleBadge="AICTE APPROVAL CYCLE 2026-27"
