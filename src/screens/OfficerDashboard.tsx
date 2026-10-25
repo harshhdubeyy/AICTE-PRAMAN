@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import {
   FileEdit,
   FileWarning,
@@ -6,13 +6,21 @@ import {
   Flag,
   CheckCircle2,
   Sparkles,
-  Download
+  Download,
+  RefreshCw,
+  FileText,
+  AlertCircle
 } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 import { HeroBanner } from '../components/HeroBanner';
 import { CategoryCard } from '../components/CategoryCard';
 import { ConfidenceRing } from '../components/ConfidenceRing';
 import { DataTable } from '../components/DataTable';
+import {
+  getDocuments,
+  downloadDocumentReport,
+  type BackendDocument,
+} from '../services/documentApi';
 
 export const OfficerDashboard: React.FC = () => {
   const {
@@ -25,6 +33,59 @@ export const OfficerDashboard: React.FC = () => {
   } = useApp();
 
   const [activeFilter, setActiveFilter] = useState<string | null>(null);
+
+  // Live records from the FastAPI document backend.
+  const [backendDocuments, setBackendDocuments] = useState<BackendDocument[]>([]);
+  const [backendLoading, setBackendLoading] = useState(false);
+  const [backendError, setBackendError] = useState<string | null>(null);
+  const [downloadingReportId, setDownloadingReportId] = useState<string | null>(null);
+
+  const refreshBackendDocuments = useCallback(async () => {
+    setBackendLoading(true);
+    setBackendError(null);
+
+    try {
+      const documents = await getDocuments();
+      setBackendDocuments(documents);
+    } catch (error) {
+      setBackendError(
+        error instanceof Error
+          ? error.message
+          : 'Unable to connect to the document backend.'
+      );
+    } finally {
+      setBackendLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    void refreshBackendDocuments();
+  }, [refreshBackendDocuments]);
+
+  const pendingBackendCount = backendDocuments.filter(
+    document => document.review?.toLowerCase() === 'pending'
+  ).length;
+
+  const flaggedBackendCount = backendDocuments.filter(document => {
+    const flag = document.flag?.toLowerCase();
+    return Boolean(flag) && !['none', 'clear', 'unflagged'].includes(flag!);
+  }).length;
+
+  const handleBackendReportDownload = async (documentId: string) => {
+    setDownloadingReportId(documentId);
+    try {
+      await downloadDocumentReport(documentId);
+      showToast('Document report downloaded.');
+    } catch (error) {
+      showToast(
+        error instanceof Error
+          ? `Report download failed: ${error.message}`
+          : 'Report download failed.'
+      );
+    } finally {
+      setDownloadingReportId(null);
+    }
+  };
 
   const svitApp = applications.find(a => a.id === 'app-1') || applications[0];
 
@@ -307,6 +368,120 @@ export const OfficerDashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Live documents from the FastAPI backend */}
+      <section className="bg-white rounded-xl p-4 shadow-card-soft border border-[#ECEDF7]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-3">
+          <div>
+            <h2 className="text-[13px] font-bold text-[#1F2350]">Live Backend Documents</h2>
+            <p className="text-[10px] text-[#8C91AB] mt-1">
+              Records retrieved from the connected document API
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => void refreshBackendDocuments()}
+            disabled={backendLoading}
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-md border border-[#ECEDF7] text-[#4F63E8] text-[10.5px] font-bold hover:bg-indigo-50 disabled:opacity-50"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${backendLoading ? 'animate-spin' : ''}`} />
+            {backendLoading ? 'Refreshing...' : 'Refresh'}
+          </button>
+        </div>
+
+        {backendError && (
+          <div className="rounded-lg border border-red-100 bg-red-50 p-3 mb-3">
+            <p className="text-[11px] font-semibold text-red-700">Could not load backend documents</p>
+            <p className="text-[10px] text-red-600 mt-1 break-words">{backendError}</p>
+            <button
+              type="button"
+              onClick={() => void refreshBackendDocuments()}
+              className="mt-2 text-[10px] font-bold text-red-700 underline"
+            >
+              Try again
+            </button>
+          </div>
+        )}
+
+        {!backendError && (
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
+            <div className="rounded-lg bg-[#F6F7FF] border border-[#ECEDF7] p-3">
+              <p className="text-[10px] text-[#8C91AB]">Total documents</p>
+              <p className="text-xl font-bold text-[#1F2350]">{backendDocuments.length}</p>
+            </div>
+            <div className="rounded-lg bg-orange-50 border border-orange-100 p-3">
+              <p className="text-[10px] text-orange-700">Pending review</p>
+              <p className="text-xl font-bold text-orange-700">{pendingBackendCount}</p>
+            </div>
+            <div className="rounded-lg bg-red-50 border border-red-100 p-3">
+              <p className="text-[10px] text-red-700">Flagged records</p>
+              <p className="text-xl font-bold text-red-700">{flaggedBackendCount}</p>
+            </div>
+          </div>
+        )}
+
+        {backendLoading && backendDocuments.length === 0 && (
+          <p className="text-[11px] text-[#8C91AB] py-4">Loading documents from the backend...</p>
+        )}
+
+        {!backendLoading && !backendError && backendDocuments.length === 0 && (
+          <div className="text-center py-6">
+            <FileText className="w-7 h-7 mx-auto text-[#8C91AB] mb-2" />
+            <p className="text-[11px] text-[#8C91AB]">
+              No backend documents found. Upload a PDF from the institution portal.
+            </p>
+          </div>
+        )}
+
+        <div className="space-y-2">
+          {backendDocuments.map(document => (
+            <div
+              key={document.id}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-lg border border-[#ECEDF7] p-3"
+            >
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start gap-2">
+                  <FileText className="w-4 h-4 text-[#4F63E8] shrink-0 mt-0.5" />
+                  <div className="min-w-0">
+                    <p className="text-[11px] font-semibold text-[#1F2350] break-words">{document.filename}</p>
+                    <p className="text-[9px] text-[#8C91AB] mt-1 break-all">ID: {document.id}</p>
+                    <p className="text-[9px] text-[#8C91AB] mt-1">
+                      Updated: {document.updated_at
+                        ? new Date(document.updated_at).toLocaleString()
+                        : 'Not available'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+                <span className="px-2 py-1 rounded-md bg-orange-50 text-orange-700 border border-orange-100 text-[9px] font-bold">
+                  {document.review || 'Review status unavailable'}
+                </span>
+                <span className="px-2 py-1 rounded-md bg-[#F6F7FF] text-[#4F63E8] border border-[#ECEDF7] text-[9px] font-semibold">
+                  {document.flag || 'No flag recorded'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => void handleBackendReportDownload(document.id)}
+                  disabled={downloadingReportId === document.id}
+                  className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md bg-[#4F63E8] text-white text-[10px] font-bold hover:bg-[#4458DC] disabled:opacity-50"
+                >
+                  <FileText className="w-3 h-3" />
+                  {downloadingReportId === document.id ? 'Generating...' : 'PDF Report'}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-start gap-2 mt-3 p-2.5 rounded-lg bg-amber-50 border border-amber-100">
+          <AlertCircle className="w-3.5 h-3.5 text-amber-700 shrink-0 mt-0.5" />
+          <p className="text-[9.5px] leading-relaxed text-amber-800">
+            These are live backend records. Pending or flagged status is not proof of forgery or authenticity.
+            The current prototype does not establish document authenticity through cryptographic verification.
+          </p>
+        </div>
+      </section>
 
       {/* Main Validation Progress Table */}
       <DataTable
