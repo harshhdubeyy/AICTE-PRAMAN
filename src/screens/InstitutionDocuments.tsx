@@ -210,16 +210,6 @@ export const InstitutionDocuments: React.FC = () => {
         )}
       </div>
 
-      {apiError && (
-        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl p-3 text-xs">
-          <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-          <div>
-            <p className="font-bold">Backend notice</p>
-            <p className="mt-0.5 break-words">{apiError}</p>
-          </div>
-        </div>
-      )}
-
       <div className="flex items-center gap-2 flex-wrap text-xs bg-white p-2.5 rounded-xl border border-[#ECEDF7] shadow-xs">
         {([
           ['ALL', `All Documents (${backendDocuments.length})`],
