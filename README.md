@@ -50,18 +50,6 @@ The platform provides dedicated workspaces for regulatory officers and instituti
 - Severity classification and rule references.
 - Support for multiple application categories, including new institutions, extension of approval, changes in programmes, intake increases, and programme closure.
 
-## Technology Stack
-
-| Component | Technology |
-|---|---|
-| Frontend | React 19 |
-| Programming Language | TypeScript |
-| Build Tool | Vite |
-| Styling | Tailwind CSS 4 |
-| Icons | Lucide React |
-| Animations | Motion |
-| Charts | Recharts |
-| AI integration dependency | Google GenAI SDK |
 
 ## Project Structure
 
