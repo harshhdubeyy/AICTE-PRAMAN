@@ -389,20 +389,6 @@ export const OfficerDashboard: React.FC = () => {
           </button>
         </div>
 
-        {backendError && (
-          <div className="rounded-lg border border-red-100 bg-red-50 p-3 mb-3">
-            <p className="text-[11px] font-semibold text-red-700">Could not load backend documents</p>
-            <p className="text-[10px] text-red-600 mt-1 break-words">{backendError}</p>
-            <button
-              type="button"
-              onClick={() => void refreshBackendDocuments()}
-              className="mt-2 text-[10px] font-bold text-red-700 underline"
-            >
-              Try again
-            </button>
-          </div>
-        )}
-
         {!backendError && (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mb-4">
             <div className="rounded-lg bg-[#F6F7FF] border border-[#ECEDF7] p-3">
