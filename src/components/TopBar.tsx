@@ -13,7 +13,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   onMobileMenuToggle,
   isMobileMenuOpen = false
 }) => {
-  const { role, openReportModal, setActiveNav, showToast, toggleLoginModal } = useApp();
+  const { role, switchRole, currentUser, openReportModal, setActiveNav, showToast, toggleLoginModal } = useApp();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [searchValue, setSearchValue] = useState('');
 
@@ -22,6 +22,8 @@ export const TopBar: React.FC<TopBarProps> = ({
     setSearchValue(val);
     if (onSearch) onSearch(val);
   };
+
+  const isAdmin = currentUser?.role === 'admin';
 
   return (
     <header
@@ -50,16 +52,43 @@ export const TopBar: React.FC<TopBarProps> = ({
         <Search className="w-3.5 h-3.5 text-[#9EA3BE] absolute right-3 top-2.5 pointer-events-none" />
       </div>
 
-      {/* Controls: Active Role Indicator, Switch/Add Role Button & Primary Action Button */}
+      {/* Controls: Active Role Indicator / Admin Demo Toggle, Switch/Add Role Button & Primary Action Button */}
       <div className="flex items-center gap-2">
-        {/* Active Role Indicator Badge */}
-        <div className="hidden sm:flex items-center gap-1.5 px-3 h-9 bg-white border border-[#ECEDF7] rounded-lg text-[11px] shadow-xs select-none">
-          <span className="w-2 h-2 rounded-full bg-[#4F63E8]" />
-          <span className="text-[#8C91AB] font-medium">Portal:</span>
-          <span className="text-[#1F2350] font-bold">
-            {role === 'officer' ? 'AICTE Officer' : 'Accredited Institution'}
-          </span>
-        </div>
+        {/* Admin Demo Switch (Visible only when currentUser role is admin) */}
+        {isAdmin ? (
+          <div className="bg-white p-1 rounded-lg shadow-sm flex items-center text-[10.5px] font-bold border border-[#ECEDF7]">
+            <span className="text-[9px] text-[#8C91AB] font-semibold px-2 uppercase tracking-wider">Demo Switch:</span>
+            <button
+              onClick={() => switchRole('officer')}
+              className={`px-2.5 py-1 rounded transition-all cursor-pointer ${
+                role === 'officer'
+                  ? 'bg-[#4F63E8] text-white shadow-xs'
+                  : 'text-[#8C91AB] hover:text-[#1F2350]'
+              }`}
+            >
+              Officer
+            </button>
+            <button
+              onClick={() => switchRole('institution')}
+              className={`px-2.5 py-1 rounded transition-all cursor-pointer ${
+                role === 'institution'
+                  ? 'bg-[#4F63E8] text-white shadow-xs'
+                  : 'text-[#8C91AB] hover:text-[#1F2350]'
+              }`}
+            >
+              Institution
+            </button>
+          </div>
+        ) : (
+          /* Standard Active Role Indicator Badge */
+          <div className="hidden sm:flex items-center gap-1.5 px-3 h-9 bg-white border border-[#ECEDF7] rounded-lg text-[11px] shadow-xs select-none">
+            <span className="w-2 h-2 rounded-full bg-[#3DBE8B]" />
+            <span className="text-[#8C91AB] font-medium">Portal:</span>
+            <span className="text-[#1F2350] font-bold">
+              {role === 'officer' ? 'AICTE Officer' : 'Accredited Institution'}
+            </span>
+          </div>
+        )}
 
         {/* Switch / Add Role Quick Trigger */}
         <button

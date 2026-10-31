@@ -45,6 +45,8 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ isModal = false }) => 
   const [customEmail, setCustomEmail] = useState('');
   const [customInstName, setCustomInstName] = useState('');
 
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+
   // If in modal mode and modal is not open, or if logged in and not modal, return null
   if (isModal && !isLoginModalOpen) return null;
   if (!isModal && isLoggedIn) return null;
@@ -68,42 +70,52 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ isModal = false }) => 
     const prof = currentProfiles[index];
     if (prof) {
       setEmail(prof.email);
-      setPassword(selectedRole === 'officer' ? 'officer@2026' : 'inst@pass2026');
+      setPassword(selectedRole === 'officer' ? 'officer@2026' : 'svit@pune2026');
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (activeTabMode === 'preset') {
-      login(activeProfile);
-    } else {
-      // Custom credentials
-      login(selectedRole, email, selectedRole === 'institution' ? 'inst-1' : undefined, email.split('@')[0]);
+    setIsSubmitting(true);
+    try {
+      if (activeTabMode === 'preset') {
+        await login(activeProfile, email, activeProfile.institutionId, activeProfile.name, password);
+      } else {
+        // Custom credentials
+        await login(selectedRole, email, selectedRole === 'institution' ? 'inst-1' : undefined, email.split('@')[0], password);
+      }
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleRegisterNewRole = (e: React.FormEvent) => {
+  const handleRegisterNewRole = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!customName.trim() || !customEmail.trim()) {
       showToast('Please enter role name and work email');
       return;
     }
 
-    const newProfile: UserProfile = {
-      name: customName,
-      email: customEmail,
-      role: selectedRole,
-      title: customTitle || (selectedRole === 'officer' ? 'Scrutiny Officer' : 'Registrar'),
-      institutionName: selectedRole === 'institution' ? customInstName || 'New Technical Institute' : undefined,
-      institutionId: selectedRole === 'institution' ? `inst-${Date.now().toString(36)}` : undefined,
-      avatar: selectedRole === 'officer'
-        ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&h=120&q=80'
-        : 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=120&h=120&q=80'
-    };
+    setIsSubmitting(true);
+    try {
+      const newProfile: UserProfile = {
+        name: customName,
+        email: customEmail,
+        role: selectedRole,
+        title: customTitle || (selectedRole === 'officer' ? 'Scrutiny Officer' : 'Registrar'),
+        institutionName: selectedRole === 'institution' ? customInstName || 'New Technical Institute' : undefined,
+        institutionId: selectedRole === 'institution' ? `inst-${Date.now().toString(36)}` : undefined,
+        avatar: selectedRole === 'officer'
+          ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=120&h=120&q=80'
+          : 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=120&h=120&q=80'
+      };
 
-    registerNewProfile(newProfile);
-    login(newProfile);
-    setActiveTabMode('preset');
+      await registerNewProfile(newProfile, password);
+      await login(newProfile, customEmail, newProfile.institutionId, newProfile.name, password);
+      setActiveTabMode('preset');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const content = (
@@ -351,9 +363,14 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ isModal = false }) => 
 
                 <button
                   type="submit"
-                  className="w-full h-10 bg-[#4F63E8] hover:bg-[#4458DC] text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                  disabled={isSubmitting}
+                  className="w-full h-10 bg-[#4F63E8] hover:bg-[#4458DC] disabled:opacity-75 text-white rounded-xl text-xs font-bold transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Sign In as {selectedRole === 'officer' ? 'Officer' : 'Institution'}</span>
+                  <span>
+                    {isSubmitting
+                      ? 'Authenticating...'
+                      : `Sign In as ${selectedRole === 'officer' ? 'Officer' : 'Institution'}`}
+                  </span>
                   <ArrowRight className="w-4 h-4" />
                 </button>
               </form>

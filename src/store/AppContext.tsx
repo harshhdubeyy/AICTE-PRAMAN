@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import {
   UserRole,
   Application,
@@ -21,6 +21,15 @@ import {
   SEED_FACILITIES
 } from '../data/seedData';
 import { AICTE_RULES, CURRENT_RULESET_VERSION, evaluateApplication } from '../rules/rules';
+import {
+  authService,
+  applicationsService,
+  documentsService,
+  queriesService,
+  auditService,
+  extractionService,
+  isSupabaseConfigured
+} from '../services';
 
 export const DEFAULT_OFFICER_PROFILES: UserProfile[] = [
   {
@@ -147,10 +156,16 @@ interface AppContextType {
   postOfficerNote: (appId: string, note: string) => void;
   applyAiSuggestion: (desc: string) => void;
   showToast: (msg: string) => void;
-  login: (profileOrRole: UserProfile | UserRole, email?: string, institutionId?: string, name?: string) => void;
-  logout: () => void;
+  isLoading: boolean;
+  isLoadingDocuments: boolean;
+  dataError: string | null;
+  refreshData: () => Promise<void>;
+  uploadRealFile: (file: File, appId: string, docName: string, category: AppDocument['category']) => Promise<{ success: boolean; sha256?: string; error?: string }>;
+  login: (profileOrRole: UserProfile | UserRole, email?: string, institutionId?: string, name?: string, password?: string) => Promise<boolean>;
+  logout: () => Promise<void>;
   toggleLoginModal: () => void;
-  registerNewProfile: (profile: UserProfile) => void;
+  registerNewProfile: (profile: UserProfile, password?: string) => Promise<boolean>;
+  editExtractedValue: (appId: string, docId: string, fieldKey: string, newValue: string) => Promise<void>;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -177,6 +192,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
   const [selectedFindingId, setSelectedFindingId] = useState<string | null>('fnd-mismatch-doc-svit-02-Land Survey / Plot ID');
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadingDocuments, setIsLoadingDocuments] = useState<boolean>(false);
+  const [dataError, setDataError] = useState<string | null>(null);
+
   const showToast = (msg: string) => {
     const id = Date.now();
     setToast({ text: msg, id });
@@ -184,6 +203,58 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       setToast(prev => (prev?.id === id ? null : prev));
     }, 2800);
   };
+
+  // Synchronize data from Supabase backend (or fallback smoothly to seed data)
+  const refreshData = useCallback(async () => {
+    setIsLoading(true);
+    setDataError(null);
+    try {
+      const [fetchedApps, fetchedDocs, fetchedQueries, fetchedAudits] = await Promise.all([
+        applicationsService.getApplications(),
+        documentsService.getDocuments(),
+        queriesService.getQueries(),
+        auditService.getAuditEvents(),
+      ]);
+
+      if (fetchedApps && fetchedApps.length > 0) setApplications(fetchedApps);
+      if (fetchedDocs && fetchedDocs.length > 0) setDocuments(fetchedDocs);
+      if (fetchedQueries && fetchedQueries.length > 0) setQueries(fetchedQueries);
+      if (fetchedAudits && fetchedAudits.length > 0) setAuditTrail(fetchedAudits);
+    } catch (err: any) {
+      console.warn('Backend sync note:', err.message || err);
+      setDataError('Using offline regulatory seed cache');
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  // Check active session and load initial data on mount
+  useEffect(() => {
+    let isMounted = true;
+
+    async function initSessionAndData() {
+      if (isSupabaseConfigured()) {
+        const activeUser = await authService.getActiveSession();
+        if (activeUser && isMounted) {
+          setCurrentUser(activeUser);
+          setRole(activeUser.role);
+          if (activeUser.institutionId) {
+            setCurrentInstitutionId(activeUser.institutionId);
+          }
+          setIsLoggedIn(true);
+        }
+      }
+      if (isMounted) {
+        await refreshData();
+      }
+    }
+
+    initSessionAndData();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [refreshData]);
 
   const switchRole = (newRole: UserRole) => {
     setRole(newRole);
@@ -531,6 +602,32 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     showToast('Document resubmitted! Validation rules re-executed and findings updated.');
   };
 
+  const editExtractedValue = async (appId: string, docId: string, fieldKey: string, newValue: string) => {
+    await extractionService.correctExtractedField({
+      documentId: docId,
+      fieldKey,
+      newValue,
+      correctedBy: currentUser.name
+    });
+
+    resubmitDocument(appId, docId, [{ fieldName: fieldKey, newValue }]);
+
+    const audit: AuditEvent = {
+      id: `aud-${Date.now()}`,
+      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
+      actor: currentUser.name,
+      actorRole: currentUser.role,
+      action: 'Extracted Field Manually Corrected',
+      applicationId: appId,
+      applicationNumber: applications.find(a => a.id === appId)?.applicationNumber || 'AICTE-2026',
+      ruleVersion: CURRENT_RULESET_VERSION,
+      details: `Field "${fieldKey}" edited to "${newValue}". Stored source="manual". Smart re-validation triggered.`
+    };
+    setAuditTrail(prev => [audit, ...prev]);
+
+    showToast(`Manual correction saved (source='manual'). Re-validated affected rules!`);
+  };
+
   const addNewApplication = (data: {
     institutionName: string;
     applicationType: ApplicationType;
@@ -634,32 +731,146 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  const login = (
+  const uploadRealFile = async (
+    file: File,
+    appId: string,
+    docName: string,
+    category: AppDocument['category']
+  ): Promise<{ success: boolean; sha256?: string; error?: string }> => {
+    setIsLoadingDocuments(true);
+    try {
+      const res = await documentsService.uploadDocument({
+        file,
+        applicationId: appId,
+        institutionId: currentInstitutionId,
+        docName,
+        category,
+      });
+
+      if (res.document) {
+        // Run extraction with Gemini provider (server-side Edge Function)
+        let enrichedDoc = res.document;
+        try {
+          const extraction = await extractionService.extractDocument({
+            file,
+            fileName: file.name,
+            mimeType: file.type || 'application/pdf',
+            documentId: res.document.id
+          });
+
+          if (extraction && extraction.fields && extraction.fields.length > 0) {
+            const newExtracted = extraction.fields.map(f => ({
+              fieldName: f.field_key.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+              extractedValue: f.value || 'N/A',
+              claimedValue: 'Statutory Target Baseline',
+              confidence: f.confidence,
+              pageNumber: f.page,
+              boundingBox: f.bbox ? {
+                x: f.bbox.x,
+                y: f.bbox.y,
+                width: f.bbox.width,
+                height: f.bbox.height
+              } : undefined,
+              status: (f.confidence < 0.70 ? 'Needs Manual Review' : 'Passed') as any,
+              notes: f.low_confidence ? 'Low confidence extraction (approximate region)' : undefined
+            }));
+
+            enrichedDoc = {
+              ...res.document,
+              ocrStatus: 'Extracted' as const,
+              ocrConfidence: extraction.average_confidence,
+              extractedFields: newExtracted
+            };
+          }
+        } catch (extErr) {
+          console.warn('Extraction note:', extErr);
+        }
+
+        const updatedDocs = [enrichedDoc, ...documents.filter(d => d.id !== res.document!.id)];
+        setDocuments(updatedDocs);
+
+        // Re-evaluate rules
+        const app = applications.find(a => a.id === appId);
+        if (app) {
+          const appDocs = updatedDocs.filter(d => d.applicationId === appId);
+          const newRun = evaluateApplication(appId, app.applicationType, appDocs, updatedDocs);
+          setApplications(prev =>
+            prev.map(a =>
+              a.id === appId
+                ? {
+                    ...a,
+                    documentCounts: {
+                      ...a.documentCounts,
+                      uploaded: appDocs.length
+                    },
+                    completenessPercentage: Math.min(100, Math.round((appDocs.length / a.documentCounts.totalRequired) * 100)),
+                    latestRun: newRun,
+                    runHistory: [newRun, ...a.runHistory]
+                  }
+                : a
+            )
+          );
+        }
+
+        // Log audit event
+        await auditService.logAuditEvent({
+          actor: currentUser.name,
+          actorRole: currentUser.role,
+          action: 'Document Uploaded & Gemini Extracted',
+          applicationId: appId,
+          applicationNumber: applications.find(a => a.id === appId)?.applicationNumber || 'AICTE-2026',
+          ruleVersion: CURRENT_RULESET_VERSION,
+          details: `Uploaded ${res.document.name} (${res.document.fileSize}). SHA-256: ${res.document.fileHash.substring(0, 16)}... Extracted with Gemini Flash.`,
+        });
+
+        showToast(`Document uploaded & verified: SHA-256 ${res.document.fileHash.substring(0, 12)}...`);
+        return { success: true, sha256: res.document.fileHash };
+      }
+      return { success: false, error: res.error || 'Upload failed' };
+    } catch (err: any) {
+      return { success: false, error: err.message || 'Upload failed' };
+    } finally {
+      setIsLoadingDocuments(false);
+    }
+  };
+
+  const login = async (
     profileOrRole: UserProfile | UserRole,
     email?: string,
     institutionId?: string,
-    name?: string
-  ) => {
+    name?: string,
+    password?: string
+  ): Promise<boolean> => {
     let resolvedProfile: UserProfile;
 
     if (typeof profileOrRole === 'object') {
       resolvedProfile = profileOrRole;
     } else {
-      const isOfficer = profileOrRole === 'officer';
-      const foundInst = institutions.find(i => i.id === institutionId);
-      resolvedProfile = {
-        name: name || (isOfficer ? 'AICTE Officer' : foundInst?.name || 'Institutional Representative'),
-        email: email || (isOfficer ? 'officer@aicte-india.org' : 'admin@institution.edu.in'),
-        role: profileOrRole,
-        title: isOfficer ? 'Scrutiny Officer' : 'Registrar / Principal',
-        avatar: isOfficer
-          ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80'
-          : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80',
-        institutionId: institutionId || (profileOrRole === 'institution' ? 'inst-1' : undefined),
-        institutionName: foundInst?.name
-      };
+      const isOfficer = profileOrRole === 'officer' || profileOrRole === 'admin' || profileOrRole === 'auditor';
+      const targetEmail = email || (isOfficer ? 'officer@aicte-india.org' : 'registrar@svit.ac.in');
+      const targetPwd = password || (isOfficer ? 'officer@2026' : 'svit@pune2026');
+
+      // Attempt Supabase Auth sign-in
+      const authResult = await authService.signIn(targetEmail, targetPwd);
+      if (authResult.user) {
+        resolvedProfile = authResult.user;
+      } else {
+        const foundInst = institutions.find(i => i.id === institutionId);
+        resolvedProfile = {
+          name: name || (isOfficer ? 'AICTE Officer' : foundInst?.name || 'Institutional Representative'),
+          email: targetEmail,
+          role: profileOrRole,
+          title: isOfficer ? 'Scrutiny Officer' : 'Registrar / Principal',
+          avatar: isOfficer
+            ? 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=120&h=120&q=80'
+            : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80',
+          institutionId: institutionId || (profileOrRole === 'institution' ? 'inst-1' : undefined),
+          institutionName: foundInst?.name
+        };
+      }
     }
 
+    // Role-based workspace routing
     setRole(resolvedProfile.role);
     setCurrentUser(resolvedProfile);
     if (resolvedProfile.institutionId) {
@@ -671,10 +882,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsLoggedIn(true);
     setIsLoginModalOpen(false);
     setActiveNav('dashboard');
-    showToast(`Welcome ${resolvedProfile.name}! Logged in as ${resolvedProfile.role === 'officer' ? 'AICTE Officer' : 'Institution Portal'}.`);
+    showToast(`Welcome ${resolvedProfile.name}! Logged in as ${resolvedProfile.role === 'institution' ? 'Institution Portal' : 'AICTE Officer / Reviewer'}.`);
+    
+    // Refresh data for user
+    refreshData();
+    return true;
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await authService.signOut();
     setIsLoggedIn(false);
     setIsLoginModalOpen(false);
     showToast('Logged out of AICTE PRAMAN. Please choose a role to sign in.');
@@ -684,13 +900,26 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsLoginModalOpen(prev => !prev);
   };
 
-  const registerNewProfile = (newProfile: UserProfile) => {
-    if (newProfile.role === 'officer') {
+  const registerNewProfile = async (newProfile: UserProfile, password?: string): Promise<boolean> => {
+    if (newProfile.role === 'officer' || newProfile.role === 'admin') {
       setAvailableOfficerProfiles(prev => [newProfile, ...prev]);
     } else {
       setAvailableInstitutionProfiles(prev => [newProfile, ...prev]);
     }
+
+    if (password) {
+      await authService.signUp({
+        email: newProfile.email,
+        password,
+        fullName: newProfile.name,
+        role: newProfile.role,
+        title: newProfile.title,
+        institutionId: newProfile.institutionId,
+      });
+    }
+
     showToast(`Registered new role profile: ${newProfile.name} (${newProfile.role})`);
+    return true;
   };
 
   return (
@@ -733,10 +962,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         postOfficerNote,
         applyAiSuggestion,
         showToast,
+        isLoading,
+        isLoadingDocuments,
+        dataError,
+        refreshData,
+        uploadRealFile,
         login,
         logout,
         toggleLoginModal,
-        registerNewProfile
+        registerNewProfile,
+        editExtractedValue
       }}
     >
       {children}

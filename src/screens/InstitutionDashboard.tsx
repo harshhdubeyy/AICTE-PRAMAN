@@ -12,7 +12,9 @@ import {
   Edit3,
   UserPlus,
   CheckCircle2,
-  ShieldCheck
+  ShieldCheck,
+  RefreshCw,
+  Loader2
 } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 import { HeroBanner } from '../components/HeroBanner';
@@ -23,15 +25,20 @@ import { StatusDot } from '../components/StatusDot';
 export const InstitutionDashboard: React.FC = () => {
   const {
     documents,
+    applications,
+    isLoading,
+    dataError,
+    refreshData,
     openReportModal,
     setActiveNav,
     resubmitDocument,
     showToast
   } = useApp();
 
-  const [selectedRowId, setSelectedRowId] = useState<string>('doc-svit-02'); // Notarized Affidavit selected by default
+  const [selectedRowId, setSelectedRowId] = useState<string>('doc-svit-02');
 
   const svitDocuments = documents.filter(d => d.applicationId === 'app-1');
+  const activeApp = applications.find(a => a.id === 'app-1') || applications[0];
 
   const handleFixAffidavit = () => {
     resubmitDocument('app-1', 'doc-svit-02');
@@ -47,6 +54,30 @@ export const InstitutionDashboard: React.FC = () => {
     showToast('Redirected to Faculty Roster amendment section');
   };
 
+  // Counts
+  const landPending = svitDocuments.filter(d => d.category === 'Land & Ownership' && d.status !== 'Passed').length;
+  const buildingExpiring = svitDocuments.filter(d => d.category === 'Building & Safety' && d.status === 'Expired').length;
+  const facultyPending = svitDocuments.filter(d => d.category === 'Faculty & Pay' && d.status !== 'Passed').length;
+
+  if (isLoading && svitDocuments.length === 0) {
+    return (
+      <div className="space-y-4 animate-pulse">
+        <div className="h-44 bg-white/70 rounded-2xl border border-indigo-100 p-6 flex flex-col justify-between">
+          <div className="h-5 w-48 bg-gray-200 rounded" />
+          <div className="space-y-2">
+            <div className="h-6 w-96 bg-gray-200 rounded" />
+            <div className="h-4 w-64 bg-gray-100 rounded" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-24 bg-white/70 rounded-xl border border-indigo-50 p-4" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-3.5">
       {/* 1. Hero Banner */}
@@ -58,8 +89,25 @@ export const InstitutionDashboard: React.FC = () => {
         primaryButtonText="View Report"
         onPrimaryClick={() => openReportModal('app-1')}
         showCompletenessBadge={true}
-        completenessPercent={78}
+        completenessPercent={activeApp ? activeApp.completenessPercentage : 78}
       />
+
+      {/* Friendly error banner if Supabase network fails and fallback mode is active */}
+      {dataError && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-center justify-between text-xs text-amber-800">
+          <div className="flex items-center gap-2">
+            <span className="font-semibold">{dataError}</span>
+            <span className="text-amber-600">(Running in resilient offline mode)</span>
+          </div>
+          <button
+            onClick={() => refreshData()}
+            className="flex items-center gap-1 font-bold text-amber-900 hover:underline cursor-pointer"
+          >
+            <RefreshCw className="w-3 h-3" />
+            <span>Retry Sync</span>
+          </button>
+        </div>
+      )}
 
       {/* 2. Documents You Need to Submit (5 Category Cards) */}
       <div>
@@ -81,26 +129,26 @@ export const InstitutionDashboard: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
           <CategoryCard
             title="Land & Ownership"
-            countText="(2 Pending)"
+            countText={`(${landPending > 0 ? `${landPending} Pending` : 'All Verified'})`}
             icon={<MapPin className="w-4 h-4" />}
             gradient="bg-gradient-to-br from-[#4F63E8] to-[#3B4ED4]"
-            statusDotColor="#EF4444"
+            statusDotColor={landPending > 0 ? '#EF4444' : '#22C55E'}
             onClick={() => setActiveNav('documents')}
           />
           <CategoryCard
             title="Building & Fire Safety"
-            countText="(1 Expiring)"
+            countText={`(${buildingExpiring > 0 ? `${buildingExpiring} Expiring` : 'All Verified'})`}
             icon={<Flame className="w-4 h-4" />}
             gradient="bg-gradient-to-br from-[#FF7A59] to-[#EE5B37]"
-            statusDotColor="#F59E0B"
+            statusDotColor={buildingExpiring > 0 ? '#F59E0B' : '#22C55E'}
             onClick={() => setActiveNav('documents')}
           />
           <CategoryCard
             title="Faculty Details"
-            countText="(3 Pending)"
+            countText={`(${facultyPending > 0 ? `${facultyPending} Pending` : 'All Verified'})`}
             icon={<Users className="w-4 h-4" />}
             gradient="bg-gradient-to-br from-[#8B5CF6] to-[#6D28D9]"
-            statusDotColor="#4F63E8"
+            statusDotColor={facultyPending > 0 ? '#4F63E8' : '#22C55E'}
             onClick={() => setActiveNav('documents')}
           />
           <CategoryCard
@@ -127,24 +175,31 @@ export const InstitutionDashboard: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#4F63E8]" />
-            <h3 className="text-[13.5px] font-bold text-[#1F2350]">Application Status — EoA 2026-27</h3>
+            <h3 className="text-[13.5px] font-bold text-[#1F2350]">
+              Application Status — {activeApp ? activeApp.applicationType : 'EoA'} {activeApp ? activeApp.academicYear : '2026-27'}
+            </h3>
             <span className="text-[10px] text-[#8C91AB] bg-[#F4F5FE] px-2 py-0.5 rounded font-mono">
-              AICTE-2026-04821
+              {activeApp ? activeApp.applicationNumber : 'AICTE-2026-04821'}
             </span>
           </div>
 
           <div className="flex items-center gap-3">
             <div className="flex flex-col items-end">
               <span className="text-[11px] text-[#8C91AB]">Overall Completeness</span>
-              <span className="text-[13px] font-bold text-[#4F63E8]">78%</span>
+              <span className="text-[13px] font-bold text-[#4F63E8]">
+                {activeApp ? activeApp.completenessPercentage : 78}%
+              </span>
             </div>
             <div className="w-28 h-2 rounded-full bg-[#ECEEFF] overflow-hidden">
-              <div className="h-full bg-[#4F63E8] rounded-full transition-all duration-500" style={{ width: '78%' }} />
+              <div
+                className="h-full bg-[#4F63E8] rounded-full transition-all duration-500"
+                style={{ width: `${activeApp ? activeApp.completenessPercentage : 78}%` }}
+              />
             </div>
           </div>
         </div>
 
-        <Stepper currentStage="AI Validation" />
+        <Stepper currentStage={activeApp ? activeApp.stage : 'AI Validation'} />
       </div>
 
       {/* 4. AI Remediation Guidance (3 Priority Deficiencies) */}

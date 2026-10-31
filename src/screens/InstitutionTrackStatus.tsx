@@ -1,43 +1,54 @@
 import React from 'react';
-import { GitBranch, CheckCircle2, Clock, ShieldCheck, ArrowRight } from 'lucide-react';
+import { GitBranch, CheckCircle2, Clock, ShieldCheck, ArrowRight, Loader2 } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 import { Stepper } from '../components/Stepper';
 
 export const InstitutionTrackStatus: React.FC = () => {
-  const { applications, openReportModal, showToast } = useApp();
+  const { applications, openReportModal, showToast, isLoading } = useApp();
   const app = applications.find(a => a.id === 'app-1') || applications[0];
 
   const milestones = [
     {
       title: 'Application Dossier Submitted & Fee Verified',
-      timestamp: '14 Oct 2026, 09:15 IST',
+      timestamp: app ? `${app.submittedAt}, 09:15 IST` : '14 Oct 2026, 09:15 IST',
       completed: true,
-      description: 'Transaction ID: TXN-AICTE-9812401. 32 statutory documents submitted to Western Regional Office.',
+      description: `Transaction ID: TXN-AICTE-9812401. Statutory documents submitted for ${app?.applicationNumber || 'AICTE-2026-04821'}.`,
       actor: 'SVIT Pune Registrar'
     },
     {
-      title: 'Spatial OCR & Automated Neural Scrutiny',
+      title: 'Spatial OCR & Automated Scrutiny Engine',
       timestamp: '14 Oct 2026, 16:45 IST',
-      completed: true,
-      description: 'Document coordinates checked against APH 2026-27 rules. 3 discrepancies detected requiring institutional response.',
+      completed: app ? app.stage !== 'Submitted' : true,
+      current: app ? app.stage === 'AI Validation' : false,
+      description: 'Document coordinates evaluated against AICTE Approval Process Handbook (APH) 2026-27 rules.',
       actor: 'PRAMAN Compliance Engine v4.11.2'
     },
     {
       title: 'Scrutiny Officer Review & Clarification Dispatch',
       timestamp: '14 Oct 2026, 17:00 IST',
-      completed: false,
-      current: true,
-      description: 'Officer Sara Abraham reviewed flagged variances and issued inquiry #qry-1 regarding Land Survey 44/A vs 44/B.',
+      completed: app ? app.stage === 'Final Decision' || app.status === 'Ready for Decision' : false,
+      current: app ? app.stage === 'Officer Review' : true,
+      description: 'Regional Scrutiny Officer reviewed flagged variances and issued inquiries.',
       actor: 'Regional Officer (Western Bureau)'
     },
     {
       title: 'Standing Hearing Committee / Final Decision',
       timestamp: 'Scheduled 15 Nov 2026',
-      completed: false,
-      description: 'Final issuance of Digital Extension of Approval (EoA) order upon clarification resolution.',
+      completed: app ? app.status === 'Passed' || app.status === 'Ready for Decision' : false,
+      description: 'Issuance of Digital Extension of Approval (EoA) order upon resolution of clarification.',
       actor: 'AICTE Executive Committee'
     }
   ];
+
+  if (isLoading && !app) {
+    return (
+      <div className="space-y-4 animate-pulse">
+        <div className="h-24 bg-white/70 rounded-2xl p-5 border border-indigo-50" />
+        <div className="h-32 bg-white/70 rounded-2xl p-5 border border-indigo-50" />
+        <div className="h-64 bg-white/70 rounded-2xl p-5 border border-indigo-50" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -50,13 +61,13 @@ export const InstitutionTrackStatus: React.FC = () => {
           <div>
             <h1 className="text-base font-bold text-[#1F2350]">Application Lifecycle & Stage Tracking</h1>
             <p className="text-[11px] text-[#8C91AB]">
-              Live status tracking for Application {app.applicationNumber} across AI validation, committee scrutiny, and decision.
+              Live status tracking for Application {app?.applicationNumber || 'AICTE-2026-04821'} across AI validation, committee scrutiny, and decision.
             </p>
           </div>
         </div>
 
         <button
-          onClick={() => openReportModal('app-1')}
+          onClick={() => openReportModal(app?.id || 'app-1')}
           className="h-8 px-3.5 bg-[#EEF0FD] hover:bg-[#4F63E8] hover:text-white text-[#4F63E8] rounded-lg text-xs font-bold transition-all cursor-pointer"
         >
           View Full AI Report
@@ -68,10 +79,10 @@ export const InstitutionTrackStatus: React.FC = () => {
         <div className="flex justify-between items-center mb-4">
           <span className="text-xs font-bold text-[#1F2350]">Scrutiny Stepper</span>
           <span className="text-xs font-bold text-[#4F63E8] bg-indigo-50 px-2.5 py-0.5 rounded-full">
-            Stage 2: AI Validation & Officer Inquiry
+            Stage: {app?.stage || 'AI Validation'} • {app?.status || 'In Progress'}
           </span>
         </div>
-        <Stepper currentStage="AI Validation" />
+        <Stepper currentStage={app?.stage || 'AI Validation'} />
       </div>
 
       {/* Detailed Milestone Timeline with Timestamps */}

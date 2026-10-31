@@ -1,4 +1,4 @@
-export type UserRole = 'officer' | 'institution';
+export type UserRole = 'officer' | 'institution' | 'admin' | 'auditor';
 
 export interface UserProfile {
   name: string;
@@ -41,18 +41,20 @@ export interface Institution {
   establishedYear: number;
 }
 
+export interface BoundingBox {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 export interface ExtractedField {
   fieldName: string;
   extractedValue: string;
   claimedValue: string;
   confidence: number;
   pageNumber: number;
-  boundingBox?: {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-  };
+  boundingBox?: BoundingBox;
   status: ValidationStatus;
   notes?: string;
 }
@@ -98,10 +100,17 @@ export interface ValidationFinding {
   applicationId: string;
   status: ValidationStatus;
   rule_code: string;
+  rule_version?: string;
   ruleTitle: string;
   documentName: string;
   documentId: string;
   page: number;
+  bbox?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
   field: string;
   extractedValue: string;
   claimedValue: string;
@@ -111,12 +120,15 @@ export interface ValidationFinding {
   whyLine?: string;
   severity: 'CRITICAL' | 'HIGH' | 'MEDIUM' | 'LOW';
   sourceReference: string;
+  superseded_by?: string | null;
 }
 
 export interface ValidationRun {
   runId: string;
   timestamp: string;
   ruleVersion: string;
+  triggerReason?: string;
+  triggeredBy?: string;
   findingsCount: {
     passed: number;
     missing: number;

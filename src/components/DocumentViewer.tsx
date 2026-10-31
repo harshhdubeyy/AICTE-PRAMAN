@@ -144,8 +144,8 @@ export const DocumentViewer: React.FC<DocumentViewerProps> = ({ onInsertToClarif
 
           {/* Footnote on Coordinates */}
           <div className="w-full flex items-center justify-between text-[10px] text-[#8C91AB] mt-2 px-1">
-            <span>Bounding Coordinates: [X: 142px, Y: 310px, W: 260px, H: 45px]</span>
-            <span className="text-[#4F63E8] font-semibold">Tesseract-NLP v4.11</span>
+            <span>Bounding Coordinates: [X: 142px, Y: 310px, W: 260px, H: 45px] (approximate region)</span>
+            <span className="text-[#4F63E8] font-semibold">Gemini Flash OCR</span>
           </div>
         </div>
 

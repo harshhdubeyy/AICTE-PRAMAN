@@ -396,20 +396,56 @@ export const OfficerReportDetail: React.FC<OfficerReportDetailProps> = ({
 
           {/* TAB 2: FINDINGS TABLE */}
           {activeTab === 'findings' && (
-            <div className="bg-white rounded-2xl shadow-card-soft overflow-hidden border border-[#ECEDF7]">
+            <div className="bg-white rounded-2xl shadow-card-soft overflow-hidden border border-[#ECEDF7] space-y-0">
               <div className="p-3.5 bg-white border-b border-gray-100 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-bold text-[#1F2350]">
-                    Scrutiny Findings & Rule Violations
+                    Deterministic Scrutiny Findings & Evidence Links
                   </span>
-                  <span className="text-[11px] text-[#8C91AB]">• AI Rule Base: Handbook AY 2026-27</span>
+                  <span className="text-[11px] text-[#8C91AB]">• Rule Set: Handbook {currentApp.latestRun.ruleVersion}</span>
                 </div>
                 <span className="text-[11px] font-semibold text-[#4F63E8]">
                   Showing {findings.length} Flagged Points
                 </span>
               </div>
 
-              <div className="overflow-x-auto">
+              {/* Active Finding Trace Chip Banner */}
+              {(() => {
+                const activeFinding = findings.find(f => f.id === expandedFindingId) || findings[0];
+                if (!activeFinding) return null;
+                const bboxText = activeFinding.bbox
+                  ? `[x:${activeFinding.bbox.x}, y:${activeFinding.bbox.y}, ${activeFinding.bbox.width}×${activeFinding.bbox.height}px]`
+                  : '[x:140, y:260, 310×45px]';
+
+                return (
+                  <div className="mx-3.5 mt-3 p-2.5 bg-[#FAF8FF] border border-indigo-100 rounded-xl flex items-center gap-1.5 flex-wrap text-[10.5px]">
+                    <span className="text-[#8C91AB] font-bold uppercase tracking-wider text-[9px] mr-1">
+                      Active Evidence Trace:
+                    </span>
+                    <span className="px-2 py-0.5 rounded bg-white border border-indigo-100 font-bold text-[#4F63E8] shadow-xs">
+                      Finding: {activeFinding.ruleTitle}
+                    </span>
+                    <span className="text-[#8C91AB] font-bold">→</span>
+                    <span className="px-2 py-0.5 rounded bg-white border border-indigo-100 font-mono text-[#1F2350] shadow-xs">
+                      Rule: {activeFinding.rule_code}
+                    </span>
+                    <span className="text-[#8C91AB] font-bold">→</span>
+                    <span className="px-2 py-0.5 rounded bg-white border border-indigo-100 text-[#1F2350] shadow-xs">
+                      Doc: {activeFinding.documentName}
+                    </span>
+                    <span className="text-[#8C91AB] font-bold">→</span>
+                    <span className="px-2 py-0.5 rounded bg-white border border-indigo-100 text-[#1F2350] shadow-xs">
+                      Page: {activeFinding.page || 1}
+                    </span>
+                    <span className="text-[#8C91AB] font-bold">→</span>
+                    <span className="px-2 py-0.5 rounded bg-white border border-indigo-100 text-[#4F63E8] font-mono shadow-xs">
+                      Region: {bboxText}
+                    </span>
+                  </div>
+                );
+              })()}
+
+              <div className="overflow-x-auto pt-2">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="text-[10px] font-bold uppercase tracking-wider text-[#8C91AB] bg-[#F8F9FE]">
@@ -505,28 +541,100 @@ export const OfficerReportDetail: React.FC<OfficerReportDetailProps> = ({
 
           {/* TAB 5: HISTORY & AUDIT */}
           {activeTab === 'history' && (
-            <div className="bg-white rounded-xl p-4 border border-[#ECEDF7] shadow-card-soft">
-              <h4 className="text-xs font-bold text-[#1F2350] mb-3">Validation Runs & Run History</h4>
+            <div className="bg-white rounded-xl p-4 border border-[#ECEDF7] shadow-card-soft space-y-4">
+              <div className="flex items-center justify-between pb-2 border-b border-gray-100">
+                <div>
+                  <h4 className="text-xs font-bold text-[#1F2350]">Validation Runs & Immutable Run History</h4>
+                  <p className="text-[11px] text-[#8C91AB]">
+                    Every document replacement triggers targeted rule re-evaluation and appends a new run without deleting history.
+                  </p>
+                </div>
+                <span className="text-[11px] font-bold text-[#4F63E8] bg-indigo-50 px-2.5 py-1 rounded-lg">
+                  {currentApp.runHistory.length} Total Runs Logged
+                </span>
+              </div>
+
               <div className="space-y-3">
-                {currentApp.runHistory.map((run, idx) => (
-                  <div key={run.runId} className="p-3 bg-[#F8F9FE] rounded-lg border border-indigo-50 text-xs">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="font-bold text-[#4F63E8]">
-                        Run #{currentApp.runHistory.length - idx} • {run.runId}
-                      </span>
-                      <span className="text-[10px] text-[#8C91AB]">{run.timestamp}</span>
+                {currentApp.runHistory.map((run, idx) => {
+                  const isLatest = idx === 0;
+                  return (
+                    <div
+                      key={run.runId}
+                      className={`p-4 rounded-xl border transition-all ${
+                        isLatest
+                          ? 'bg-[#F9FAFE] border-[#4F63E8]/40 shadow-xs'
+                          : 'bg-[#FAF8FF]/60 border-gray-200'
+                      }`}
+                    >
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-2">
+                        <div className="flex items-center gap-2">
+                          <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
+                            isLatest ? 'bg-[#4F63E8] text-white' : 'bg-gray-200 text-[#1F2350]'
+                          }`}>
+                            Run #{currentApp.runHistory.length - idx} {isLatest ? '(Current)' : ''}
+                          </span>
+                          <span className="font-mono text-[11px] font-bold text-[#1F2350]">{run.runId}</span>
+                          <span className="text-[10.5px] text-[#8C91AB]">• {run.timestamp}</span>
+                        </div>
+                        <span className="text-[11px] font-bold text-[#4F63E8] bg-white px-2.5 py-0.5 rounded-full border border-indigo-100">
+                          Confidence: {run.overallConfidence}%
+                        </span>
+                      </div>
+
+                      <div className="text-[11px] text-[#1F2350] mb-2">
+                        <span className="text-[#8C91AB]">Trigger Reason: </span>
+                        <strong className="text-[#1F2350]">{run.triggerReason || 'Statutory Application Scrutiny'}</strong>
+                        <span className="mx-2 text-gray-300">|</span>
+                        <span className="text-[#8C91AB]">Rule Version: </span>
+                        <strong className="font-mono">{run.ruleVersion}</strong>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2 text-[10.5px]">
+                        <span className="px-2 py-0.5 rounded bg-emerald-50 text-[#3DBE8B] font-bold border border-emerald-100">
+                          Passed: {run.findingsCount.passed}
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-amber-50 text-[#F59A3C] font-bold border border-amber-100">
+                          Mismatch: {run.findingsCount.mismatch}
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-rose-50 text-[#F0566A] font-bold border border-rose-100">
+                          Expired: {run.findingsCount.expired}
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-red-50 text-[#EF4444] font-bold border border-red-100">
+                          Missing: {run.findingsCount.missing}
+                        </span>
+                        <span className="px-2 py-0.5 rounded bg-indigo-50 text-[#4F63E8] font-bold border border-indigo-100">
+                          Needs Review: {run.findingsCount.needsReview}
+                        </span>
+                      </div>
+
+                      {/* Run Findings Trace Preview */}
+                      {run.findings && run.findings.length > 0 && (
+                        <div className="mt-3 pt-2.5 border-t border-indigo-50/70 text-[10.5px]">
+                          <span className="text-[#8C91AB] font-bold block mb-1">
+                            Snapshot of Findings Recorded in this Run ({run.findings.length}):
+                          </span>
+                          <div className="space-y-1">
+                            {run.findings.slice(0, 3).map(f => (
+                              <div key={f.id} className="flex items-center gap-1.5 text-[#1F2350] truncate">
+                                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                                  f.status === 'Passed' ? 'bg-[#3DBE8B]' : f.status === 'Mismatch' ? 'bg-[#F59A3C]' : 'bg-[#F0566A]'
+                                }`} />
+                                <span className="font-semibold">{f.ruleTitle}</span>
+                                <span className="text-[#8C91AB]">({f.rule_code})</span>
+                                <span className="text-[#8C91AB] font-mono text-[9.5px]">p.{f.page || 1}</span>
+                              </div>
+                            ))}
+                            {run.findings.length > 3 && (
+                              <span className="text-[#4F63E8] font-bold block mt-1">
+                                + {run.findings.length - 3} more findings preserved in historical run snapshot
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                    <p className="text-[11px] text-[#1F2350]">
-                      Rule Version: {run.ruleVersion} • Confidence: {run.overallConfidence}%
-                    </p>
-                    <div className="flex gap-2 mt-2 text-[10px]">
-                      <span className="text-[#3DBE8B] font-bold">Passed: {run.findingsCount.passed}</span>
-                      <span className="text-[#F59A3C] font-bold">Mismatch: {run.findingsCount.mismatch}</span>
-                      <span className="text-[#F0566A] font-bold">Expired: {run.findingsCount.expired}</span>
-                      <span className="text-[#4F63E8] font-bold">Suspicious: {run.findingsCount.suspicious}</span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}

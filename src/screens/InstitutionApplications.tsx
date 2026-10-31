@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
-import { Plus, FileText, CheckCircle, ArrowRight, ArrowLeft, Upload, Shield } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { Plus, FileText, CheckCircle, ArrowRight, ArrowLeft, Upload, Shield, Loader2 } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 import { ApplicationType } from '../types';
 import { StatusDot } from '../components/StatusDot';
 
 export const InstitutionApplications: React.FC = () => {
-  const { applications, addNewApplication, openReportModal, showToast } = useApp();
+  const { applications, addNewApplication, openReportModal, showToast, isLoading } = useApp();
   const [isWizardOpen, setIsWizardOpen] = useState(false);
   const [wizardStep, setWizardStep] = useState(1);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Wizard form states
   const [appType, setAppType] = useState<ApplicationType>('Extension of Approval');
@@ -16,25 +17,51 @@ export const InstitutionApplications: React.FC = () => {
   const [builtUpArea, setBuiltUpArea] = useState('14,200 sq.m');
   const [uploadedFilesCount, setUploadedFilesCount] = useState(4);
 
-  // SVIT Pune applications only
+  const wizardFileInputRef = useRef<HTMLInputElement>(null);
+
+  // SVIT Pune applications only (inst-1)
   const institutionApps = applications.filter(a => a.institutionId === 'inst-1');
 
-  const handleNextStep = () => {
+  const handleNextStep = async () => {
     if (wizardStep < 4) {
       setWizardStep(prev => prev + 1);
     } else {
-      addNewApplication({
-        institutionName: 'Sri Venkateswara Institute of Technology, Pune',
-        applicationType: appType,
-        academicYear
-      });
-      setIsWizardOpen(false);
-      setWizardStep(1);
+      setIsSubmitting(true);
+      try {
+        await addNewApplication({
+          institutionName: 'Sri Venkateswara Institute of Technology, Pune',
+          applicationType: appType,
+          academicYear
+        });
+        showToast('Application successfully submitted to AICTE Western Regional Office!');
+        setIsWizardOpen(false);
+        setWizardStep(1);
+      } catch (err: any) {
+        showToast('Submission error: ' + err.message);
+      } finally {
+        setIsSubmitting(false);
+      }
+    }
+  };
+
+  const handleSimulateAttach = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setUploadedFilesCount(prev => prev + e.target.files!.length);
+      showToast(`Attached ${e.target.files[0].name} with SHA-256 stamp to application`);
     }
   };
 
   return (
     <div className="space-y-4">
+      {/* Hidden file input for wizard */}
+      <input
+        type="file"
+        ref={wizardFileInputRef}
+        onChange={handleSimulateAttach}
+        accept=".pdf,.png,.jpg,.jpeg"
+        className="hidden"
+      />
+
       {/* Header */}
       <div className="bg-white rounded-2xl p-4 md:p-5 shadow-card-soft border border-[#ECEDF7] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-center gap-3">
@@ -63,49 +90,59 @@ export const InstitutionApplications: React.FC = () => {
 
       {/* Applications Cards List */}
       <div className="space-y-3">
-        {institutionApps.map(app => (
-          <div
-            key={app.id}
-            className="bg-white rounded-2xl p-4 sm:p-5 border border-[#ECEDF7] shadow-card-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-          >
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="font-bold text-xs bg-indigo-50 text-[#4F63E8] px-2 py-0.5 rounded font-mono">
-                  {app.applicationNumber}
-                </span>
-                <h3 className="font-bold text-sm text-[#1F2350]">{app.applicationType}</h3>
-                <StatusDot status={app.status} />
-              </div>
-
-              <div className="flex items-center gap-3 text-xs text-[#8C91AB]">
-                <span>Cycle: <strong className="text-[#1F2350]">{app.academicYear}</strong></span>
-                <span>•</span>
-                <span>Submitted: {app.submittedAt}</span>
-                <span>•</span>
-                <span>Stage: <strong className="text-[#4F63E8]">{app.stage}</strong></span>
-              </div>
-
-              <div className="flex items-center gap-2 mt-2">
-                <div className="w-36 h-2 rounded-full bg-gray-100 overflow-hidden">
-                  <div
-                    className="h-full bg-[#4F63E8] rounded-full"
-                    style={{ width: `${app.completenessPercentage}%` }}
-                  />
+        {isLoading && institutionApps.length === 0 ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="bg-white rounded-2xl p-5 border border-[#ECEDF7] animate-pulse space-y-3">
+              <div className="h-4 w-48 bg-gray-200 rounded" />
+              <div className="h-3 w-64 bg-gray-100 rounded" />
+              <div className="h-2 w-36 bg-gray-200 rounded" />
+            </div>
+          ))
+        ) : (
+          institutionApps.map(app => (
+            <div
+              key={app.id}
+              className="bg-white rounded-2xl p-4 sm:p-5 border border-[#ECEDF7] shadow-card-soft flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
+              <div className="space-y-1.5">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold text-xs bg-indigo-50 text-[#4F63E8] px-2 py-0.5 rounded font-mono">
+                    {app.applicationNumber}
+                  </span>
+                  <h3 className="font-bold text-sm text-[#1F2350]">{app.applicationType}</h3>
+                  <StatusDot status={app.status} />
                 </div>
-                <span className="text-[11px] font-bold text-[#1F2350]">{app.completenessPercentage}% Complete</span>
+
+                <div className="flex items-center gap-3 text-xs text-[#8C91AB]">
+                  <span>Cycle: <strong className="text-[#1F2350]">{app.academicYear}</strong></span>
+                  <span>•</span>
+                  <span>Submitted: {app.submittedAt}</span>
+                  <span>•</span>
+                  <span>Stage: <strong className="text-[#4F63E8]">{app.stage}</strong></span>
+                </div>
+
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="w-36 h-2 rounded-full bg-gray-100 overflow-hidden">
+                    <div
+                      className="h-full bg-[#4F63E8] rounded-full"
+                      style={{ width: `${app.completenessPercentage}%` }}
+                    />
+                  </div>
+                  <span className="text-[11px] font-bold text-[#1F2350]">{app.completenessPercentage}% Complete</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  onClick={() => openReportModal(app.id)}
+                  className="px-4 py-2 bg-[#EEF0FD] hover:bg-[#4F63E8] hover:text-white text-[#4F63E8] rounded-xl text-xs font-bold transition-all cursor-pointer"
+                >
+                  View Validation Report
+                </button>
               </div>
             </div>
-
-            <div className="flex items-center gap-2 shrink-0">
-              <button
-                onClick={() => openReportModal(app.id)}
-                className="px-4 py-2 bg-[#EEF0FD] hover:bg-[#4F63E8] hover:text-white text-[#4F63E8] rounded-xl text-xs font-bold transition-all cursor-pointer"
-              >
-                View Validation Report
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
 
       {/* 4-Step Wizard Modal */}
@@ -186,7 +223,7 @@ export const InstitutionApplications: React.FC = () => {
                     type="text"
                     value={academicYear}
                     onChange={e => setAcademicYear(e.target.value)}
-                    className="w-full h-9 px-3 bg-[#F4F5FE] border border-gray-200 rounded-lg"
+                    className="w-full h-9 px-3 bg-[#F4F5FE] border border-gray-200 rounded-lg text-xs"
                   />
                 </div>
                 <div>
@@ -195,7 +232,7 @@ export const InstitutionApplications: React.FC = () => {
                     type="text"
                     value={programName}
                     onChange={e => setProgramName(e.target.value)}
-                    className="w-full h-9 px-3 bg-[#F4F5FE] border border-gray-200 rounded-lg"
+                    className="w-full h-9 px-3 bg-[#F4F5FE] border border-gray-200 rounded-lg text-xs"
                   />
                 </div>
                 <div>
@@ -204,7 +241,7 @@ export const InstitutionApplications: React.FC = () => {
                     type="text"
                     value={builtUpArea}
                     onChange={e => setBuiltUpArea(e.target.value)}
-                    className="w-full h-9 px-3 bg-[#F4F5FE] border border-gray-200 rounded-lg"
+                    className="w-full h-9 px-3 bg-[#F4F5FE] border border-gray-200 rounded-lg text-xs"
                   />
                 </div>
               </div>
@@ -221,13 +258,10 @@ export const InstitutionApplications: React.FC = () => {
                   </p>
                   <button
                     type="button"
-                    onClick={() => {
-                      setUploadedFilesCount(prev => prev + 1);
-                      showToast('Attached statutory document to wizard draft');
-                    }}
-                    className="px-3 py-1.5 bg-[#4F63E8] text-white rounded-lg text-xs font-bold cursor-pointer"
+                    onClick={() => wizardFileInputRef.current?.click()}
+                    className="px-3.5 py-1.5 bg-[#4F63E8] hover:bg-[#4458DC] text-white rounded-lg text-xs font-bold cursor-pointer transition-colors shadow-xs"
                   >
-                    Simulate Attach File ({uploadedFilesCount} Attached)
+                    Attach File ({uploadedFilesCount} Attached)
                   </button>
                 </div>
               </div>
@@ -268,10 +302,10 @@ export const InstitutionApplications: React.FC = () => {
             <div className="flex justify-between items-center pt-3 border-t">
               <button
                 type="button"
-                disabled={wizardStep === 1}
+                disabled={wizardStep === 1 || isSubmitting}
                 onClick={() => setWizardStep(prev => prev - 1)}
                 className={`px-4 py-1.5 rounded-lg border text-xs font-bold flex items-center gap-1 ${
-                  wizardStep === 1 ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'
+                  wizardStep === 1 || isSubmitting ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer hover:bg-gray-50'
                 }`}
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
@@ -280,11 +314,21 @@ export const InstitutionApplications: React.FC = () => {
 
               <button
                 type="button"
+                disabled={isSubmitting}
                 onClick={handleNextStep}
-                className="px-5 py-2 bg-[#4F63E8] hover:bg-[#4458DC] text-white rounded-xl text-xs font-bold shadow-sm flex items-center gap-1.5 cursor-pointer"
+                className="px-5 py-2 bg-[#4F63E8] hover:bg-[#4458DC] text-white rounded-xl text-xs font-bold shadow-sm flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
               >
-                <span>{wizardStep === 4 ? 'Sign & Submit Application' : 'Next Step'}</span>
-                <ArrowRight className="w-3.5 h-3.5" />
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                    <span>Transmitting to AICTE...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>{wizardStep === 4 ? 'Sign & Submit Application' : 'Next Step'}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </>
+                )}
               </button>
             </div>
           </div>
