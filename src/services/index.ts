@@ -5,5 +5,6 @@ export * from './documentsService';
 export * from './findingsService';
 export * from './queriesService';
 export * from './auditService';
+export * from './notificationsService';
 export * from './extractionService';
 export * from './extraction';

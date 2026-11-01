@@ -1,7 +1,7 @@
-import React from 'react';
-import { Settings, Bell, Mail, Eye, ShieldCheck, Zap, Clock } from 'lucide-react';
+import { Settings, Mail, Eye, ShieldCheck, Zap, Clock } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 import { CalendarStrip } from './CalendarStrip';
+import { NotificationBell } from './NotificationBell';
 
 export const RightPanel: React.FC = () => {
   const {
@@ -35,14 +35,7 @@ export const RightPanel: React.FC = () => {
             >
               <Settings className="w-4 h-4" />
             </button>
-            <button
-              onClick={() => showToast('Regulatory notifications marked as read')}
-              className="hover:text-[#4F63E8] p-1 transition-colors relative cursor-pointer"
-              title="Notifications"
-            >
-              <Bell className="w-4 h-4" />
-              <span className="absolute top-1 right-1 w-2 h-2 rounded-full bg-[#F0566A] ring-2 ring-white" />
-            </button>
+            <NotificationBell />
           </div>
 
           <div

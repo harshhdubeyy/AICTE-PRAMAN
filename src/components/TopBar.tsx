@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, ChevronDown, Menu, X, FileUp, PlusCircle, Filter, UserCheck } from 'lucide-react';
 import { useApp } from '../store/AppContext';
+import { NotificationBell } from './NotificationBell';
 
 interface TopBarProps {
   onSearch?: (query: string) => void;
@@ -89,6 +90,11 @@ export const TopBar: React.FC<TopBarProps> = ({
             </span>
           </div>
         )}
+
+        {/* Realtime Notification Bell */}
+        <div className="bg-white border border-[#ECEDF7] rounded-lg h-9 flex items-center px-1 shadow-xs">
+          <NotificationBell />
+        </div>
 
         {/* Switch / Add Role Quick Trigger */}
         <button

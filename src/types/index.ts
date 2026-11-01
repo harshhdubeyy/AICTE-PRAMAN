@@ -211,6 +211,31 @@ export interface AuditEvent {
   details: string;
   isSimulatedExternal?: boolean; // For DigiLocker / UGC mock external checks
   externalSource?: 'DigiLocker' | 'UGC' | 'NAAC' | 'State Sub-Registrar';
+  // Cryptographic audit chain & relational tracking
+  actor_id?: string;
+  actor_role?: string;
+  entity_type?: string;
+  entity_id?: string;
+  application_id?: string;
+  details_json?: Record<string, any>;
+  rule_set_version?: string;
+  model_version?: string;
+  created_at?: string;
+  prev_hash?: string | null;
+  hash?: string;
+}
+
+export interface NotificationItem {
+  id: string;
+  user_id?: string;
+  role?: UserRole;
+  application_id?: string;
+  title: string;
+  message: string;
+  type: 'info' | 'warning' | 'action_required' | 'success';
+  read: boolean;
+  link_nav?: string;
+  created_at: string;
 }
 
 export interface InfrastructureFacility {

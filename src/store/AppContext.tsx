@@ -9,7 +9,8 @@ import {
   AuditEvent,
   InfrastructureFacility,
   ApplicationType,
-  UserProfile
+  UserProfile,
+  NotificationItem
 } from '../types';
 import {
   SEED_INSTITUTIONS,
@@ -27,8 +28,12 @@ import {
   documentsService,
   queriesService,
   auditService,
+  createChainedAuditEvent,
+  notificationsService,
+  SEED_NOTIFICATIONS,
   extractionService,
-  isSupabaseConfigured
+  isSupabaseConfigured,
+  supabase
 } from '../services';
 
 export const DEFAULT_OFFICER_PROFILES: UserProfile[] = [
@@ -127,6 +132,8 @@ interface AppContextType {
   inspections: InspectionSchedule[];
   auditTrail: AuditEvent[];
   facilities: InfrastructureFacility[];
+  notifications: NotificationItem[];
+  unreadNotificationCount: number;
   toast: { text: string; id: number } | null;
   availableOfficerProfiles: UserProfile[];
   availableInstitutionProfiles: UserProfile[];
@@ -135,6 +142,8 @@ interface AppContextType {
   isLoginModalOpen: boolean;
   selectedFindingId: string | null;
   // Methods
+  markNotificationAsRead: (id: string) => void;
+  markAllNotificationsAsRead: () => void;
   switchRole: (role: UserRole) => void;
   setActiveNav: (nav: string) => void;
   selectApplication: (appId: string) => void;
@@ -187,6 +196,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [inspections, setInspections] = useState<InspectionSchedule[]>(SEED_INSPECTIONS);
   const [auditTrail, setAuditTrail] = useState<AuditEvent[]>(SEED_AUDIT_TRAIL);
   const [facilities, setFacilities] = useState<InfrastructureFacility[]>(SEED_FACILITIES);
+  const [notifications, setNotifications] = useState<NotificationItem[]>(SEED_NOTIFICATIONS);
   const [toast, setToast] = useState<{ text: string; id: number } | null>(null);
   const [isReportModalOpen, setIsReportModalOpen] = useState<boolean>(false);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState<boolean>(false);
@@ -204,29 +214,71 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }, 2800);
   };
 
+  const unreadNotificationCount = notifications.filter(
+    n => !n.read && (!n.role || n.role === role)
+  ).length;
+
+  const markNotificationAsRead = useCallback(async (id: string) => {
+    setNotifications(prev => prev.map(n => (n.id === id ? { ...n, read: true } : n)));
+    await notificationsService.markAsRead(id);
+  }, []);
+
+  const markAllNotificationsAsRead = useCallback(async () => {
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+    await notificationsService.markAllAsRead(role);
+  }, [role]);
+
   // Synchronize data from Supabase backend (or fallback smoothly to seed data)
   const refreshData = useCallback(async () => {
     setIsLoading(true);
     setDataError(null);
     try {
-      const [fetchedApps, fetchedDocs, fetchedQueries, fetchedAudits] = await Promise.all([
+      const [fetchedApps, fetchedDocs, fetchedQueries, fetchedAudits, fetchedNotifs] = await Promise.all([
         applicationsService.getApplications(),
         documentsService.getDocuments(),
         queriesService.getQueries(),
         auditService.getAuditEvents(),
+        notificationsService.getNotifications(role),
       ]);
 
       if (fetchedApps && fetchedApps.length > 0) setApplications(fetchedApps);
       if (fetchedDocs && fetchedDocs.length > 0) setDocuments(fetchedDocs);
       if (fetchedQueries && fetchedQueries.length > 0) setQueries(fetchedQueries);
       if (fetchedAudits && fetchedAudits.length > 0) setAuditTrail(fetchedAudits);
+      if (fetchedNotifs && fetchedNotifs.length > 0) setNotifications(fetchedNotifs);
     } catch (err: any) {
       console.warn('Backend sync note:', err.message || err);
       setDataError('Using offline regulatory seed cache');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [role]);
+
+  // Supabase Realtime live sync across roles and tabs
+  useEffect(() => {
+    const client = supabase;
+    if (isSupabaseConfigured() && client) {
+      const channel = client
+        .channel('aicte-praman-live-channel')
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'applications' }, () => {
+          refreshData();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'queries' }, () => {
+          refreshData();
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'audit_events' }, () => {
+          refreshData();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications' }, () => {
+          refreshData();
+        })
+        .subscribe();
+
+      return () => {
+        client.removeChannel(channel);
+      };
+    }
+  }, [refreshData]);
 
   // Check active session and load initial data on mount
   useEffect(() => {
@@ -300,29 +352,58 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setApplications(prev =>
       prev.map(a =>
         a.id === appId
-          ? { ...a, status: 'Mismatch', recommendedAction: 'Seek Clarification' }
+          ? { ...a, status: 'Mismatch', stage: 'Officer Review', recommendedAction: 'Seek Clarification' }
           : a
       )
     );
 
-    // Write audit event
-    const audit: AuditEvent = {
-      id: `aud-${Date.now()}`,
-      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
-      actor: 'Sara Abraham (Senior Scrutiny Officer)',
-      actorRole: 'officer',
-      action: 'Dispatched Formal Clarification Notice',
-      applicationId: app.id,
-      applicationNumber: app.applicationNumber,
-      ruleVersion: CURRENT_RULESET_VERSION,
-      details: `Clarification notice sent to institution regarding: "${queryText.substring(0, 80)}..."`
+    // Cryptographic audit chain calculation
+    createChainedAuditEvent(
+      {
+        actor: 'Sara Abraham (Senior Scrutiny Officer)',
+        actorRole: 'officer',
+        action: 'Dispatched Formal Clarification Notice',
+        applicationId: app.id,
+        applicationNumber: app.applicationNumber,
+        ruleVersion: CURRENT_RULESET_VERSION,
+        details: `Clarification notice sent to institution regarding: "${queryText.substring(0, 80)}..."`,
+        entityType: 'query',
+        details_json: { queryText, fieldRef, recipientRole: 'institution' },
+      },
+      auditTrail[0]
+    ).then(audit => {
+      setAuditTrail(prev => [audit, ...prev]);
+      auditService.logAuditEvent({
+        actor: audit.actor,
+        actorRole: audit.actorRole,
+        action: audit.action,
+        applicationId: audit.applicationId,
+        applicationNumber: audit.applicationNumber,
+        ruleVersion: audit.ruleVersion,
+        details: audit.details,
+        entityType: 'query',
+      });
+    });
+
+    // Add Live Notification for Institution
+    const newNotif: NotificationItem = {
+      id: `notif-${Date.now()}`,
+      role: 'institution',
+      application_id: app.id,
+      title: 'Clarification Notice Issued',
+      message: `Scrutiny Officer requested clarification on ${fieldRef || app.applicationNumber}: "${queryText.substring(0, 80)}..."`,
+      type: 'action_required',
+      read: false,
+      link_nav: 'queries',
+      created_at: new Date().toISOString(),
     };
-    setAuditTrail(prev => [audit, ...prev]);
+    setNotifications(prev => [newNotif, ...prev]);
 
     showToast('Clarification notice dispatched to Institution dashboard');
   };
 
   const replyClarification = (queryId: string, replyText: string, attachmentName?: string) => {
+    const qry = queries.find(q => q.id === queryId);
     setQueries(prev =>
       prev.map(q => {
         if (q.id === queryId) {
@@ -346,19 +427,47 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       })
     );
 
-    // Audit event
-    const audit: AuditEvent = {
-      id: `aud-${Date.now()}`,
-      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
-      actor: role === 'institution' ? 'Dr. V. Kulkarni (Principal SVIT)' : 'Sara Abraham',
-      actorRole: role,
-      action: 'Clarification Response Submitted',
-      applicationId: selectedAppId,
-      applicationNumber: 'AICTE-2026-04821',
-      ruleVersion: CURRENT_RULESET_VERSION,
-      details: `Response posted with message: "${replyText.substring(0, 70)}..." ${attachmentName ? `(Attached: ${attachmentName})` : ''}`
+    // Cryptographic audit event
+    createChainedAuditEvent(
+      {
+        actor: role === 'institution' ? 'Dr. V. Kulkarni (Principal SVIT)' : 'Sara Abraham',
+        actorRole: role,
+        action: 'Clarification Response Submitted',
+        applicationId: qry?.applicationId || selectedAppId,
+        applicationNumber: qry?.applicationNumber || 'AICTE-2026-04821',
+        ruleVersion: CURRENT_RULESET_VERSION,
+        details: `Response posted with message: "${replyText.substring(0, 70)}..." ${attachmentName ? `(Attached: ${attachmentName})` : ''}`,
+        entityType: 'query',
+        details_json: { queryId, replyText, attachmentName },
+      },
+      auditTrail[0]
+    ).then(audit => {
+      setAuditTrail(prev => [audit, ...prev]);
+      auditService.logAuditEvent({
+        actor: audit.actor,
+        actorRole: audit.actorRole,
+        action: audit.action,
+        applicationId: audit.applicationId,
+        applicationNumber: audit.applicationNumber,
+        ruleVersion: audit.ruleVersion,
+        details: audit.details,
+        entityType: 'query',
+      });
+    });
+
+    // Add Live Notification for Officer
+    const newNotif: NotificationItem = {
+      id: `notif-${Date.now()}`,
+      role: 'officer',
+      application_id: qry?.applicationId || selectedAppId,
+      title: 'Clarification Response Received',
+      message: `Institution submitted response to ${qry?.subject || 'Statutory inquiry'}: "${replyText.substring(0, 70)}..."`,
+      type: 'info',
+      read: false,
+      link_nav: 'clarifications',
+      created_at: new Date().toISOString(),
     };
-    setAuditTrail(prev => [audit, ...prev]);
+    setNotifications(prev => [newNotif, ...prev]);
 
     showToast('Clarification response sent to AICTE Scrutiny Bureau');
   };
@@ -387,48 +496,80 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       )
     );
 
-    const audit: AuditEvent = {
-      id: `aud-${Date.now()}`,
-      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
-      actor: 'Sara Abraham (Senior Scrutiny Officer)',
-      actorRole: 'officer',
-      action: 'Expert Committee Physical Inspection Scheduled',
-      applicationId: app.id,
-      applicationNumber: app.applicationNumber,
-      ruleVersion: CURRENT_RULESET_VERSION,
-      details: `Scheduled physical inspection on 28 May 2026: ${notes || 'Ground verification'}`
+    createChainedAuditEvent(
+      {
+        actor: 'Sara Abraham (Senior Scrutiny Officer)',
+        actorRole: 'officer',
+        action: 'Expert Committee Physical Inspection Scheduled',
+        applicationId: app.id,
+        applicationNumber: app.applicationNumber,
+        ruleVersion: CURRENT_RULESET_VERSION,
+        details: `Scheduled physical inspection on 28 May 2026: ${notes || 'Ground verification'}`,
+        entityType: 'inspection',
+        details_json: { date: '28 May 2026', notes },
+      },
+      auditTrail[0]
+    ).then(audit => {
+      setAuditTrail(prev => [audit, ...prev]);
+      auditService.logAuditEvent({
+        actor: audit.actor,
+        actorRole: audit.actorRole,
+        action: audit.action,
+        applicationId: audit.applicationId,
+        applicationNumber: audit.applicationNumber,
+        ruleVersion: audit.ruleVersion,
+        details: audit.details,
+        entityType: 'inspection',
+      });
+    });
+
+    const newNotif: NotificationItem = {
+      id: `notif-${Date.now()}`,
+      role: 'institution',
+      application_id: app.id,
+      title: 'Physical Inspection Scheduled',
+      message: 'Expert Visiting Committee scheduled for on-campus ground truth audit on 28 May 2026.',
+      type: 'warning',
+      read: false,
+      link_nav: 'track-status',
+      created_at: new Date().toISOString(),
     };
-    setAuditTrail(prev => [audit, ...prev]);
+    setNotifications(prev => [newNotif, ...prev]);
 
     showToast('Physical Inspection Committee scheduled in docket');
   };
 
   const flagManualReview = (appId: string, reason: string) => {
+    const app = applications.find(a => a.id === appId);
     setApplications(prev =>
       prev.map(a =>
         a.id === appId
-          ? { ...a, status: 'Needs Manual Review', officerObservation: reason }
+          ? { ...a, status: 'Needs Manual Review', stage: 'Officer Review', officerObservation: reason }
           : a
       )
     );
 
-    const audit: AuditEvent = {
-      id: `aud-${Date.now()}`,
-      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
-      actor: 'Sara Abraham (Senior Scrutiny Officer)',
-      actorRole: 'officer',
-      action: 'Flagged for Bureau Committee Manual Verification',
-      applicationId: appId,
-      applicationNumber: applications.find(a => a.id === appId)?.applicationNumber || '',
-      ruleVersion: CURRENT_RULESET_VERSION,
-      details: reason
-    };
-    setAuditTrail(prev => [audit, ...prev]);
+    createChainedAuditEvent(
+      {
+        actor: 'Sara Abraham (Senior Scrutiny Officer)',
+        actorRole: 'officer',
+        action: 'Flagged for Bureau Committee Manual Verification',
+        applicationId: appId,
+        applicationNumber: app?.applicationNumber || '',
+        ruleVersion: CURRENT_RULESET_VERSION,
+        details: reason,
+        entityType: 'application',
+      },
+      auditTrail[0]
+    ).then(audit => {
+      setAuditTrail(prev => [audit, ...prev]);
+    });
 
     showToast('Application flagged for Manual Verification');
   };
 
   const approveApplication = (appId: string, notes?: string) => {
+    const app = applications.find(a => a.id === appId);
     setApplications(prev =>
       prev.map(a =>
         a.id === appId
@@ -443,18 +584,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       )
     );
 
-    const audit: AuditEvent = {
-      id: `aud-${Date.now()}`,
-      timestamp: new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }) + ' IST',
-      actor: 'Sara Abraham (Senior Scrutiny Officer)',
-      actorRole: 'officer',
-      action: 'Approval Recommended to Executive Committee',
-      applicationId: appId,
-      applicationNumber: applications.find(a => a.id === appId)?.applicationNumber || '',
-      ruleVersion: CURRENT_RULESET_VERSION,
-      details: notes || 'Passed scrutiny review. Forwarded to Executive Committee for Digital EoA dispatch.'
+    createChainedAuditEvent(
+      {
+        actor: 'Sara Abraham (Senior Scrutiny Officer)',
+        actorRole: 'officer',
+        action: 'Approval Recommended to Executive Committee',
+        applicationId: appId,
+        applicationNumber: app?.applicationNumber || '',
+        ruleVersion: CURRENT_RULESET_VERSION,
+        details: notes || 'Passed scrutiny review. Forwarded to Executive Committee for Digital EoA dispatch.',
+        entityType: 'decision',
+        details_json: { decision: 'Approve to Next Stage', notes },
+      },
+      auditTrail[0]
+    ).then(audit => {
+      setAuditTrail(prev => [audit, ...prev]);
+      auditService.logAuditEvent({
+        actor: audit.actor,
+        actorRole: audit.actorRole,
+        action: audit.action,
+        applicationId: audit.applicationId,
+        applicationNumber: audit.applicationNumber,
+        ruleVersion: audit.ruleVersion,
+        details: audit.details,
+        entityType: 'decision',
+      });
+    });
+
+    const newNotif: NotificationItem = {
+      id: `notif-${Date.now()}`,
+      role: 'institution',
+      application_id: appId,
+      title: 'Application Approved to Decision',
+      message: 'Scrutiny Officer approved application dossier. Scheduled for Digital EoA issuance.',
+      type: 'success',
+      read: false,
+      link_nav: 'track-status',
+      created_at: new Date().toISOString(),
     };
-    setAuditTrail(prev => [audit, ...prev]);
+    setNotifications(prev => [newNotif, ...prev]);
 
     showToast('Application approved & advanced to Final Executive Committee');
   };
@@ -939,12 +1107,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         inspections,
         auditTrail,
         facilities,
+        notifications,
+        unreadNotificationCount,
         toast,
         availableOfficerProfiles,
         availableInstitutionProfiles,
         isReportModalOpen,
         isLoginModalOpen,
         selectedFindingId,
+        markNotificationAsRead,
+        markAllNotificationsAsRead,
         switchRole,
         setActiveNav,
         selectApplication,
